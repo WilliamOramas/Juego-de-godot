@@ -44,3 +44,44 @@ Desarrollar un videojuego interactivo con Inteligencia Artificial para enseñar 
    ```
 3. Abre el **Godot Project Manager**, haz clic en **Import** (Importar) y selecciona el archivo `project.godot` en la carpeta raíz del proyecto.
 4. Presiona **F5** (o el botón de reproducir en la esquina superior derecha) para ejecutar la demo del juego.
+
+---
+
+## 📐 Arquitectura del Proyecto
+
+Este proyecto utiliza una **Arquitectura Orientada a Funcionalidades (Feature-Oriented Architecture)**, la cual está diseñada para optimizar la modularidad y escalabilidad en Godot Engine 4.
+
+### Estructura de Carpetas
+
+La estructura de directorios del proyecto se organiza de la siguiente manera:
+
+```text
+res://
+├── src/                     # Código fuente y recursos del juego
+│   ├── assets/              # Recursos gráficos y de audio compartidos
+│   │   └── sprites/         # Hojas de sprites y fondos del juego
+│   │       ├── player_spritesheet.png        # Spritesheet del protagonista (caminar/parado)
+│   │       └── school_hallway_background.png # Imagen de fondo del pasillo escolar
+│   ├── entities/            # Personajes, enemigos y objetos interactivos (Entidades)
+│   │   └── player/          # Lógica y scripts relacionados al jugador
+│   │       ├── player.gd    # Script principal de movimiento y animación
+│   │       └── player.gd.uid # Identificador único de recurso en Godot
+│   └── levels/              # Escenas completas de mapas y niveles
+│       └── school_hallway.tscn # Nivel principal (Pasillo de la escuela)
+├── project.godot            # Archivo de configuración del proyecto Godot
+└── README.md                # Documentación del proyecto
+```
+
+### Ventajas de este Diseño
+1. **Modularidad:** El jugador (`player.gd`) se encuentra autocontenido dentro de su propia carpeta en `entities/player/`. Esto facilita la reutilización y el mantenimiento individual.
+2. **Escalabilidad:** A medida que se agreguen más enemigos o niveles, se crearán subcarpetas bajo `entities/enemies/` o `levels/` respectivamente, evitando acumular archivos en la raíz del proyecto.
+3. **Facilidad de Trabajo en Equipo:** Reduce los conflictos en el control de versiones al tener archivos organizados por componentes lógicos diferenciados.
+
+---
+
+## 🤖 Habilidades de Asistencia de IA (Skills)
+
+Para el desarrollo y mantenimiento de este código se han incorporado las siguientes herramientas de soporte en el agente de IA:
+* **`godot-gdscript-patterns`**: Una guía de patrones de producción especializada en Godot 4.x (abarcando máquinas de estado, singletons, Event Bus, componentes de daño/vida y optimización).
+* **`caveman-commit`**: Un generador optimizado y comprimido de mensajes de commit para registrar de forma clara y estricta el avance en el control de versiones.
+

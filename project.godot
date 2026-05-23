@@ -10,10 +10,9 @@ config_version=5
 
 [application]
 
-config/name="Terror"
-run/main_scene="uid://d37ykuofdv1m1"
+config/name="vital pixel"
+run/main_scene="res://src/levels/school_hallway.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="res://icon.svg"
 
 [display]
 

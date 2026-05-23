@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d22o2a6kqweh0"
-path="res://.godot/imported/Personajes_NPCS_ETC_fondo_transparente_caminar_y_de_pie.png-da73c5118b9bd305c5b48c19dd8e35fa.ctex"
+path="res://.godot/imported/Personajes_NPCS_ETC_fondo_transparente_caminar_y_de_pie.png-53764ac7effdb07e06c96b997c20180c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Personajes_NPCS_ETC_fondo_transparente_caminar_y_de_pie/Personajes_NPCS_ETC_fondo_transparente_caminar_y_de_pie.png"
-dest_files=["res://.godot/imported/Personajes_NPCS_ETC_fondo_transparente_caminar_y_de_pie.png-da73c5118b9bd305c5b48c19dd8e35fa.ctex"]
+source_file="res://assets/sprites/Personajes_NPCS_ETC_fondo_transparente_caminar_y_de_pie.png"
+dest_files=["res://.godot/imported/Personajes_NPCS_ETC_fondo_transparente_caminar_y_de_pie.png-53764ac7effdb07e06c96b997c20180c.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bdfnpkj70102w"
-path="res://.godot/imported/Personajes, NPCS, ETC  fondo transparente caminar y de pie.png-3460540717e1f1a863a565ac67eb468c.ctex"
+uid="uid://3vnnumk7d1ri"
+path="res://.godot/imported/school_hallway.png-8b2162e1a3c2e0f63fa9c8572c730021.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/Personajes, NPCS, ETC  fondo transparente caminar y de pie.png"
-dest_files=["res://.godot/imported/Personajes, NPCS, ETC  fondo transparente caminar y de pie.png-3460540717e1f1a863a565ac67eb468c.ctex"]
+source_file="res://assets/sprites/school_hallway.png"
+dest_files=["res://.godot/imported/school_hallway.png-8b2162e1a3c2e0f63fa9c8572c730021.ctex"]
 
 [params]
 

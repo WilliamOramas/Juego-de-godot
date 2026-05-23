@@ -27,6 +27,9 @@ func animate_player() -> void:
 		animationTree.set("parameters/conditions/walk", true)
 		
 		# Solo intentamos asignar si el parámetro existe para evitar el error E 0:00:00:831
+		# Comentarios dejados por el Sr Williams
+		# Todav{ia ando esperando que se instale discord en el phone.
+		# 
 		# IMPORTANTE: Revisa que en el Tree tus nodos se llamen 'idle' y 'walk' en minúsculas
 		animationTree.set("parameters/walk/blend_position", input_vector)
 		animationTree.set("parameters/idle/blend_position", input_vector)

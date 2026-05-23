@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "GDScript: Launch Game",
+      "type": "godot",
+      "request": "launch",
+      "project": "${workspaceRoot}",
+      "port": 6007
+    }
+  ]
+}

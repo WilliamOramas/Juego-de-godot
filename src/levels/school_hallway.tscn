@@ -127,7 +127,7 @@ shape = SubResource("RectangleShape2D_door")
 [node name="DoorToClassroomRight" type="Area2D" parent="." unique_id=1347073251]
 position = Vector2(811, 127)
 script = ExtResource("4_door_gd")
-target_scene_path = "res://src/levels/classroom_1.tscn"
+target_scene_path = "res://src/levels/classroom_2.tscn"
 target_spawn_name = "ClassroomSpawnPoint"
 return_spawn_name = "HallwaySpawnRight"
 

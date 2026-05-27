@@ -11,8 +11,8 @@ func _init() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	clip_contents = true
 
-func update_url_from_project_settings():
-	var new_url = ProjectSettings.get_setting("editor/ide/vscode_url", "https://vscode.dev")
+func update_url_from_project_settings() -> void:
+	var new_url: String = ProjectSettings.get_setting("editor/ide/vscode_url", "https://vscode.dev")
 	if url == new_url:
 		return
 	url = new_url

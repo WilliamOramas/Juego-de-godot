@@ -2,6 +2,10 @@
 
 [ext_resource type="Script" uid="uid://catce730dn3yp" path="res://src/entities/player/player.gd" id="1_ij6vw"]
 [ext_resource type="Texture2D" uid="uid://d22o2a6kqweh0" path="res://src/assets/sprites/player_spritesheet.png" id="2_f50pn"]
+[ext_resource type="Script" path="res://src/components/state_machine/state_machine.gd" id="3_state_machine"]
+[ext_resource type="Script" path="res://src/entities/player/states/player_idle.gd" id="4_player_idle"]
+[ext_resource type="Script" path="res://src/entities/player/states/player_move.gd" id="5_player_move"]
+[ext_resource type="Script" path="res://src/entities/player/states/player_locked.gd" id="6_player_locked"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_phys"]
 size = Vector2(23, 8)
@@ -305,3 +309,16 @@ limit_top = 0
 limit_right = 853
 limit_bottom = 745
 position_smoothing_enabled = true
+
+[node name="StateMachine" type="Node" parent="." unique_id=2002740200]
+script = ExtResource("3_state_machine")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine" unique_id=2002740201]
+script = ExtResource("4_player_idle")
+
+[node name="Move" type="Node" parent="StateMachine" unique_id=2002740202]
+script = ExtResource("5_player_move")
+
+[node name="Locked" type="Node" parent="StateMachine" unique_id=2002740203]
+script = ExtResource("6_player_locked")

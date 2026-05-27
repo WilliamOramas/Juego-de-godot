@@ -16,8 +16,13 @@ var tunnel_stderr: FileAccess = null
 var _tunnel_in_url := false
 var _tunnel_building_url := ""
 
-func _enter_tree():
+func _enter_tree() -> void:
 	_kill_all_tunnels()
+	_setup_webview()
+	_setup_menu_items()
+	_auto_start_tunnel()
+
+func _setup_webview() -> void:
 	webview = VSCODE_WEBVIEW_SCENE.instantiate()
 	if not webview:
 		push_error("[VSCode] Failed to instantiate vscode_webview.tscn")
@@ -29,15 +34,16 @@ func _enter_tree():
 	webview.ipc_message.connect(_on_ipc_message_main)
 	webview.gui_input.connect(_on_webview_gui_input)
 
-	var main_screen = get_editor_interface().get_editor_main_screen()
-	main_screen.add_child(webview)
+	get_editor_interface().get_editor_main_screen().add_child(webview)
 
+func _setup_menu_items() -> void:
 	add_tool_menu_item("Open developer tools", _open_dev_tools)
 	add_tool_menu_item("Refresh VSCode view", _refresh_webview)
 	add_tool_menu_item("Start tunnel", _start_code_tunnel)
 	add_tool_menu_item("Stop tunnels", _kill_all_tunnels)
 
-	if ProjectSettings.get_setting("editor/ide/auto_start_tunnel", true):
+func _auto_start_tunnel() -> void:
+	if ProjectSettings.get_setting("editor/ide/auto_start_tunnel", false):
 		_start_code_tunnel()
 
 func _handles(object: Object) -> bool:
@@ -68,25 +74,39 @@ func _make_visible(p_visible: bool) -> void:
 	if not webview:
 		return
 	webview.update_url_from_project_settings()
-	if not main_loaded:
-		main_loaded = true
-		webview.create_webview()
+	_initialize_webview_lazy()
 
 	webview.visible = p_visible
 	webview.grab_click_focus()
 	webview.grab_focus()
+	_handle_distraction_free_mode(p_visible)
 
-	var distraction_free_setting = ProjectSettings.get_setting("editor/ide/distraction_free_mode", false)
-	var editor_interface = get_editor_interface()
-	if distraction_free_setting:
-		if p_visible:
-			if not editor_interface.is_distraction_free_mode_enabled():
-				editor_interface.set_distraction_free_mode(true)
-				distraction_free_enabled_by_us = true
-		else:
-			if distraction_free_enabled_by_us:
-				editor_interface.set_distraction_free_mode(false)
-				distraction_free_enabled_by_us = false
+func _initialize_webview_lazy() -> void:
+	if main_loaded:
+		return
+	main_loaded = true
+	webview.create_webview()
+
+func _handle_distraction_free_mode(visible: bool) -> void:
+	if not ProjectSettings.get_setting("editor/ide/distraction_free_mode", false):
+		return
+	var editor_interface := get_editor_interface()
+	if visible:
+		_enable_distraction_free(editor_interface)
+	else:
+		_disable_distraction_free(editor_interface)
+
+func _enable_distraction_free(editor_interface: EditorInterface) -> void:
+	if editor_interface.is_distraction_free_mode_enabled():
+		return
+	editor_interface.set_distraction_free_mode(true)
+	distraction_free_enabled_by_us = true
+
+func _disable_distraction_free(editor_interface: EditorInterface) -> void:
+	if not distraction_free_enabled_by_us:
+		return
+	editor_interface.set_distraction_free_mode(false)
+	distraction_free_enabled_by_us = false
 
 func _refresh_webview() -> void:
 	if webview and main_loaded:
@@ -97,70 +117,78 @@ func _on_ipc_message_main(message: String) -> void:
 		webview.grab_click_focus()
 		webview.grab_focus()
 
-func _on_resource_selected(p_res: Resource, p_property: String) -> void:
-	var selected_script := p_res
-	if typeof(selected_script) == TYPE_OBJECT and selected_script is Script:
-		var script_path = selected_script.resource_path
-		if script_path != "":
-			_open_script_in_vscode(script_path)
+func _on_resource_selected(p_res: Resource, _p_property: String) -> void:
+	if p_res is Script and p_res.resource_path != "":
+		_open_script_in_vscode(p_res.resource_path)
 
 func _on_script_open_request(p_script: Script) -> void:
-	if p_script:
-		var script_path = p_script.resource_path
-		if script_path != "":
-			_open_script_in_vscode(script_path)
+	if p_script and p_script.resource_path != "":
+		_open_script_in_vscode(p_script.resource_path)
 
 func _process(delta: float) -> void:
 	if webview:
 		webview.update_webview()
-	if !tunnel_process.is_empty():
-		var stdio_text = tunnel_stdio.get_as_text()
-		if stdio_text != "":
-			_extract_vscode_url(stdio_text)
+	_update_tunnel_process()
 
-		var stderr_text = tunnel_stderr.get_as_text()
-		if stderr_text != "":
-			print("[VSCode] Error from tunnel: ", stderr_text)
+func _update_tunnel_process() -> void:
+	if tunnel_process.is_empty():
+		return
+	var stdio_text := tunnel_stdio.get_as_text()
+	if stdio_text != "":
+		_extract_vscode_url(stdio_text)
+
+	var stderr_text := tunnel_stderr.get_as_text()
+	if stderr_text != "":
+		print("[VSCode] Error from tunnel: ", stderr_text)
 
 func _extract_vscode_url(text: String) -> void:
 	for line in text.split("\n"):
-		var chunk = line.strip_edges()
-		print("[VSCode] ", chunk)
+		_process_tunnel_chunk(line.strip_edges())
 
-		if not _tunnel_in_url and chunk.find("https://vscode.dev/tunnel/") != -1:
-			_tunnel_in_url = true
-			_tunnel_building_url = ""
-			var start_pos = chunk.find("https://vscode.dev/tunnel/")
-			if start_pos != -1:
-				var after = chunk.substr(start_pos, chunk.length() - start_pos)
-				_tunnel_building_url += after
-			continue
-		if _tunnel_in_url and chunk.is_empty():
-			var clean_url = _tunnel_building_url.strip_edges()
-			print("[VSCode] Found tunnel at: ", _tunnel_building_url)
-			ProjectSettings.set_setting("editor/ide/vscode_url", clean_url)
-			ProjectSettings.save()
-			webview.update_url_from_project_settings()
-			_tunnel_in_url = false
-			_tunnel_building_url = ""
-			continue
+func _process_tunnel_chunk(chunk: String) -> void:
+	print("[VSCode] ", chunk)
+	
+	if not _tunnel_in_url and chunk.find("https://vscode.dev/tunnel/") != -1:
+		_tunnel_in_url = true
+		_tunnel_building_url = ""
+		var start_pos := chunk.find("https://vscode.dev/tunnel/")
+		_tunnel_building_url += chunk.substr(start_pos) if start_pos != -1 else ""
+		return
+		
+	if _tunnel_in_url and chunk.is_empty():
+		var clean_url := _tunnel_building_url.strip_edges()
+		print("[VSCode] Found tunnel at: ", clean_url)
+		ProjectSettings.set_setting("editor/ide/vscode_url", clean_url)
+		ProjectSettings.save()
+		webview.update_url_from_project_settings()
+		_tunnel_in_url = false
+		_tunnel_building_url = ""
+		return
 
-		if _tunnel_in_url:
-			_tunnel_building_url += chunk
+	if _tunnel_in_url:
+		_tunnel_building_url += chunk
 
 func _cleanup_tunnel() -> void:
-	if output_timer and output_timer.is_inside_tree():
-		output_timer.stop()
-		output_timer.queue_free()
-		output_timer = null
-	var pid = tunnel_process.get("pid", -1)
-	if pid != -1:
-		print("[VSCode] Killing tunnel with PID ", pid)
-		OS.kill(pid)
+	_cleanup_output_timer()
+	_kill_tunnel_pid()
 	set_process(false)
 	tunnel_process = {}
 	tunnel_stdio = null
 	tunnel_stderr = null
+
+func _cleanup_output_timer() -> void:
+	if not (output_timer and output_timer.is_inside_tree()):
+		return
+	output_timer.stop()
+	output_timer.queue_free()
+	output_timer = null
+
+func _kill_tunnel_pid() -> void:
+	var pid := int(tunnel_process.get("pid", -1))
+	if pid == -1:
+		return
+	print("[VSCode] Killing tunnel with PID ", pid)
+	OS.kill(pid)
 
 func _kill_all_tunnels() -> void:
 	var os_name = OS.get_name()
@@ -201,13 +229,10 @@ func _kill_all_tunnels() -> void:
 		print("[VSCode] ", line)
 	_cleanup_tunnel()
 
-func _open_script_in_vscode(script_path: String) -> void:
-	if not webview or script_path == "":
-		return
-
-	var project_path = ProjectSettings.globalize_path("res://")
-	var full_script_path = ProjectSettings.globalize_path(script_path)
-	var message = {"type": "open_file", "path": full_script_path, "project_path": project_path}
+func _open_script_in_vscode(_script_path: String) -> void:
+	# Esta función es un placeholder para futuras integraciones de apertura de archivos.
+	# Actualmente, el editor de VSCode se sincroniza vía vscode.dev y el túnel de puertos.
+	pass
 
 func _start_code_tunnel() -> void:
 	if !tunnel_process.is_empty():

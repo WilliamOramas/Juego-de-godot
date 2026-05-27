@@ -22,23 +22,16 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func _position_at_spawn() -> void:
-	if Global.target_spawn_name == "":
-		return
-		
-	var spawn_point := get_tree().current_scene.find_child(Global.target_spawn_name, true, false) as Node2D
-	if spawn_point:
-		global_position = spawn_point.global_position
-	Global.target_spawn_name = ""
+	if Global.target_spawn_name != "":
+		var spawn := get_tree().current_scene.find_child(Global.target_spawn_name, true, false) as Node2D
+		if spawn:
+			global_position = spawn.global_position
+		Global.target_spawn_name = ""
 
 func _connect_scene_manager() -> void:
-	if not has_node("/root/SceneManager"):
-		return
-		
-	var scene_manager := get_node("/root/SceneManager")
-	scene_manager.transition_started.connect(_on_transition_started)
-	scene_manager.transition_finished.connect(_on_transition_finished)
-	
-	if scene_manager.is_transitioning:
+	SceneManager.transition_started.connect(_on_transition_started)
+	SceneManager.transition_finished.connect(_on_transition_finished)
+	if SceneManager.is_transitioning:
 		_on_transition_started()
 
 func _on_transition_started() -> void:

@@ -2,47 +2,59 @@ class_name Player
 extends CharacterBody2D
 
 @export var speed: float = 60.0
+@export var control_enabled: bool = true
+
+var input_vector: Vector2 = Vector2.ZERO
 
 @onready var animation_tree: AnimationTree = $AnimationTree
-@onready var state_machine: StateMachine = $StateMachine
 
 func _ready() -> void:
 	animation_tree.active = true
-	_position_at_spawn()
-	_connect_scene_manager()
+	
+	# Si hay un spawn de destino configurado globalmente, nos posicionamos allí
+	if Global.target_spawn_name != "":
+		var spawn_point := get_tree().current_scene.find_child(Global.target_spawn_name, true, false) as Marker2D
+		if spawn_point:
+			global_position = spawn_point.global_position
+		Global.target_spawn_name = ""
+		
+	# Conexión automática con el gestor de escenas para deshabilitar controles durante fundidos
+	if has_node("/root/SceneManager"):
+		var scene_manager := get_node("/root/SceneManager")
+		scene_manager.transition_started.connect(_on_transition_started)
+		scene_manager.transition_finished.connect(_on_transition_finished)
 
-func _unhandled_input(event: InputEvent) -> void:
-	state_machine.handle_input(event)
-
-func _process(delta: float) -> void:
-	state_machine.update(delta)
-
-func _physics_process(delta: float) -> void:
-	state_machine.physics_update(delta)
+func _physics_process(_delta: float) -> void:
+	if control_enabled:
+		get_input()
+		animate_player()
+	else:
+		velocity = Vector2.ZERO
+		# Forzar animación idle cuando no hay control
+		animation_tree.set("parameters/conditions/idle", true)
+		animation_tree.set("parameters/conditions/walk", false)
+		
 	move_and_slide()
 
-func _position_at_spawn() -> void:
-	if Global.target_spawn_name == "":
-		return
-		
-	var spawn_point := get_tree().current_scene.find_child(Global.target_spawn_name, true, false) as Node2D
-	if spawn_point:
-		global_position = spawn_point.global_position
-	Global.target_spawn_name = ""
+func get_input() -> void:
+	# Usamos el vector de entrada directamente (get_vector ya viene normalizado)
+	input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	velocity = input_vector * speed
 
-func _connect_scene_manager() -> void:
-	if not has_node("/root/SceneManager"):
-		return
+func animate_player() -> void:
+	if velocity == Vector2.ZERO:
+		animation_tree.set("parameters/conditions/idle", true)
+		animation_tree.set("parameters/conditions/walk", false)
+	else:
+		animation_tree.set("parameters/conditions/idle", false)
+		animation_tree.set("parameters/conditions/walk", true)
 		
-	var scene_manager := get_node("/root/SceneManager")
-	scene_manager.transition_started.connect(_on_transition_started)
-	scene_manager.transition_finished.connect(_on_transition_finished)
-	
-	if scene_manager.is_transitioning:
-		_on_transition_started()
+		# Solo intentamos asignar si el parámetro existe en el árbol
+		animation_tree.set("parameters/walk/blend_position", input_vector)
+		animation_tree.set("parameters/idle/blend_position", input_vector)
 
 func _on_transition_started() -> void:
-	state_machine.transition_to(&"Locked")
+	control_enabled = false
 
 func _on_transition_finished() -> void:
-	state_machine.transition_to(&"Idle")
+	control_enabled = true

@@ -21,23 +21,7 @@ func _on_body_entered(body: Node2D) -> void:
 	# Verificamos si el cuerpo que entra es el jugador
 	if body is Player:
 		if target_scene_path != "":
-			if has_node("/root/SceneManager"):
-				# Delegamos la carga y la transición de pantalla al gestor global
-				var scene_manager := get_node("/root/SceneManager")
-				scene_manager.change_scene(target_scene_path, target_spawn_name, return_spawn_name, use_dynamic_return)
-			else:
-				# Modo alternativo (fallback) si el autoload no está cargado
-				push_warning("SceneManager autoload no encontrado. Cambiando de escena directamente.")
-				if use_dynamic_return:
-					Global.target_spawn_name = Global.return_spawn_name
-				else:
-					Global.target_spawn_name = target_spawn_name
-					
-				if return_spawn_name != "":
-					Global.return_spawn_name = return_spawn_name
-				
-				var error := get_tree().change_scene_to_file(target_scene_path)
-				if error != OK:
-					push_error("Error al cambiar a la escena: %s (Código de error: %d)" % [target_scene_path, error])
+			# Delegamos la carga y la transición de pantalla al gestor global
+			SceneManager.change_scene(target_scene_path, target_spawn_name, return_spawn_name, use_dynamic_return)
 		else:
 			push_warning("La puerta '%s' no tiene una escena destino configurada en el inspector." % name)

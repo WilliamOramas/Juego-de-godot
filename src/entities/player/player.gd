@@ -19,10 +19,8 @@ func _ready() -> void:
 		Global.target_spawn_name = ""
 		
 	# Conexión automática con el gestor de escenas para deshabilitar controles durante fundidos
-	if has_node("/root/SceneManager"):
-		var scene_manager := get_node("/root/SceneManager")
-		scene_manager.transition_started.connect(_on_transition_started)
-		scene_manager.transition_finished.connect(_on_transition_finished)
+	SceneManager.transition_started.connect(_on_transition_started)
+	SceneManager.transition_finished.connect(_on_transition_finished)
 
 func _physics_process(_delta: float) -> void:
 	if control_enabled:

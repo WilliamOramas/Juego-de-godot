@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://cwe6mjoekm3n6" path="res://src/assets/sprites/enfermeria.png" id="1_bg"]
 [ext_resource type="PackedScene" uid="uid://b12ykuofdv1m3" path="res://src/entities/player/player.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/entities/door/door.gd" id="3_door_gd"]
+[ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_pause"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left_bottom"]
 size = Vector2(8, 156)
@@ -77,3 +78,8 @@ shape = SubResource("RectangleShape2D_door")
 
 [node name="InfirmarySpawnPoint" type="Marker2D" parent="." unique_id=417369398]
 position = Vector2(59, 110)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("4_pause")]
+visible = false

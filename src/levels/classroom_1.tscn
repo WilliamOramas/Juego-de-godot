@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://d2xyhaqh6dlm4" path="res://src/assets/sprites/salon 1.png" id="1_bg"]
 [ext_resource type="PackedScene" uid="uid://b12ykuofdv1m3" path="res://src/entities/player/player.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/entities/door/door.gd" id="3_door_gd"]
+[ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_pause"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left"]
 size = Vector2(20, 500)
@@ -78,3 +79,8 @@ shape = SubResource("RectangleShape2D_door")
 
 [node name="ClassroomSpawnPoint" type="Marker2D" parent="."]
 position = Vector2(270, 420)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("4_pause")]
+visible = false

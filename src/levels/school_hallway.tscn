@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://3vnnumk7d1ri" path="res://src/assets/sprites/school_hallway_background.png" id="2_main"]
 [ext_resource type="PackedScene" uid="uid://b12ykuofdv1m3" path="res://src/entities/player/player.tscn" id="3_player"]
 [ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/entities/door/door.gd" id="4_door_gd"]
+[ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_x75wc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_top"]
 size = Vector2(334, 86)
@@ -150,4 +151,9 @@ return_spawn_name = "HallwaySpawnInfirmary"
 shape = SubResource("RectangleShape2D_door")
 
 [node name="HallwaySpawnInfirmary" type="Marker2D" parent="." unique_id=993638523]
+process_mode = 1
 position = Vector2(102, 543)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=514008989]
+
+[node name="PauseMenu" parent="CanvasLayer" unique_id=198726533 instance=ExtResource("4_x75wc")]

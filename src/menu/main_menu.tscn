@@ -1,0 +1,81 @@
+[gd_scene format=3 uid="uid://hdg1bfb3neyc"]
+
+[ext_resource type="PackedScene" uid="uid://cem5ckhv1st68" path="res://src/menu/custom_button.tscn" id="1_1k071"]
+[ext_resource type="Script" uid="uid://dgtof8ba3ncu2" path="res://src/menu/main_menu.gd" id="1_g2ne3"]
+[ext_resource type="Theme" uid="uid://1dkhbt1a5a34" path="res://src/menu/ThemeMapa.tres" id="1_o3lno"]
+[ext_resource type="Texture2D" uid="uid://qu3lxw8lbpm" path="res://src/assets/sprites/image_3.png" id="3_p2uv2"]
+
+[sub_resource type="Theme" id="Theme_g2ne3"]
+
+[sub_resource type="FontFile" id="FontFile_p2uv2"]
+cache/0/variation_coordinates = {}
+cache/0/face_index = 0
+cache/0/embolden = 0.0
+cache/0/transform = Transform2D(1, 0, 0, 1, 0, 0)
+cache/0/spacing_top = 0
+cache/0/spacing_bottom = 0
+cache/0/spacing_space = 0
+cache/0/spacing_glyph = 0
+cache/0/baseline_offset = 0.0
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/27/0/ascent = 0.0
+cache/0/27/0/descent = 0.0
+cache/0/27/0/underline_position = 0.0
+cache/0/27/0/underline_thickness = 0.0
+cache/0/27/0/scale = 1.0
+
+[node name="MainMenu" type="Control" unique_id=275601617]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_o3lno")
+script = ExtResource("1_g2ne3")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1721142045]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer" unique_id=328701817]
+layout_mode = 2
+texture = ExtResource("3_p2uv2")
+expand_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1122999580]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=804275167]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = SubResource("Theme_g2ne3")
+theme_override_colors/font_color = Color(0.012617188, 0.012617188, 0.012617188, 1)
+theme_override_fonts/font = SubResource("FontFile_p2uv2")
+theme_override_font_sizes/font_size = 27
+text = "VitaLPixeL"
+
+[node name="Start_Game" parent="MarginContainer/VBoxContainer" unique_id=364183220 instance=ExtResource("1_1k071")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+
+[node name="Exit_Game" parent="MarginContainer/VBoxContainer" unique_id=610016158 instance=ExtResource("1_1k071")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "SALIDA
+"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Start_Game" to="." method="_on_start_game_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Exit_Game" to="." method="_on_exit_game_pressed"]

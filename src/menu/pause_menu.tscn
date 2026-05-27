@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://bguh7xdm1qnpl"]
+
+[ext_resource type="Script" uid="uid://cx1cioygldoxc" path="res://src/menu/pause_menu.gd" id="1_2omny"]
+[ext_resource type="Theme" uid="uid://1dkhbt1a5a34" path="res://src/menu/ThemeMapa.tres" id="1_ld5fl"]
+[ext_resource type="PackedScene" uid="uid://cem5ckhv1st68" path="res://src/menu/custom_button.tscn" id="3_w7oy8"]
+
+[node name="PauseMenu" type="Control" unique_id=198726533]
+process_mode = 2
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_2omny")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1869500877]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0, 0, 0, 0)
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=91117220]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_ld5fl")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1291432731]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Resume" parent="MarginContainer/VBoxContainer" unique_id=364183220 instance=ExtResource("3_w7oy8")]
+layout_mode = 2
+text = "RESUME"
+
+[node name="ExitGame" parent="MarginContainer/VBoxContainer" unique_id=1938876114 instance=ExtResource("3_w7oy8")]
+layout_mode = 2
+text = "SALIDA"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ExitGame" to="." method="_on_exit_game_pressed"]

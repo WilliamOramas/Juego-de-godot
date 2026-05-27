@@ -14,6 +14,10 @@ config/name="vital pixel"
 run/main_scene="res://src/levels/school_hallway.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 
+[autoload]
+
+Global="*res://src/levels/global.gd"
+
 [display]
 
 window/size/viewport_width=800

@@ -1,3 +1,4 @@
+class_name Player
 extends CharacterBody2D
 
 @export var speed: float = 60.0
@@ -7,6 +8,13 @@ var input_vector: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	animationTree.active = true
+	
+	# Si hay un spawn de destino configurado globalmente, nos posicionamos allí
+	if Global.target_spawn_name != "":
+		var spawn_point = get_tree().current_scene.find_child(Global.target_spawn_name, true, false)
+		if spawn_point:
+			global_position = spawn_point.global_position
+		Global.target_spawn_name = ""
 
 func _physics_process(_delta: float) -> void:
 	get_input()

@@ -10,6 +10,7 @@ mono_crash.*.json
 # System/Tool ignores
 *.tmp
 *.log
+~*
 
 # Export ignores (build builds)
 /build/

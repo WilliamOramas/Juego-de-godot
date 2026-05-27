@@ -2,42 +2,59 @@ class_name Player
 extends CharacterBody2D
 
 @export var speed: float = 60.0
+@export var control_enabled: bool = true
+
 var input_vector: Vector2 = Vector2.ZERO
 
-@onready var animationTree: AnimationTree = $AnimationTree
+@onready var animation_tree: AnimationTree = $AnimationTree
 
 func _ready() -> void:
-	animationTree.active = true
+	animation_tree.active = true
 	
 	# Si hay un spawn de destino configurado globalmente, nos posicionamos allí
 	if Global.target_spawn_name != "":
-		var spawn_point = get_tree().current_scene.find_child(Global.target_spawn_name, true, false)
+		var spawn_point := get_tree().current_scene.find_child(Global.target_spawn_name, true, false) as Marker2D
 		if spawn_point:
 			global_position = spawn_point.global_position
 		Global.target_spawn_name = ""
+		
+	# Conexión automática con el gestor de escenas para deshabilitar controles durante fundidos
+	if has_node("/root/SceneManager"):
+		var scene_manager := get_node("/root/SceneManager")
+		scene_manager.transition_started.connect(_on_transition_started)
+		scene_manager.transition_finished.connect(_on_transition_finished)
 
 func _physics_process(_delta: float) -> void:
-	get_input()
-	animate_player()
+	if control_enabled:
+		get_input()
+		animate_player()
+	else:
+		velocity = Vector2.ZERO
+		# Forzar animación idle cuando no hay control
+		animation_tree.set("parameters/conditions/idle", true)
+		animation_tree.set("parameters/conditions/walk", false)
+		
 	move_and_slide()
 
 func get_input() -> void:
-	# Usamos el vector de entrada directamente
+	# Usamos el vector de entrada directamente (get_vector ya viene normalizado)
 	input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	velocity = input_vector * speed # get_vector ya viene normalizado
+	velocity = input_vector * speed
 
 func animate_player() -> void:
 	if velocity == Vector2.ZERO:
-		animationTree.set("parameters/conditions/idle", true)
-		animationTree.set("parameters/conditions/walk", false)
+		animation_tree.set("parameters/conditions/idle", true)
+		animation_tree.set("parameters/conditions/walk", false)
 	else:
-		animationTree.set("parameters/conditions/idle", false)
-		animationTree.set("parameters/conditions/walk", true)
+		animation_tree.set("parameters/conditions/idle", false)
+		animation_tree.set("parameters/conditions/walk", true)
 		
-		# Solo intentamos asignar si el parámetro existe para evitar el error E 0:00:00:831
-		# Comentarios dejados por el Sr Williams
-		# Todav{ia ando esperando que se instale discord en el phone.
-		# 
-		# IMPORTANTE: Revisa que en el Tree tus nodos se llamen 'idle' y 'walk' en minúsculas
-		animationTree.set("parameters/walk/blend_position", input_vector)
-		animationTree.set("parameters/idle/blend_position", input_vector)
+		# Solo intentamos asignar si el parámetro existe en el árbol
+		animation_tree.set("parameters/walk/blend_position", input_vector)
+		animation_tree.set("parameters/idle/blend_position", input_vector)
+
+func _on_transition_started() -> void:
+	control_enabled = false
+
+func _on_transition_finished() -> void:
+	control_enabled = true

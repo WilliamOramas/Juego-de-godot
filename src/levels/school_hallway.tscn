@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://b12ykuofdv1m3" path="res://src/entities/player/player.tscn" id="3_player"]
 [ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/entities/door/door.gd" id="4_door_gd"]
 [ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_x75wc"]
+[ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_top"]
 size = Vector2(334, 86)
@@ -156,6 +157,19 @@ shape = SubResource("RectangleShape2D_door")
 [node name="HallwaySpawnInfirmary" type="Marker2D" parent="." unique_id=993638523]
 process_mode = 1
 position = Vector2(102, 543)
+
+[node name="EstudiantePasilloNervioso" parent="." instance=ExtResource("5_npc")]
+position = Vector2(250, 150)
+sprite_modulate = Color(1, 0.85, 0.85, 1)
+dialog_text = "¡El examen de matemáticas es hoy! Estoy muy nervioso."
+wander_radius = 40.0
+
+[node name="EstudiantePasilloEnfermo" parent="." instance=ExtResource("5_npc")]
+position = Vector2(650, 150)
+sprite_frame = 15
+sprite_modulate = Color(0.85, 0.9, 1, 1)
+dialog_text = "Me duele el estómago... Creo que iré a la enfermería."
+wander_radius = 40.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=514008989]
 

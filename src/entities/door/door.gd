@@ -1,3 +1,4 @@
+# PROVISIONAL: Los cambios de confirmación en puertas de este PR son provisionales.
 class_name Door
 extends Area2D
 

@@ -1,3 +1,4 @@
+# PROVISIONAL: Este panel flotante de interacción de este PR es provisional.
 extends Control
 class_name DoorPrompt
 

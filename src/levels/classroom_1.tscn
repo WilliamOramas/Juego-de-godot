@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" uid="uid://b12ykuofdv1m3" path="res://src/entities/player/player.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/entities/door/door.gd" id="3_door_gd"]
 [ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" uid="uid://d37ykuofdv1m8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
+[ext_resource type="Texture2D" path="res://src/assets/sprites/npc_spritesheet.png" id="6_teacher_tex"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left"]
 size = Vector2(20, 500)
@@ -80,6 +82,23 @@ shape = SubResource("RectangleShape2D_door")
 
 [node name="ClassroomSpawnPoint" type="Marker2D" parent="."]
 position = Vector2(270, 420)
+
+[node name="EstudianteSentadoAtento" parent="." instance=ExtResource("5_npc")]
+position = Vector2(150, 200)
+sprite_modulate = Color(0.9, 1, 0.9, 1)
+dialog_text = "¡No dejes que el profesor te vea fuera de tu asiento!"
+routine_type = "Estático"
+
+[node name="ProfesorClase" parent="." instance=ExtResource("5_npc")]
+position = Vector2(240, 100)
+sprite_texture = ExtResource("6_teacher_tex")
+sprite_frame = 5
+dialog_text = "¡Silencio en clase! Abran sus libros en la página 45."
+routine_type = "Patrulla Horizontal"
+speed = 15.0
+
+[node name="Sprite2D" parent="ProfesorClase" index="0"]
+texture = ExtResource("6_teacher_tex")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

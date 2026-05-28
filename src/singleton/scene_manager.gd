@@ -1,3 +1,4 @@
+# PROVISIONAL: Toda esta integración de transiciones, menús y SceneManager es provisional para este PR.
 extends Node
 
 ## Señales de transición para que otros nodos (ej. Player) reaccionen

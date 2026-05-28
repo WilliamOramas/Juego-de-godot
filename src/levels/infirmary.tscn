@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" uid="uid://b12ykuofdv1m3" path="res://src/entities/player/player.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/entities/door/door.gd" id="3_door_gd"]
 [ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
+[ext_resource type="Texture2D" path="res://src/assets/sprites/npc_spritesheet_alt.png" id="6_nurse_tex"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left_bottom"]
 size = Vector2(8, 156)
@@ -79,6 +81,16 @@ shape = SubResource("RectangleShape2D_door")
 
 [node name="InfirmarySpawnPoint" type="Marker2D" parent="." unique_id=417369398]
 position = Vector2(59, 110)
+
+[node name="EnfermeroGuardia" parent="." instance=ExtResource("5_npc")]
+position = Vector2(240, 120)
+sprite_texture = ExtResource("6_nurse_tex")
+sprite_frame = 5
+dialog_text = "Hola, joven. ¿Te sientes mal? Toma asiento en la camilla."
+routine_type = "Estático"
+
+[node name="Sprite2D" parent="EnfermeroGuardia" index="0"]
+texture = ExtResource("6_nurse_tex")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

@@ -56,6 +56,7 @@ var _anim_timer: float = 0.0
 var _anim_frame: int = 0
 var _patrol_dir: float = 1.0 # 1 = derecha/abajo, -1 = izquierda/arriba
 var _player_in_range: Player = null # Referencia al jugador en rango de interacción
+var _prompt_instance: Control = null
 
 func _ready() -> void:
 	# 1. Aplicar textura, frame y modulación
@@ -189,13 +190,34 @@ func _select_new_target() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body is Player:
 		_player_in_range = body
-		dialog_bubble.visible = true
+		_show_prompt()
 
 func _on_body_exited(body: Node2D) -> void:
 	if body is Player:
 		if _player_in_range == body:
 			_player_in_range = null
 		dialog_bubble.visible = false
+		_remove_prompt()
+
+func _show_prompt() -> void:
+	_remove_prompt()
+	var prompt_scene = load("res://src/menu/interact_prompt.tscn")
+	if prompt_scene:
+		_prompt_instance = prompt_scene.instantiate()
+		add_child(_prompt_instance)
+		_prompt_instance.position = Vector2(-20, -35)
+		
+		_prompt_instance.setup(func():
+			if dialog_bubble:
+				dialog_bubble.visible = !dialog_bubble.visible
+				if _prompt_instance and _prompt_instance.has_method("set_button_visible"):
+					_prompt_instance.set_button_visible(!dialog_bubble.visible)
+		)
+
+func _remove_prompt() -> void:
+	if _prompt_instance and is_instance_valid(_prompt_instance):
+		_prompt_instance.queue_free()
+	_prompt_instance = null
 
 func _reposition_dialog_bubble() -> void:
 	if dialog_bubble:

@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://cx2cioygldoxg"]
+
+[ext_resource type="Script" path="res://src/menu/interact_prompt.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://cem5ckhv1st68" path="res://src/menu/custom_button.tscn" id="2_btn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_root"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_interact_normal"]
+bg_color = Color(0.117647, 0.117647, 0.137255, 0.941176)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.294118, 0.294118, 0.352941, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_interact_hover"]
+bg_color = Color(0.18, 0.18, 0.2, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.4, 0.45, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_interact_pressed"]
+bg_color = Color(0.08, 0.08, 0.1, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_focus"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_e"]
+device = -1
+physical_keycode = 69
+unicode = 101
+
+[sub_resource type="Shortcut" id="Shortcut_e"]
+events = [SubResource("InputEventKey_e")]
+
+[node name="InteractPrompt" type="PanelContainer"]
+z_index = 10
+custom_minimum_size = Vector2(40, 18)
+offset_right = 40.0
+offset_bottom = 18.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_root")
+script = ExtResource("1_script")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+alignment = 1
+
+[node name="InteractButton" parent="HBoxContainer" instance=ExtResource("2_btn")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 18)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_interact_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_interact_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_interact_pressed")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+theme_override_font_sizes/font_size = 7
+shortcut = SubResource("Shortcut_e")
+text = "E - Interactuar"
+
+[connection signal="pressed" from="HBoxContainer/InteractButton" to="." method="_on_interact_pressed"]

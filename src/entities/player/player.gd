@@ -7,6 +7,9 @@ extends CharacterBody2D
 var input_vector: Vector2 = Vector2.ZERO
 
 @onready var animation_tree: AnimationTree = $AnimationTree
+@onready var step_sound: AudioStreamPlayer = $StepSound
+
+var step_timer: float = 0.0
 
 func _ready() -> void:
 	animation_tree.active = true
@@ -25,7 +28,7 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	if control_enabled:
 		get_input()
-		animate_player()
+		animate_player(_delta)
 	else:
 		velocity = Vector2.ZERO
 		# Forzar animación idle cuando no hay control
@@ -39,13 +42,22 @@ func get_input() -> void:
 	input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	velocity = input_vector * speed
 
-func animate_player() -> void:
+func animate_player(delta: float = 0.0) -> void:
 	if velocity == Vector2.ZERO:
 		animation_tree.set("parameters/conditions/idle", true)
 		animation_tree.set("parameters/conditions/walk", false)
+		step_timer = 0.3
 	else:
 		animation_tree.set("parameters/conditions/idle", false)
 		animation_tree.set("parameters/conditions/walk", true)
+		
+		if delta > 0.0:
+			step_timer += delta
+			if step_timer >= 0.3:
+				step_timer = 0.0
+				if step_sound:
+					step_sound.pitch_scale = randf_range(0.85, 1.15)
+					step_sound.play()
 		
 		# Solo intentamos asignar si el parámetro existe en el árbol
 		animation_tree.set("parameters/walk/blend_position", input_vector)

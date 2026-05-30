@@ -65,6 +65,7 @@ _data = {
 }
 
 [node name="Pixel" type="Control"]
+process_mode = 1
 custom_minimum_size = Vector2(192, 192)
 layout_mode = 3
 anchors_preset = 0

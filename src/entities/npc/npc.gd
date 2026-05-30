@@ -10,6 +10,9 @@ class_name NPC
 ## Color de modulación para cambiar el aspecto del uniforme o cabello
 @export var sprite_modulate: Color = Color.WHITE
 
+## Nombre visible del NPC
+@export var npc_name: String = ""
+
 ## Texto de diálogo que dirá el NPC al acercarse
 @export var dialog_text: String = "¡Hola!"
 
@@ -31,9 +34,6 @@ class_name NPC
 ## Rango de detección físico de proximidad del jugador
 @export var detection_radius: float = 45.0
 
-## Offset personalizado para ubicar la burbuja de diálogo flotante (centrado horizontalmente de forma automática)
-@export var dialog_offset: Vector2 = Vector2(0, -48)
-
 ## Tiempo de espera mínimo al llegar a un punto o al iniciar la rutina
 @export var wait_time_min: float = 1.0
 
@@ -42,8 +42,6 @@ class_name NPC
 
 
 @onready var sprite: Sprite2D = $Sprite2D
-@onready var dialog_bubble: PanelContainer = $DialogBubble
-@onready var dialog_label: Label = %DialogLabel
 @onready var detection_area: Area2D = $DetectionArea
 
 # Variables de control lógico
@@ -64,15 +62,14 @@ func _ready() -> void:
 		sprite.texture = sprite_texture
 	sprite.frame = sprite_frame
 	sprite.modulate = sprite_modulate
-	dialog_label.text = dialog_text
-	dialog_bubble.visible = false
 	
-	# 2. Configurar el offset personalizado de la burbuja de diálogo
-	dialog_bubble.reset_size()
-	_reposition_dialog_bubble()
-	dialog_bubble.item_rect_changed.connect(_reposition_dialog_bubble)
+	# 3. Ocultar la burbuja flotante legacy (se usa DialogBox ahora)
+	if $DialogBubble:
+		$DialogBubble.visible = false
+		if %DialogLabel:
+			%DialogLabel.text = dialog_text
 	
-	# 3. Redimensionar dinámicamente el rango de detección del jugador
+	# 4. Redimensionar dinámicamente el rango de detección del jugador
 	var detect_shape = detection_area.get_node_or_null("CollisionShape2D")
 	if detect_shape and detect_shape.shape is CircleShape2D:
 		detect_shape.shape = detect_shape.shape.duplicate() # Evitar compartir el recurso del shape entre instancias
@@ -196,8 +193,8 @@ func _on_body_exited(body: Node2D) -> void:
 	if body is Player:
 		if _player_in_range == body:
 			_player_in_range = null
-		dialog_bubble.visible = false
 		_remove_prompt()
+		DialogBox.hide_dialog()
 
 func _show_prompt() -> void:
 	_remove_prompt()
@@ -205,21 +202,28 @@ func _show_prompt() -> void:
 	if prompt_scene:
 		_prompt_instance = prompt_scene.instantiate()
 		add_child(_prompt_instance)
-		_prompt_instance.position = Vector2(-20, -35)
-		
-		_prompt_instance.setup(func():
-			if dialog_bubble:
-				dialog_bubble.visible = !dialog_bubble.visible
-				if _prompt_instance and _prompt_instance.has_method("set_button_visible"):
-					_prompt_instance.set_button_visible(!dialog_bubble.visible)
-		)
+		_prompt_instance.position = Vector2(-14, -82)
+
+		_prompt_instance.setup(_on_interact_pressed)
 
 func _remove_prompt() -> void:
 	if _prompt_instance and is_instance_valid(_prompt_instance):
 		_prompt_instance.queue_free()
 	_prompt_instance = null
 
-func _reposition_dialog_bubble() -> void:
-	if dialog_bubble:
-		dialog_bubble.position.y = dialog_offset.y
-		dialog_bubble.position.x = dialog_offset.x - (dialog_bubble.size.x / 2.0)
+func _on_interact_pressed() -> void:
+	if DialogBox.is_open:
+		return
+
+	if _prompt_instance and _prompt_instance.has_method("set_button_visible"):
+		_prompt_instance.set_button_visible(false)
+
+	if DialogBox.dialog_finished.is_connected(_on_dialog_finished):
+		DialogBox.dialog_finished.disconnect(_on_dialog_finished)
+	DialogBox.dialog_finished.connect(_on_dialog_finished)
+	DialogBox.show_dialog(npc_name, [dialog_text])
+
+func _on_dialog_finished() -> void:
+	DialogBox.dialog_finished.disconnect(_on_dialog_finished)
+	if _prompt_instance and is_instance_valid(_prompt_instance) and _prompt_instance.has_method("set_button_visible"):
+		_prompt_instance.set_button_visible(true)

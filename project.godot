@@ -19,6 +19,7 @@ boot_splash/bg_color=Color(0.30692276, 0.30692267, 0.30692264, 1)
 
 Global="*res://src/levels/global.gd"
 SceneManager="*res://src/singleton/scene_manager.gd"
+DialogBox="*res://src/menu/dialog_box.tscn"
 
 [display]
 

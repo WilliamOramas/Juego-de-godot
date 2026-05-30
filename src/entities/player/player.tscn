@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://d22o2a6kqweh0" path="res://src/assets/sprites/player_spritesheet.png" id="2_f50pn"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_phys"]
-size = Vector2(23, 8)
+size = Vector2(23, 58)
 
 [sub_resource type="Animation" id="Animation_f50pn"]
 length = 0.001
@@ -274,6 +274,7 @@ states/walk/position = Vector2(627, 97)
 transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_qnedo"), "idle", "walk", SubResource("AnimationNodeStateMachineTransition_wyqjk"), "walk", "idle", SubResource("AnimationNodeStateMachineTransition_k85er")]
 
 [node name="Player" type="CharacterBody2D" unique_id=2002740125]
+collision_layer = 3
 script = ExtResource("1_ij6vw")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1541215716]
@@ -283,7 +284,7 @@ vframes = 4
 frame = 15
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=310722239]
-position = Vector2(0, 11)
+position = Vector2(0, 16)
 shape = SubResource("RectangleShape2D_phys")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1941436272]

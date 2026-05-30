@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="100%" height="100%" fill="none" stroke="#3e4e5e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Arm Segment 1 (Shoulder to Elbow) -->
+  <line x1="6" y1="8" x2="12" y2="18" stroke="#7d90a6" stroke-width="5.5" />
+  
+  <!-- Arm Segment 2 (Elbow to Hand) -->
+  <line x1="12" y1="18" x2="18" y2="28" stroke="#7d90a6" stroke-width="5.5" />
+  
+  <!-- Elbow Joint -->
+  <circle cx="12" cy="18" r="3.5" fill="#5c6e80" />
+  
+  <!-- Shoulder Joint -->
+  <circle cx="6" cy="8" r="5" fill="#5c6e80" />
+  
+  <!-- Mechanical Claw (Pincer) -->
+  <path d="M18 28 Q22 27 21 31" fill="none" />
+  <path d="M18 28 Q16 31 21 31" fill="none" />
+</svg>

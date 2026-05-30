@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/entities/door/door.gd" id="3_door_gd"]
 [ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_pause"]
 [ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
-[ext_resource type="Texture2D" path="res://src/assets/sprites/npc_spritesheet_alt.png" id="6_nurse_tex"]
+[ext_resource type="Texture2D" path="res://src/assets/sprites/npc_spritesheet.png" id="6_nurse_tex"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left_bottom"]
 size = Vector2(8, 156)

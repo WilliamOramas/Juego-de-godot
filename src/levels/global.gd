@@ -5,3 +5,12 @@ var target_spawn_name: String = ""
 
 ## Almacena el SpawnPoint de retorno dinámico cuando el jugador regrese al nivel anterior
 var return_spawn_name: String = ""
+
+## Indica si el audio del juego está silenciado
+var is_muted: bool = false
+
+## Activa o desactiva el silenciado global del juego (Master bus)
+func set_mute(muted: bool) -> void:
+	is_muted = muted
+	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), muted)
+

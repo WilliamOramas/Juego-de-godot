@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://cx1cioygldoxc" path="res://src/menu/pause_menu.gd" id="1_2omny"]
 [ext_resource type="Theme" uid="uid://1dkhbt1a5a34" path="res://src/menu/ThemeMapa.tres" id="1_ld5fl"]
 [ext_resource type="PackedScene" uid="uid://cem5ckhv1st68" path="res://src/menu/custom_button.tscn" id="3_w7oy8"]
+[ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="4_lqdws"]
+[ext_resource type="PackedScene" path="res://src/menu/mute_button.tscn" id="5_mute"]
 
 [node name="PauseMenu" type="Control" unique_id=198726533]
 process_mode = 2
@@ -37,11 +39,17 @@ size_flags_vertical = 4
 
 [node name="Resume" parent="MarginContainer/VBoxContainer" unique_id=364183220 instance=ExtResource("3_w7oy8")]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lqdws")
+theme_override_font_sizes/font_size = 21
 text = "RESUME"
 
 [node name="ExitGame" parent="MarginContainer/VBoxContainer" unique_id=1938876114 instance=ExtResource("3_w7oy8")]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "SALIDA"
+
+[node name="MuteButton" parent="." instance=ExtResource("5_mute")]
+layout_mode = 1
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Resume" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/ExitGame" to="." method="_on_exit_game_pressed"]

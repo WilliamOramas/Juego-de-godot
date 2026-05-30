@@ -16,19 +16,19 @@ size = Vector2(340, 86)
 size = Vector2(10, 749)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_interior1"]
-size = Vector2(25, 99)
+size = Vector2(24, 123)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_interior2"]
-size = Vector2(25, 99)
+size = Vector2(23, 121)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_interior3"]
-size = Vector2(339.19922, 233)
+size = Vector2(339.19922, 258.5625)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_interior4"]
 size = Vector2(5, 591)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_interior7"]
-size = Vector2(853, 126)
+size = Vector2(853, 152)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_interior8"]
 size = Vector2(6, 4)
@@ -71,23 +71,23 @@ shape = SubResource("RectangleShape2D_wall_left")
 [node name="Interior1" type="StaticBody2D" parent="Walls" unique_id=1314916381]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Interior1" unique_id=1740287059]
-position = Vector2(352.5, 298.5)
+position = Vector2(352, 310.5)
 shape = SubResource("RectangleShape2D_interior1")
 
 [node name="Interior2" type="StaticBody2D" parent="Walls" unique_id=857721318]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Interior2" unique_id=509768340]
-position = Vector2(506.5, 298.5)
+position = Vector2(505.5, 309.5)
 shape = SubResource("RectangleShape2D_interior2")
 
 [node name="Interior3" type="StaticBody2D" parent="Walls" unique_id=824607518]
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Walls/Interior3" unique_id=1747128863]
-position = Vector2(170.40039, 365.5)
+position = Vector2(170.40039, 378.28125)
 shape = SubResource("RectangleShape2D_interior3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Interior3" unique_id=327170293]
-position = Vector2(687.40234, 364.5)
+position = Vector2(687.40234, 376.4375)
 shape = SubResource("RectangleShape2D_interior3")
 
 [node name="Interior4" type="StaticBody2D" parent="Walls" unique_id=2140947347]
@@ -99,7 +99,7 @@ shape = SubResource("RectangleShape2D_interior4")
 [node name="Interior7" type="StaticBody2D" parent="Walls" unique_id=2014402017]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Interior7" unique_id=1394199244]
-position = Vector2(426, 21)
+position = Vector2(426, 34)
 shape = SubResource("RectangleShape2D_interior7")
 
 [node name="Interior8" type="StaticBody2D" parent="Walls" unique_id=337588427]
@@ -113,7 +113,7 @@ position = Vector2(170, 357.5)
 shape = SubResource("RectangleShape2D_interior8")
 
 [node name="Player" parent="." unique_id=2051864525 instance=ExtResource("3_player")]
-position = Vector2(353, 145)
+position = Vector2(353, 142)
 
 [node name="DoorToClassroomLeft" type="Area2D" parent="." unique_id=1581816247]
 position = Vector2(49, 127)
@@ -158,13 +158,13 @@ shape = SubResource("RectangleShape2D_door")
 process_mode = 1
 position = Vector2(102, 543)
 
-[node name="EstudiantePasilloNervioso" parent="." instance=ExtResource("5_npc")]
+[node name="EstudiantePasilloNervioso" parent="." unique_id=671978575 instance=ExtResource("5_npc")]
 position = Vector2(250, 150)
 sprite_modulate = Color(1, 0.85, 0.85, 1)
 dialog_text = "¡El examen de matemáticas es hoy! Estoy muy nervioso."
 wander_radius = 40.0
 
-[node name="EstudiantePasilloEnfermo" parent="." instance=ExtResource("5_npc")]
+[node name="EstudiantePasilloEnfermo" parent="." unique_id=622006352 instance=ExtResource("5_npc")]
 position = Vector2(650, 150)
 sprite_frame = 15
 sprite_modulate = Color(0.85, 0.9, 1, 1)

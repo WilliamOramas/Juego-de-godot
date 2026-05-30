@@ -82,10 +82,10 @@ anchor_left = 0.68600005
 anchor_top = 0.87200004
 anchor_right = 0.68600005
 anchor_bottom = 0.87200004
-offset_left = 28.199951
-offset_top = -128.20001
-offset_right = 284.19995
-offset_bottom = 127.79999
+offset_left = 60.0
+offset_top = -96.0
+offset_right = 252.0
+offset_bottom = 96.0
 grow_vertical = 2
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Start_Game" to="." method="_on_start_game_pressed"]

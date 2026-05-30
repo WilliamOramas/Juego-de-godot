@@ -1,0 +1,119 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/menu/phone_hud.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://src/assets/sprites/phone_holding_hand.svg" id="2_bg"]
+[ext_resource type="Texture2D" path="res://src/assets/sprites/robot_face_happy.svg" id="3_face_happy"]
+[ext_resource type="Texture2D" path="res://src/assets/sprites/robot_face_blink.svg" id="4_face_blink"]
+[ext_resource type="Texture2D" path="res://src/assets/sprites/robot_face_talk.svg" id="5_face_talk"]
+[ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="6_font"]
+
+[sub_resource type="Animation" id="Animation_slide_in"]
+resource_name = "slide_in"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Phone:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(0.4, 1),
+"update": 0,
+"values": [Vector2(580, 650), Vector2(580, 330)]
+}
+
+[sub_resource type="Animation" id="Animation_slide_out"]
+resource_name = "slide_out"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Phone:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [Vector2(580, 330), Vector2(580, 650)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_phone"]
+_data = {
+"slide_in": SubResource("Animation_slide_in"),
+"slide_out": SubResource("Animation_slide_out")
+}
+
+[sub_resource type="Animation" id="Animation_talk"]
+resource_name = "talk"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Face:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.4, 1.55, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("3_face_happy"), ExtResource("5_face_talk"), ExtResource("3_face_happy"), ExtResource("5_face_talk"), ExtResource("3_face_happy"), ExtResource("5_face_talk"), ExtResource("3_face_happy"), ExtResource("4_face_blink"), ExtResource("3_face_happy"), ExtResource("3_face_happy")]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_face"]
+_data = {
+"talk": SubResource("Animation_talk")
+}
+
+[node name="PhoneHud" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_script")
+
+[node name="Phone" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 580.0
+offset_top = 650.0
+offset_right = 760.0
+offset_bottom = 950.0
+
+[node name="Background" type="TextureRect" parent="Phone"]
+layout_mode = 0
+offset_right = 180.0
+offset_bottom = 300.0
+texture = ExtResource("2_bg")
+expand_mode = 1
+
+[node name="Face" type="TextureRect" parent="Phone"]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 80.0
+offset_right = 130.0
+offset_bottom = 145.0
+texture = ExtResource("3_face_happy")
+expand_mode = 1
+
+[node name="Status" type="Label" parent="Phone"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 160.0
+offset_right = 162.0
+offset_bottom = 180.0
+theme_override_colors/font_color = Color(0.227451, 0.886275, 0.886275, 1)
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 11
+text = "PIXEL v1.0"
+horizontal_alignment = 1
+
+[node name="FacePlayer" type="AnimationPlayer" parent="Phone"]
+libraries = {
+"": SubResource("AnimationLibrary_face")
+}
+autoplay = "talk"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_phone")
+}

@@ -28,6 +28,8 @@ func set_button_visible(is_visible: bool) -> void:
 	prompt_texture.visible = is_visible
 
 func _unhandled_input(event: InputEvent) -> void:
+	if get_tree().paused:
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_E and prompt_texture.visible:
 			_on_interact_pressed()

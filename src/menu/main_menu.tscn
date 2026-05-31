@@ -10,6 +10,10 @@
 [ext_resource type="PackedScene" path="res://src/menu/mute_button.tscn" id="7_mute"]
 [ext_resource type="PackedScene" path="res://src/menu/pixel.tscn" id="8_pixel"]
 
+[ext_resource type="PackedScene" path="res://src/menu/controles_panel.tscn" id="9_controls"]
+[ext_resource type="PackedScene" path="res://src/menu/opciones_panel.tscn" id="10_opciones"]
+[ext_resource type="PackedScene" path="res://src/menu/creditos_panel.tscn" id="11_creditos"]
+
 [sub_resource type="Theme" id="Theme_g2ne3"]
 
 [node name="MainMenu" type="Control" unique_id=275601617]
@@ -60,6 +64,27 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("6_such8")
 theme_override_font_sizes/font_size = 18
 
+[node name="Opciones" parent="MarginContainer/VBoxContainer" unique_id=830016159 instance=ExtResource("1_1k071")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("6_such8")
+theme_override_font_sizes/font_size = 18
+text = "OPCIONES"
+
+[node name="Controles" parent="MarginContainer/VBoxContainer" unique_id=830016158 instance=ExtResource("1_1k071")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("6_such8")
+theme_override_font_sizes/font_size = 18
+text = "CONTROLES"
+
+[node name="Creditos" parent="MarginContainer/VBoxContainer" unique_id=830016160 instance=ExtResource("1_1k071")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("6_such8")
+theme_override_font_sizes/font_size = 18
+text = "CREDITOS"
+
 [node name="Exit_Game" parent="MarginContainer/VBoxContainer" unique_id=610016158 instance=ExtResource("1_1k071")]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -88,5 +113,12 @@ offset_right = 217.19995
 offset_bottom = 37.799988
 grow_vertical = 2
 
+[node name="ControlesPanel" parent="." instance=ExtResource("9_controls")]
+[node name="OpcionesPanel" parent="." instance=ExtResource("10_opciones")]
+[node name="CreditosPanel" parent="." instance=ExtResource("11_creditos")]
+
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Start_Game" to="." method="_on_start_game_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Opciones" to="." method="_on_opciones_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Controles" to="." method="_on_controles_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Creditos" to="." method="_on_creditos_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Exit_Game" to="." method="_on_exit_game_pressed"]

@@ -27,6 +27,15 @@ func _ready() -> void:
 	_anim.play("fade_in")
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F11:
+		var mode = DisplayServer.window_get_mode()
+		if mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		else:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		get_viewport().set_input_as_handled()
+		return
+
 	# Capturar la tecla Escape/Pause para abrir el menú de pausa
 	if event.is_action_pressed("Pause"):
 		# No permitir pausar durante la transición de escena o si estamos en el menú principal

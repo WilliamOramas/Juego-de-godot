@@ -12,6 +12,8 @@ func _ready() -> void:
 	face_anim.play("talk")
 
 func _unhandled_input(event: InputEvent) -> void:
+	if get_tree().paused:
+		return
 	if event.is_action_pressed("Phone"):
 		toggle_phone()
 

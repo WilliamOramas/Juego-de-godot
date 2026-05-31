@@ -84,6 +84,8 @@ func _on_type_timer_timeout() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_open:
 		return
+	if get_tree().paused:
+		return
 
 	if _just_opened:
 		_just_opened = false

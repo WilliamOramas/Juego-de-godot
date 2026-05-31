@@ -308,6 +308,7 @@ limit_top = 0
 limit_right = 853
 limit_bottom = 745
 position_smoothing_enabled = true
+position_smoothing_speed = 5.0
 
 [node name="PhoneHud" parent="." instance=ExtResource("3_phone_hud")]
 

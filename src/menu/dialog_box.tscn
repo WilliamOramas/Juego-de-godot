@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://dxnulafrox56d" path="res://src/menu/dialog_box.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bd6b7pih731t6" path="res://src/fonts/porky_s/PORKYS_.TTF" id="2_porkys"]
 [ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="3_coolvetica"]
+[ext_resource type="AudioStreamMP3" uid="uid://owxxir7was1f" path="res://src/assets/sounds/magiaz-teclado-371741.mp3" id="4_typewriter"]
+[ext_resource type="AudioStreamMP3" uid="uid://b4ehv3hxbqbnk" path="res://src/assets/sounds/emilianodleon-select-button-ui-395763.mp3" id="5_select"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(0.117647, 0.117647, 0.137255, 0.941176)
@@ -72,5 +74,12 @@ horizontal_alignment = 2
 
 [node name="TypeTimer" type="Timer" parent="." unique_id=385777632]
 wait_time = 0.03
+
+[node name="AudioTypewriter" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_typewriter")
+volume_db = -15.0
+
+[node name="AudioSelect" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_select")
 
 [connection signal="timeout" from="TypeTimer" to="." method="_on_type_timer_timeout"]

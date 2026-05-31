@@ -9,6 +9,9 @@ var return_spawn_name: String = ""
 ## Indica si el audio del juego está silenciado
 var is_muted: bool = false
 
+## Registro de NPCs con los que ya habló el jugador (key = npc_nombre)
+var dialogs_seen: Dictionary = {}
+
 ## Activa o desactiva el silenciado global del juego (Master bus)
 func set_mute(muted: bool) -> void:
 	is_muted = muted

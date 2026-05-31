@@ -13,7 +13,13 @@ class_name NPC
 ## Nombre visible del NPC
 @export var npc_name: String = ""
 
-## Texto de diálogo que dirá el NPC al acercarse
+## Diálogo principal (primera vez que hablas con el NPC). Varias líneas = varias páginas.
+@export var dialog_lines: Array[String] = []
+
+## Diálogo alternativo al volver a hablar con el NPC (si está vacío, repite dialog_lines)
+@export var dialog_lines_repeat: Array[String] = []
+
+## (Legacy) Texto de diálogo de una línea — se usa si dialog_lines está vacío
 @export var dialog_text: String = "¡Hola!"
 
 ## Tipo de comportamiento o rutina lógica para el NPC
@@ -67,7 +73,7 @@ func _ready() -> void:
 	if $DialogBubble:
 		$DialogBubble.visible = false
 		if %DialogLabel:
-			%DialogLabel.text = dialog_text
+			%DialogLabel.text = dialog_lines[0] if not dialog_lines.is_empty() else dialog_text
 	
 	# 4. Redimensionar dinámicamente el rango de detección del jugador
 	var detect_shape = detection_area.get_node_or_null("CollisionShape2D")
@@ -215,13 +221,24 @@ func _on_interact_pressed() -> void:
 	if DialogBox.is_open:
 		return
 
+	var key = "npc_" + name
+	var is_first = not Global.dialogs_seen.has(key)
+	var lines: Array[String]
+
+	if is_first:
+		lines = dialog_lines.duplicate() if not dialog_lines.is_empty() else [dialog_text]
+	else:
+		lines = dialog_lines_repeat.duplicate() if not dialog_lines_repeat.is_empty() else (dialog_lines.duplicate() if not dialog_lines.is_empty() else [dialog_text])
+
+	Global.dialogs_seen[key] = true
+
 	if _prompt_instance and _prompt_instance.has_method("set_button_visible"):
 		_prompt_instance.set_button_visible(false)
 
 	if DialogBox.dialog_finished.is_connected(_on_dialog_finished):
 		DialogBox.dialog_finished.disconnect(_on_dialog_finished)
 	DialogBox.dialog_finished.connect(_on_dialog_finished)
-	DialogBox.show_dialog(npc_name, [dialog_text])
+	DialogBox.show_dialog(npc_name, lines)
 
 func _on_dialog_finished() -> void:
 	DialogBox.dialog_finished.disconnect(_on_dialog_finished)

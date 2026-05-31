@@ -9,6 +9,8 @@ signal dialog_finished
 @onready var dialog_label: Label = %DialogText
 @onready var continue_prompt: Label = %ContinuePrompt
 @onready var type_timer: Timer = $TypeTimer
+@onready var audio_typewriter: AudioStreamPlayer = $AudioTypewriter
+@onready var audio_select: AudioStreamPlayer = $AudioSelect
 
 var is_open: bool = false
 
@@ -40,6 +42,7 @@ func show_dialog(npc_name: String, lines: Array[String]) -> void:
 	_slide_tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	_slide_tween.tween_property(panel, "offset_top", -170.0, 0.3)
 	_slide_tween.finished.connect(_start_typewriter)
+	audio_select.play()
 
 func _start_typewriter() -> void:
 	if _current_line >= _lines.size():
@@ -69,9 +72,12 @@ func _on_type_timer_timeout() -> void:
 	if _char_index < _lines[_current_line].length():
 		_char_index += 1
 		dialog_label.text = _lines[_current_line].left(_char_index)
+		if not audio_typewriter.playing:
+			audio_typewriter.play()
 	else:
 		_is_typing = false
 		type_timer.stop()
+		audio_typewriter.stop()
 		continue_prompt.visible = true
 		_start_blink()
 
@@ -89,10 +95,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		if _is_typing:
 			_is_typing = false
 			type_timer.stop()
+			audio_typewriter.stop()
 			dialog_label.text = _lines[_current_line]
 			continue_prompt.visible = true
 			_start_blink()
 		else:
+			audio_select.play()
 			_current_line += 1
 			if _current_line >= _lines.size():
 				hide_dialog()
@@ -106,6 +114,7 @@ func hide_dialog() -> void:
 	is_open = false
 	_is_typing = false
 	type_timer.stop()
+	audio_typewriter.stop()
 	_stop_blink()
 	continue_prompt.visible = false
 
@@ -122,6 +131,7 @@ func hide_dialog() -> void:
 	_slide_tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 	_slide_tween.tween_property(panel, "offset_top", 0.0, 0.25)
 	_slide_tween.finished.connect(_on_hide_finished)
+	audio_select.play()
 
 func _on_hide_finished() -> void:
 	visible = false

@@ -224,13 +224,17 @@ position = Vector2(270, 420)
 [node name="EstudianteSentadoAtento" parent="." unique_id=2005933650 instance=ExtResource("5_npc")]
 position = Vector2(427, 419)
 sprite_modulate = Color(0.9, 1, 0.9, 1)
-dialog_text = "¡No dejes que el profesor te vea fuera de tu asiento!"
+npc_name = "Compañero"
+dialog_lines = ["Oye, ¿qué haces fuera de tu asiento?", "El profesor Méndez está de un humor terrible hoy, no perdonará a nadie.", "Vuelve antes de que te vea, yo te cubro."]
+dialog_lines_repeat = ["¿Otra vez fuera? Eres valiente...", "No sé si podré cubrirte esta vez, pero dale."]
 routine_type = "Estático"
 
 [node name="ProfesorClase" parent="." unique_id=1591853063 instance=ExtResource("5_npc")]
 position = Vector2(240, 100)
 sprite_texture = ExtResource("6_teacher_tex")
-dialog_text = "¡Silencio en clase! Abran sus libros en la página 45."
+npc_name = "Profesor Méndez"
+dialog_lines = ["¡Silencio en clase! ¿Qué haces fuera de tu asiento?", "Abran sus libros en la página 45 y resuelvan los ejercicios del 1 al 10.", "Y tú, ocupa tu lugar ahora mismo o te mando a dirección."]
+dialog_lines_repeat = ["¿De nuevo interrumpiendo mi clase?", "No te advertiré otra vez. Toma tu lugar."]
 routine_type = "Patrulla Horizontal"
 speed = 15.0
 

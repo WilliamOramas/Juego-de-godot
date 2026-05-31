@@ -86,7 +86,9 @@ position = Vector2(59, 110)
 position = Vector2(240, 120)
 sprite_texture = ExtResource("6_nurse_tex")
 sprite_frame = 5
-dialog_text = "Hola, joven. ¿Te sientes mal? Toma asiento en la camilla."
+npc_name = "Enfermero"
+dialog_lines = ["Hola, joven. ¿Te sientes mal?", "Siéntate en la camilla y te tomo la temperatura.", "No te preocupes, solo es un chequeo rápido."]
+dialog_lines_repeat = ["¿Otra vez con malestar? Deberías ir al médico general.", "Toma, aquí tienes un poco de agua y una pastilla."]
 routine_type = "Estático"
 
 [node name="Sprite2D" parent="EnfermeroGuardia" index="0"]

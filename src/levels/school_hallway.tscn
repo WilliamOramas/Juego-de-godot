@@ -161,14 +161,18 @@ position = Vector2(102, 543)
 [node name="EstudiantePasilloNervioso" parent="." unique_id=671978575 instance=ExtResource("5_npc")]
 position = Vector2(250, 150)
 sprite_modulate = Color(1, 0.85, 0.85, 1)
-dialog_text = "¡El examen de matemáticas es hoy! Estoy muy nervioso."
+npc_name = "Luis"
+dialog_lines = ["¡El examen de matemáticas es hoy! Estoy muy nervioso.", "No he dormido nada estudiando fórmulas y todavía no me sé ninguna.", "Ojalá el profesor ponga algo fácil... como sumas."]
+dialog_lines_repeat = ["Todavía no empieza el examen y ya siento que voy a reprobar.", "Mis manos no dejan de temblar, hermano."]
 wander_radius = 40.0
 
 [node name="EstudiantePasilloEnfermo" parent="." unique_id=622006352 instance=ExtResource("5_npc")]
 position = Vector2(650, 150)
 sprite_frame = 15
 sprite_modulate = Color(0.85, 0.9, 1, 1)
-dialog_text = "Me duele el estómago... Creo que iré a la enfermería."
+npc_name = "Pedro"
+dialog_lines = ["Me duele el estómago... Creo que iré a la enfermería.", "El desayuno de la cafetería no me cayó bien, qué asco.", "Ojalá la enfermera me dé algo para el dolor."]
+dialog_lines_repeat = ["Todavía me duele... mejor me voy a casa.", "Ya hablé con el enfermero, me dijo que descanse."]
 wander_radius = 40.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=514008989]

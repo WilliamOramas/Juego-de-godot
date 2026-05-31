@@ -17,6 +17,9 @@ size = Vector2(485, 61)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_bottom_side"]
 size = Vector2(237.05031, 40)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor_bottom"]
+size = Vector2(500, 10)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_student_desk"]
 size = Vector2(30, 19)
 
@@ -66,6 +69,13 @@ shape = SubResource("RectangleShape2D_wall_bottom_side")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallBottomRight" unique_id=1450194896]
 position = Vector2(455, 497)
 shape = SubResource("RectangleShape2D_wall_bottom_side")
+
+[node name="FloorBottom" type="StaticBody2D" parent="Walls" unique_id=1264287921]
+position = Vector2(7, -44)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/FloorBottom" unique_id=1852817351]
+position = Vector2(242.5, 550)
+shape = SubResource("RectangleShape2D_floor_bottom")
 
 [node name="Furniture" type="Node2D" parent="." unique_id=1945402661]
 
@@ -210,10 +220,9 @@ position = Vector2(270, 482)
 script = ExtResource("3_door_gd")
 target_scene_path = "res://src/levels/school_hallway.tscn"
 use_dynamic_return = true
-require_confirmation = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoorToHallway" unique_id=958588288]
-position = Vector2(23.5, 16)
+position = Vector2(23, 15)
 shape = SubResource("RectangleShape2D_door")
 
 [node name="ClassroomSpawnPoint" type="Marker2D" parent="." unique_id=510557234]

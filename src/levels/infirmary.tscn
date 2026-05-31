@@ -73,7 +73,6 @@ position = Vector2(40, 83)
 script = ExtResource("3_door_gd")
 target_scene_path = "res://src/levels/school_hallway.tscn"
 use_dynamic_return = true
-require_confirmation = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoorToHallway" unique_id=1101677984]
 position = Vector2(0, 0.5)

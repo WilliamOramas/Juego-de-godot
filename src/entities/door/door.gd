@@ -5,6 +5,7 @@ extends Area2D
 @export var target_spawn_name: String = ""
 @export var return_spawn_name: String = ""
 @export var use_dynamic_return: bool = false
+@export var prompt_offset: Vector2 = Vector2(-14, -35)
 
 var _prompt_instance: Control = null
 
@@ -29,7 +30,7 @@ func _show_prompt() -> void:
 	var prompt_scene = load("res://src/menu/interact_prompt.tscn")
 	_prompt_instance = prompt_scene.instantiate()
 	add_child(_prompt_instance)
-	_prompt_instance.position = Vector2(-14, -35)
+	_prompt_instance.position = prompt_offset
 	_prompt_instance.setup(_on_interact_pressed)
 
 func _remove_prompt() -> void:

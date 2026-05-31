@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" uid="uid://b12ykuofdv1m3" path="res://src/entities/player/player.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/entities/door/door.gd" id="3_door_gd"]
 [ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_pause"]
+[ext_resource type="Texture2D" uid="uid://cm3pj731lfemk" path="res://src/assets/sprites/np2.png" id="5_np2"]
+[ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="6_npc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left"]
 size = Vector2(12, 500)
@@ -30,6 +32,7 @@ size = Vector2(117.5, 19)
 size = Vector2(87, 40)
 
 [node name="Classroom2" type="Node2D" unique_id=511145554]
+y_sort_enabled = true
 
 [node name="Background" type="Sprite2D" parent="." unique_id=322616785]
 z_index = -1
@@ -220,6 +223,7 @@ position = Vector2(270, 482)
 script = ExtResource("3_door_gd")
 target_scene_path = "res://src/levels/school_hallway.tscn"
 use_dynamic_return = true
+prompt_offset = Vector2(10, -10)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoorToHallway" unique_id=958588288]
 position = Vector2(23, 15)
@@ -227,6 +231,14 @@ shape = SubResource("RectangleShape2D_door")
 
 [node name="ClassroomSpawnPoint" type="Marker2D" parent="." unique_id=510557234]
 position = Vector2(270, 420)
+
+[node name="EstudianteSalon" parent="." unique_id=835562264 instance=ExtResource("6_npc")]
+position = Vector2(192, 268)
+sprite_texture = ExtResource("5_np2")
+npc_name = "Ana"
+dialog_lines = Array[String](["Hola, ¿viniste a estudiar? Este salón está más tranquilo.", "El profe de ciencias dejó una tarea bien difícil, ¿ya la hiciste?", "Si quieres te presto mis apuntes, tengo todo el temario."])
+dialog_lines_repeat = Array[String](["Otra vez aquí estudiando. Eres más aplicado de lo que pareces.", "La biblioteca está llena, mejor quédate aquí."])
+wander_radius = 40.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1726231783]
 

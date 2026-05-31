@@ -16,4 +16,3 @@ var dialogs_seen: Dictionary = {}
 func set_mute(muted: bool) -> void:
 	is_muted = muted
 	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), muted)
-

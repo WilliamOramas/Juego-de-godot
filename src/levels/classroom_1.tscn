@@ -32,6 +32,7 @@ size = Vector2(118.5, 16.5)
 size = Vector2(87, 40)
 
 [node name="Classroom1" type="Node2D" unique_id=1742570909]
+y_sort_enabled = true
 
 [node name="Background" type="Sprite2D" parent="." unique_id=1946591102]
 z_index = -1
@@ -221,6 +222,7 @@ position = Vector2(270, 482)
 script = ExtResource("3_door_gd")
 target_scene_path = "res://src/levels/school_hallway.tscn"
 use_dynamic_return = true
+prompt_offset = Vector2(10, -10)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoorToHallway" unique_id=822597211]
 position = Vector2(23, 15)

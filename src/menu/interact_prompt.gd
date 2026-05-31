@@ -2,6 +2,7 @@ class_name InteractPrompt
 extends PanelContainer
 
 var _on_interact_callback: Callable
+var _float_tween: Tween = null
 
 @onready var prompt_texture: TextureRect = %PromptTexture
 
@@ -12,6 +13,12 @@ func setup(on_interact: Callable) -> void:
 	scale = Vector2.ZERO
 	var tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "scale", Vector2.ONE, 0.25)
+	tween.tween_callback(_start_float)
+
+func _start_float() -> void:
+	_float_tween = create_tween().set_loops()
+	_float_tween.tween_property(self, "position:y", position.y - 6, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_float_tween.tween_property(self, "position:y", position.y + 6, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 func _on_interact_pressed() -> void:
 	if _on_interact_callback.is_valid():
@@ -25,3 +32,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_E and prompt_texture.visible:
 			_on_interact_pressed()
 			get_viewport().set_input_as_handled()
+
+func _exit_tree() -> void:
+	if _float_tween:
+		_float_tween.kill()
+		_float_tween = null

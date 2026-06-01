@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c67ppnxp05lt0"]
 
-[ext_resource type="Script" path="res://src/menu/creditos_panel.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://snnaurfkg0da" path="res://src/menu/creditos_panel.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bd6b7pih731t6" path="res://src/fonts/porky_s/PORKYS_.TTF" id="2_porky"]
 [ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="3_cool"]
 [ext_resource type="PackedScene" uid="uid://cem5ckhv1st68" path="res://src/menu/custom_button.tscn" id="4_button"]
@@ -12,14 +12,16 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="CreditosPanel" type="Panel"]
+[node name="CreditosPanel" type="Panel" unique_id=585980815]
+custom_minimum_size = Vector2(800, 600)
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
 script = ExtResource("1_script")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1759513173]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -35,28 +37,40 @@ grow_vertical = 2
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="Title" type="Label" parent="VBoxContainer"]
+[node name="Title" type="Label" parent="VBoxContainer" unique_id=277651694]
+layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_porky")
 theme_override_font_sizes/font_size = 20
 text = "CREDITOS"
 horizontal_alignment = 1
 
-[node name="Separator" type="Label" parent="VBoxContainer"]
+[node name="Separator" type="Label" parent="VBoxContainer" unique_id=722577196]
+layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_fonts/font = ExtResource("3_cool")
 theme_override_font_sizes/font_size = 12
 text = "──────────────"
 horizontal_alignment = 1
 
-[node name="Body" type="Label" parent="VBoxContainer"]
+[node name="Body" type="Label" parent="VBoxContainer" unique_id=1166946226]
+layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_fonts/font = ExtResource("3_cool")
 theme_override_font_sizes/font_size = 14
-text = "VITAL PIXEL\n\nHecho por:\nWilliam Oramas\nEnmanuel Bracho\nOscar Petit\nJavier Garcia\n\nUNEFA - Punto Fijo"
+text = "VITAL PIXEL
+
+Hecho por:
+William Oramas
+Enmanuel Bracho
+Oscar Petit
+Javier Garcia
+
+UNEFA - Punto Fijo"
 horizontal_alignment = 1
 
-[node name="CloseButton" parent="VBoxContainer" instance=ExtResource("4_button")]
+[node name="CloseButton" parent="VBoxContainer" unique_id=291962094 instance=ExtResource("4_button")]
+layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_cool")
 theme_override_font_sizes/font_size = 18

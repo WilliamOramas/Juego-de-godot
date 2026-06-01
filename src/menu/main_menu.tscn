@@ -5,14 +5,13 @@
 [ext_resource type="Theme" uid="uid://1dkhbt1a5a34" path="res://src/menu/ThemeMapa.tres" id="1_o3lno"]
 [ext_resource type="Texture2D" uid="uid://qu3lxw8lbpm" path="res://src/assets/sprites/image_3.png" id="3_p2uv2"]
 [ext_resource type="FontFile" uid="uid://bd6b7pih731t6" path="res://src/fonts/porky_s/PORKYS_.TTF" id="4_such8"]
-[ext_resource type="AudioStream" uid="uid://d17ksm17ebjcb" path="res://src/menu/WhatsApp Audio.mp3" id="5_wkckh"]
+[ext_resource type="AudioStream" uid="uid://d17ksm17ebjcb" path="res://src/menu/WhatsApp_Audio.mp3" id="5_wkckh"]
 [ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="6_such8"]
 [ext_resource type="PackedScene" path="res://src/menu/mute_button.tscn" id="7_mute"]
 [ext_resource type="PackedScene" path="res://src/menu/pixel.tscn" id="8_pixel"]
-
-[ext_resource type="PackedScene" path="res://src/menu/controles_panel.tscn" id="9_controls"]
-[ext_resource type="PackedScene" path="res://src/menu/opciones_panel.tscn" id="10_opciones"]
-[ext_resource type="PackedScene" path="res://src/menu/creditos_panel.tscn" id="11_creditos"]
+[ext_resource type="PackedScene" uid="uid://dxr0kqygwudel" path="res://src/menu/controles_panel.tscn" id="9_controls"]
+[ext_resource type="PackedScene" uid="uid://b7w4ojuqxa3qw" path="res://src/menu/opciones_panel.tscn" id="10_opciones"]
+[ext_resource type="PackedScene" uid="uid://c67ppnxp05lt0" path="res://src/menu/creditos_panel.tscn" id="11_creditos"]
 
 [sub_resource type="Theme" id="Theme_g2ne3"]
 

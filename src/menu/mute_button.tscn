@@ -1,10 +1,9 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://3t1cr3nwdrm3"]
 
-[ext_resource type="Script" path="res://src/menu/mute_button.gd" id="1_mute"]
+[ext_resource type="Script" uid="uid://bhl421oxcl8sx" path="res://src/menu/mute_button.gd" id="1_mute"]
 
-[node name="MuteButton" type="TextureButton"]
+[node name="MuteButton" type="TextureButton" unique_id=846627359]
 custom_minimum_size = Vector2(48, 48)
-layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0

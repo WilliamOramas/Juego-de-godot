@@ -4,9 +4,9 @@
 [ext_resource type="Theme" uid="uid://1dkhbt1a5a34" path="res://src/menu/ThemeMapa.tres" id="1_ld5fl"]
 [ext_resource type="PackedScene" uid="uid://cem5ckhv1st68" path="res://src/menu/custom_button.tscn" id="3_w7oy8"]
 [ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="4_lqdws"]
-[ext_resource type="PackedScene" path="res://src/menu/mute_button.tscn" id="5_mute"]
-[ext_resource type="PackedScene" path="res://src/menu/controles_panel.tscn" id="6_controls"]
-[ext_resource type="PackedScene" path="res://src/menu/opciones_panel.tscn" id="7_opciones"]
+[ext_resource type="PackedScene" uid="uid://3t1cr3nwdrm3" path="res://src/menu/mute_button.tscn" id="5_mute"]
+[ext_resource type="PackedScene" uid="uid://dxr0kqygwudel" path="res://src/menu/controles_panel.tscn" id="6_controls"]
+[ext_resource type="PackedScene" uid="uid://b7w4ojuqxa3qw" path="res://src/menu/opciones_panel.tscn" id="7_opciones"]
 
 [sub_resource type="Shader" id="Shader_blur"]
 code = "shader_type canvas_item;
@@ -43,7 +43,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(1, 1, 1, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=91117220]
 layout_mode = 1
@@ -82,7 +81,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "SALIDA"
 
-[node name="MuteButton" parent="." instance=ExtResource("5_mute")]
+[node name="MuteButton" parent="." unique_id=2141135941 instance=ExtResource("5_mute")]
 layout_mode = 1
 
 [node name="ControlesPanel" parent="." instance=ExtResource("6_controls")]

@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://cem5ckhv1st68"]
 
 [ext_resource type="Script" uid="uid://cd3sjqfbnpxch" path="res://src/menu/custom_button.gd" id="1_flvc7"]
-[ext_resource type="AudioStreamMP3" uid="uid://xqjk6ki36tl6" path="res://src/menu/Click.mp3" id="2_click"]
-[ext_resource type="AudioStreamMP3" uid="uid://dkhow268u5elp" path="res://src/menu/OnHover.mp3" id="3_hover"]
+[ext_resource type="AudioStream" uid="uid://xqjk6ki36tl6" path="res://src/menu/Click.mp3" id="2_click"]
+[ext_resource type="AudioStream" uid="uid://dkhow268u5elp" path="res://src/menu/OnHover.mp3" id="3_hover"]
 
 [node name="CustomButton" type="Button" unique_id=364183220]
 offset_right = 8.0
@@ -18,4 +18,3 @@ stream = ExtResource("3_hover")
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="pressed" from="." to="." method="_on_pressed"]
-

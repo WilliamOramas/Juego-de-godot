@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://b2vxwqo0r0pyg"]
+
+[ext_resource type="Script" uid="uid://jnolnkbo7t2d" path="res://src/menu/objeto_interactivo.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_block"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_detect"]
+
+[node name="ObjetoInteractivo" type="StaticBody2D" unique_id=2091576868]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=107107182]
+z_index = -1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1512762398]
+unique_name_in_owner = true
+shape = SubResource("RectangleShape2D_block")
+
+[node name="DetectionArea" type="Area2D" parent="." unique_id=1440683381]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=2017685284]
+shape = SubResource("CircleShape2D_detect")

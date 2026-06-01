@@ -1,10 +1,10 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dswjytovfuu1t"]
 
-[ext_resource type="Texture2D" path="res://src/assets/sprites/robot_body.svg" id="1_body"]
-[ext_resource type="Texture2D" path="res://src/assets/sprites/robot_face_happy.svg" id="2_face_happy"]
-[ext_resource type="Texture2D" path="res://src/assets/sprites/robot_face_blink.svg" id="3_face_blink"]
-[ext_resource type="Texture2D" path="res://src/assets/sprites/robot_arm_left.svg" id="4_arm_left"]
-[ext_resource type="Texture2D" path="res://src/assets/sprites/robot_arm_right.svg" id="5_arm_right"]
+[ext_resource type="Texture2D" uid="uid://dcfxrre35wb7u" path="res://src/assets/sprites/robot_body.svg" id="1_body"]
+[ext_resource type="Texture2D" uid="uid://bxwu5sdekb6va" path="res://src/assets/sprites/robot_face_happy.svg" id="2_face_happy"]
+[ext_resource type="Texture2D" uid="uid://deq33brrv05w" path="res://src/assets/sprites/robot_face_blink.svg" id="3_face_blink"]
+[ext_resource type="Texture2D" uid="uid://nvhpae8kmui7" path="res://src/assets/sprites/robot_arm_left.svg" id="4_arm_left"]
+[ext_resource type="Texture2D" uid="uid://dqgsxigrb2fij" path="res://src/assets/sprites/robot_arm_right.svg" id="5_arm_right"]
 
 [sub_resource type="Animation" id="Animation_idle"]
 resource_name = "idle"
@@ -61,10 +61,10 @@ tracks/3/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_pixel"]
 _data = {
-"idle": SubResource("Animation_idle")
+&"idle": SubResource("Animation_idle")
 }
 
-[node name="Pixel" type="Control"]
+[node name="Pixel" type="Control" unique_id=316933044]
 process_mode = 1
 custom_minimum_size = Vector2(192, 192)
 layout_mode = 3
@@ -72,14 +72,14 @@ anchors_preset = 0
 offset_right = 192.0
 offset_bottom = 192.0
 
-[node name="Body" type="TextureRect" parent="."]
+[node name="Body" type="TextureRect" parent="." unique_id=1192802139]
 layout_mode = 0
 offset_right = 192.0
 offset_bottom = 192.0
 texture = ExtResource("1_body")
 expand_mode = 1
 
-[node name="Face" type="TextureRect" parent="Body"]
+[node name="Face" type="TextureRect" parent="Body" unique_id=1906509158]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 36.0
@@ -88,7 +88,7 @@ offset_bottom = 114.0
 texture = ExtResource("2_face_happy")
 expand_mode = 1
 
-[node name="ArmLeft" type="TextureRect" parent="."]
+[node name="ArmLeft" type="TextureRect" parent="." unique_id=2016615271]
 layout_mode = 0
 offset_left = -12.0
 offset_top = 63.0
@@ -98,7 +98,7 @@ pivot_offset = Vector2(39, 12)
 texture = ExtResource("4_arm_left")
 expand_mode = 1
 
-[node name="ArmRight" type="TextureRect" parent="."]
+[node name="ArmRight" type="TextureRect" parent="." unique_id=443364855]
 layout_mode = 0
 offset_left = 156.0
 offset_top = 63.0
@@ -108,8 +108,6 @@ pivot_offset = Vector2(9, 12)
 texture = ExtResource("5_arm_right")
 expand_mode = 1
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_pixel")
-}
-autoplay = "idle"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=992123045]
+libraries/ = SubResource("AnimationLibrary_pixel")
+autoplay = &"idle"

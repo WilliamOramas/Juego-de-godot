@@ -5,7 +5,9 @@
 [ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/entities/door/door.gd" id="4_door_gd"]
 [ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_x75wc"]
 [ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
-[ext_resource type="Texture2D" path="res://src/assets/sprites/np1.png" id="6_np1"]
+[ext_resource type="Texture2D" uid="uid://dkgmjjeegd37j" path="res://src/assets/sprites/np1.png" id="6_np1"]
+[ext_resource type="Texture2D" uid="uid://dwjewrpd3ccur" path="res://src/assets/sprites/objeto_alerta_piso.png" id="7_objeto"]
+[ext_resource type="PackedScene" uid="uid://b2vxwqo0r0pyg" path="res://src/menu/objeto_interactivo.tscn" id="8_objeto"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_top"]
 size = Vector2(334, 86)
@@ -123,7 +125,6 @@ script = ExtResource("4_door_gd")
 target_scene_path = "res://src/levels/classroom_1.tscn"
 target_spawn_name = "ClassroomSpawnPoint"
 return_spawn_name = "HallwaySpawnLeft"
-prompt_offset = Vector2(-14, -35)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoorToClassroomLeft" unique_id=809441277]
 shape = SubResource("RectangleShape2D_door")
@@ -134,7 +135,6 @@ script = ExtResource("4_door_gd")
 target_scene_path = "res://src/levels/classroom_2.tscn"
 target_spawn_name = "ClassroomSpawnPoint"
 return_spawn_name = "HallwaySpawnRight"
-prompt_offset = Vector2(-14, -35)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoorToClassroomRight" unique_id=1195196960]
 shape = SubResource("RectangleShape2D_door")
@@ -151,7 +151,6 @@ script = ExtResource("4_door_gd")
 target_scene_path = "res://src/levels/infirmary.tscn"
 target_spawn_name = "InfirmarySpawnPoint"
 return_spawn_name = "HallwaySpawnInfirmary"
-prompt_offset = Vector2(-14, -35)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoorToInfirmary" unique_id=1035093039]
 shape = SubResource("RectangleShape2D_door")
@@ -164,8 +163,8 @@ position = Vector2(102, 543)
 position = Vector2(250, 150)
 sprite_texture = ExtResource("6_np1")
 npc_name = "Luis"
-dialog_lines = ["¡El examen de matemáticas es hoy! Estoy muy nervioso.", "No he dormido nada estudiando fórmulas y todavía no me sé ninguna.", "Ojalá el profesor ponga algo fácil... como sumas."]
-dialog_lines_repeat = ["Todavía no empieza el examen y ya siento que voy a reprobar.", "Mis manos no dejan de temblar, hermano."]
+dialog_lines = Array[String](["¡El examen de matemáticas es hoy! Estoy muy nervioso.", "No he dormido nada estudiando fórmulas y todavía no me sé ninguna.", "Ojalá el profesor ponga algo fácil... como sumas."])
+dialog_lines_repeat = Array[String](["Todavía no empieza el examen y ya siento que voy a reprobar.", "Mis manos no dejan de temblar, hermano."])
 wander_radius = 40.0
 
 [node name="EstudiantePasilloEnfermo" parent="." unique_id=622006352 instance=ExtResource("5_npc")]
@@ -173,17 +172,22 @@ position = Vector2(650, 150)
 sprite_frame = 15
 sprite_modulate = Color(0.85, 0.9, 1, 1)
 npc_name = "Pedro"
-dialog_lines = ["Me duele el estómago... Creo que iré a la enfermería.", "El desayuno de la cafetería no me cayó bien, qué asco.", "Ojalá la enfermera me dé algo para el dolor."]
-dialog_lines_repeat = ["Todavía me duele... mejor me voy a casa.", "Ya hablé con el enfermero, me dijo que descanse."]
+dialog_lines = Array[String](["Me duele el estómago... Creo que iré a la enfermería.", "El desayuno de la cafetería no me cayó bien, qué asco.", "Ojalá la enfermera me dé algo para el dolor."])
+dialog_lines_repeat = Array[String](["Todavía me duele... mejor me voy a casa.", "Ya hablé con el enfermero, me dijo que descanse."])
 wander_radius = 40.0
 
-[node name="EstudiantePasilloTranquilo" parent="." instance=ExtResource("5_npc")]
+[node name="EstudiantePasilloTranquilo" parent="." unique_id=282534089 instance=ExtResource("5_npc")]
 position = Vector2(428, 350)
 sprite_texture = ExtResource("6_np1")
 npc_name = "Jorge"
-dialog_lines = ["Uff, qué día tan pesado. Tres exámenes en una semana es una locura.", "El de matemáticas me fue mal, pero el de historia creo que lo salvé.", "Ojalá el profesor de inglés haya visto mi tarea a tiempo."]
-dialog_lines_repeat = ["Sigo estudiando para los exámenes, no me queda de otra.", "Al menos ya casi es viernes, eso es lo único que me anima."]
+dialog_lines = Array[String](["Uff, qué día tan pesado. Tres exámenes en una semana es una locura.", "El de matemáticas me fue mal, pero el de historia creo que lo salvé.", "Ojalá el profesor de inglés haya visto mi tarea a tiempo."])
+dialog_lines_repeat = Array[String](["Sigo estudiando para los exámenes, no me queda de otra.", "Al menos ya casi es viernes, eso es lo único que me anima."])
 wander_radius = 40.0
+
+[node name="ObjetoPuerta" parent="." unique_id=1442141130 instance=ExtResource("8_objeto")]
+position = Vector2(780, 551)
+sprite_texture = ExtResource("7_objeto")
+dialog_lines = Array[String](["No puedes pasar aun..."])
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=514008989]
 

@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/entities/door/door.gd" id="3_door_gd"]
 [ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_pause"]
 [ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
-[ext_resource type="Texture2D" path="res://src/assets/sprites/npc_spritesheet.png" id="6_nurse_tex"]
+[ext_resource type="Texture2D" uid="uid://ckfk1i1404ys6" path="res://src/assets/sprites/npc_spritesheet.png" id="6_nurse_tex"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left_bottom"]
 size = Vector2(8, 156)
@@ -74,7 +74,6 @@ position = Vector2(40, 83)
 script = ExtResource("3_door_gd")
 target_scene_path = "res://src/levels/school_hallway.tscn"
 use_dynamic_return = true
-prompt_offset = Vector2(-14, -35)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoorToHallway" unique_id=1101677984]
 position = Vector2(0, 0.5)
@@ -83,19 +82,14 @@ shape = SubResource("RectangleShape2D_door")
 [node name="InfirmarySpawnPoint" type="Marker2D" parent="." unique_id=417369398]
 position = Vector2(59, 110)
 
-[node name="EnfermeroGuardia" parent="." instance=ExtResource("5_npc")]
+[node name="EnfermeroGuardia" parent="." unique_id=1267357982 instance=ExtResource("5_npc")]
 position = Vector2(240, 120)
 sprite_texture = ExtResource("6_nurse_tex")
-sprite_frame = 5
 npc_name = "Enfermero"
-dialog_lines = ["Hola, joven. ¿Te sientes mal?", "Siéntate en la camilla y te tomo la temperatura.", "No te preocupes, solo es un chequeo rápido."]
-dialog_lines_repeat = ["¿Otra vez con malestar? Deberías ir al médico general.", "Toma, aquí tienes un poco de agua y una pastilla."]
+dialog_lines = Array[String](["Hola, joven. ¿Te sientes mal?", "Siéntate en la camilla y te tomo la temperatura.", "No te preocupes, solo es un chequeo rápido."])
+dialog_lines_repeat = Array[String](["¿Otra vez con malestar? Deberías ir al médico general.", "Toma, aquí tienes un poco de agua y una pastilla."])
 routine_type = "Estático"
 
-[node name="Sprite2D" parent="EnfermeroGuardia" index="0"]
-texture = ExtResource("6_nurse_tex")
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1542440028]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("4_pause")]
-visible = false
+[node name="PauseMenu" parent="CanvasLayer" unique_id=348394732 instance=ExtResource("4_pause")]

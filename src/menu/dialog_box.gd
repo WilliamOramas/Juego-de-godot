@@ -21,6 +21,7 @@ var _is_typing: bool = false
 var _blink_tween: Tween = null
 var _slide_tween: Tween = null
 var _just_opened: bool = false
+var _was_open_before_pause: bool = false
 
 func _ready():
 	visible = false
@@ -33,6 +34,7 @@ func show_dialog(npc_name: String, lines: Array[String]) -> void:
 	_current_line = 0
 	npc_name_label.text = npc_name
 	npc_name_label.visible = not npc_name.is_empty()
+	dialog_label.text = ""
 
 	visible = true
 	is_open = true
@@ -69,6 +71,8 @@ func _start_blink() -> void:
 	_blink_tween.tween_property(continue_prompt, "modulate:a", 1.0, 0.5)
 
 func _on_type_timer_timeout() -> void:
+	if get_tree().paused:
+		return
 	if _char_index < _lines[_current_line].length():
 		_char_index += 1
 		dialog_label.text = _lines[_current_line].left(_char_index)
@@ -127,7 +131,7 @@ func hide_dialog() -> void:
 	if _just_opened:
 		_just_opened = false
 		visible = false
-		dialog_finished.emit()
+		_clear_dialog_finished()
 		return
 
 	_slide_tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
@@ -135,6 +139,21 @@ func hide_dialog() -> void:
 	_slide_tween.finished.connect(_on_hide_finished)
 	audio_select.play()
 
+func hide_for_pause() -> void:
+	_was_open_before_pause = is_open
+	if is_open:
+		visible = false
+
+func show_for_pause() -> void:
+	if _was_open_before_pause:
+		_was_open_before_pause = false
+		visible = true
+
 func _on_hide_finished() -> void:
 	visible = false
+	_clear_dialog_finished()
+
+func _clear_dialog_finished() -> void:
 	dialog_finished.emit()
+	for connection in dialog_finished.get_connections():
+		dialog_finished.disconnect(connection.callable)

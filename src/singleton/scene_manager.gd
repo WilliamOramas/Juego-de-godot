@@ -17,13 +17,16 @@ var _changing_scene: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	# Instanciar el overlay de transición global
 	var transition_scene = load("res://src/singleton/scene_transition.tscn")
+	if not transition_scene:
+		push_error("SceneManager: No se pudo cargar scene_transition.tscn")
+		return
 	_transition = transition_scene.instantiate()
 	add_child(_transition)
-	_anim = _transition.get_node("AnimationPlayer")
-	
-	# Hacer el fade-in al iniciar el juego
+	_anim = _transition.get_node_or_null("AnimationPlayer")
+	if not _anim:
+		push_error("SceneManager: No se encontró AnimationPlayer en scene_transition")
+		return
 	_anim.play("fade_in")
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -42,8 +45,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		if _changing_scene or get_tree().current_scene == null or get_tree().current_scene is MainMenu:
 			return
 		if get_tree().paused:
+			DialogBox.show_for_pause()
 			pause_game(false)
 		else:
+			DialogBox.hide_for_pause()
 			pause_game(true)
 
 ## Cambia de escena con una transición suave de fade negro
@@ -60,9 +65,9 @@ func change_scene(target_path: String, target_spawn: String = "", return_spawn: 
 	# Asegurarse de que el juego no esté pausado al cambiar de escena
 	get_tree().paused = false
 	
-	# Fade a negro
-	_anim.play("fade_out")
-	await _anim.animation_finished
+	if _anim:
+		_anim.play("fade_out")
+		await _anim.animation_finished
 	
 	# Configuración de spawn en el Autoload Global
 	if use_dynamic_return:
@@ -78,16 +83,18 @@ func change_scene(target_path: String, target_spawn: String = "", return_spawn: 
 	if error != OK:
 		push_error("Error al cambiar de escena a: %s (Código de error: %d)" % [target_path, error])
 		_changing_scene = false
-		_anim.play("fade_in")
+		if _anim:
+			_anim.play("fade_in")
+			await _anim.animation_finished
 		transition_finished.emit()
 		return
 	
 	# Esperamos un frame para que la nueva escena esté lista
 	await get_tree().process_frame
 	
-	# Fade-in desde negro
-	_anim.play("fade_in")
-	await _anim.animation_finished
+	if _anim:
+		_anim.play("fade_in")
+		await _anim.animation_finished
 	
 	_changing_scene = false
 	transition_finished.emit()

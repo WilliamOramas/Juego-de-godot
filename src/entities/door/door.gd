@@ -27,7 +27,9 @@ func _on_body_exited(body: Node2D) -> void:
 
 func _show_prompt() -> void:
 	_remove_prompt()
-	var prompt_scene = load("res://src/menu/interact_prompt.tscn")
+	var prompt_scene = load(Global.INTERACT_PROMPT_PATH)
+	if not prompt_scene:
+		return
 	_prompt_instance = prompt_scene.instantiate()
 	add_child(_prompt_instance)
 	_prompt_instance.position = prompt_offset

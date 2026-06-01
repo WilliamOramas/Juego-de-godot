@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://catce730dn3yp" path="res://src/entities/player/player.gd" id="1_ij6vw"]
 [ext_resource type="Texture2D" uid="uid://d22o2a6kqweh0" path="res://src/assets/sprites/player_spritesheet.png" id="2_f50pn"]
 [ext_resource type="PackedScene" path="res://src/menu/phone_hud.tscn" id="3_phone_hud"]
-[ext_resource type="AudioStream" path="res://src/assets/sounds/step.wav" id="4_step"]
+[ext_resource type="AudioStream" uid="uid://cn6u1iywkuf6l" path="res://src/assets/sounds/step.wav" id="4_step"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_phys"]
 size = Vector2(23, 58)
@@ -308,11 +308,9 @@ limit_top = 0
 limit_right = 853
 limit_bottom = 745
 position_smoothing_enabled = true
-position_smoothing_speed = 5.0
 
-[node name="PhoneHud" parent="." instance=ExtResource("3_phone_hud")]
+[node name="PhoneHud" parent="." unique_id=1374437248 instance=ExtResource("3_phone_hud")]
 
-[node name="StepSound" type="AudioStreamPlayer" parent="."]
+[node name="StepSound" type="AudioStreamPlayer" parent="." unique_id=1915714679]
 stream = ExtResource("4_step")
 volume_db = -12.0
-pitch_scale = 1.0

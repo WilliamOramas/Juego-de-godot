@@ -305,8 +305,8 @@ position = Vector2(-1, 11)
 zoom = Vector2(2, 2)
 limit_left = 0
 limit_top = 0
-limit_right = 853
-limit_bottom = 745
+limit_right = 0
+limit_bottom = 0
 position_smoothing_enabled = true
 
 [node name="PhoneHud" parent="." unique_id=1374437248 instance=ExtResource("3_phone_hud")]

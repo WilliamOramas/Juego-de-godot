@@ -69,13 +69,7 @@ func _ready() -> void:
 	sprite.frame = sprite_frame
 	sprite.modulate = sprite_modulate
 	
-	# 3. Ocultar la burbuja flotante legacy (se usa DialogBox ahora)
-	if $DialogBubble:
-		$DialogBubble.visible = false
-		if %DialogLabel:
-			%DialogLabel.text = dialog_lines[0] if not dialog_lines.is_empty() else dialog_text
-	
-	# 4. Redimensionar dinámicamente el rango de detección del jugador
+	# 3. Redimensionar dinámicamente el rango de detección del jugador
 	var detect_shape = detection_area.get_node_or_null("CollisionShape2D")
 	if detect_shape and detect_shape.shape is CircleShape2D:
 		detect_shape.shape = detect_shape.shape.duplicate() # Evitar compartir el recurso del shape entre instancias

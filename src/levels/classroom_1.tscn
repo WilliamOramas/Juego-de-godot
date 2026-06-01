@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_pause"]
 [ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
 [ext_resource type="Texture2D" uid="uid://bejib1kp3kfe1" path="res://src/assets/sprites/npc_spritesheet_alt.png" id="6_teacher_tex"]
+[ext_resource type="Script" path="res://src/levels/level_limits.gd" id="7_limits"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left"]
 size = Vector2(13, 500)
@@ -33,6 +34,9 @@ size = Vector2(87, 40)
 
 [node name="Classroom1" type="Node2D" unique_id=1742570909]
 y_sort_enabled = true
+script = ExtResource("7_limits")
+camera_right = 485
+camera_bottom = 515
 
 [node name="Background" type="Sprite2D" parent="." unique_id=1946591102]
 z_index = -1

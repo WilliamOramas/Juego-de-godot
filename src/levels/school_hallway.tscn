@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://dkgmjjeegd37j" path="res://src/assets/sprites/np1.png" id="6_np1"]
 [ext_resource type="Texture2D" uid="uid://dwjewrpd3ccur" path="res://src/assets/sprites/objeto_alerta_piso.png" id="7_objeto"]
 [ext_resource type="PackedScene" uid="uid://b2vxwqo0r0pyg" path="res://src/menu/objeto_interactivo.tscn" id="8_objeto"]
+[ext_resource type="Script" path="res://src/levels/level_limits.gd" id="9_limits"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_top"]
 size = Vector2(334, 86)
@@ -41,6 +42,9 @@ size = Vector2(4, 7)
 
 [node name="Main" type="Node2D" unique_id=1905237382]
 y_sort_enabled = true
+script = ExtResource("9_limits")
+camera_right = 853
+camera_bottom = 749
 
 [node name="Background" type="Sprite2D" parent="." unique_id=1439525713]
 z_index = -1

@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_pause"]
 [ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
 [ext_resource type="Texture2D" uid="uid://ckfk1i1404ys6" path="res://src/assets/sprites/npc_spritesheet.png" id="6_nurse_tex"]
+[ext_resource type="Script" path="res://src/levels/level_limits.gd" id="7_limits"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left_bottom"]
 size = Vector2(8, 156)
@@ -27,6 +28,9 @@ size = Vector2(13, 5)
 
 [node name="Infirmary" type="Node2D" unique_id=1175055387]
 y_sort_enabled = true
+script = ExtResource("7_limits")
+camera_right = 387
+camera_bottom = 296
 
 [node name="Background" type="Sprite2D" parent="." unique_id=203791448]
 z_index = -1

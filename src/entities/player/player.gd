@@ -69,3 +69,10 @@ func _on_transition_started() -> void:
 
 func _on_transition_finished() -> void:
 	control_enabled = true
+
+func set_camera_limits(left: int, top: int, right: int, bottom: int) -> void:
+	var cam: Camera2D = $Camera2D
+	cam.limit_left = left
+	cam.limit_top = top
+	cam.limit_right = right
+	cam.limit_bottom = bottom

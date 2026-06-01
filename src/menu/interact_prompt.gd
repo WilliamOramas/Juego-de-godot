@@ -31,7 +31,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if get_tree().paused:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_E and prompt_texture.visible:
+		if event.keycode == KEY_E and prompt_texture.visible and not DialogBox.is_open:
 			_on_interact_pressed()
 			get_viewport().set_input_as_handled()
 

@@ -1,5 +1,7 @@
 extends Panel
 
+signal panel_closed
+
 @onready var volume_slider: HSlider = $VBoxContainer/VolumeContainer/HSlider
 @onready var volume_label: Label = $VBoxContainer/VolumeContainer/ValueLabel
 @onready var fullscreen_check: CheckBox = $VBoxContainer/FullscreenContainer/CheckBox
@@ -47,3 +49,4 @@ func _update_fullscreen_state() -> void:
 
 func _on_close_pressed() -> void:
 	hide_panel()
+	panel_closed.emit()

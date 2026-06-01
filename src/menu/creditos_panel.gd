@@ -1,5 +1,7 @@
 extends Panel
 
+signal panel_closed
+
 func _ready() -> void:
 	visible = false
 	modulate.a = 0.0
@@ -22,3 +24,4 @@ func hide_panel() -> void:
 
 func _on_close_pressed() -> void:
 	hide_panel()
+	panel_closed.emit()

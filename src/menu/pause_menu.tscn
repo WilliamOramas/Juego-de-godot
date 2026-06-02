@@ -89,6 +89,12 @@ theme_override_fonts/font = ExtResource("4_lqdws")
 theme_override_font_sizes/font_size = 21
 text = "CARGAR PARTIDA"
 
+[node name="BorrarPartida" parent="MarginContainer/VBoxContainer" instance=ExtResource("3_w7oy8")]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_lqdws")
+theme_override_font_sizes/font_size = 21
+text = "BORRAR PARTIDA"
+
 [node name="ExitGame" parent="MarginContainer/VBoxContainer" unique_id=1938876114 instance=ExtResource("3_w7oy8")]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
@@ -111,6 +117,7 @@ size = Vector2i(400, 150)
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Controles" to="." method="_on_controles_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/SaveGame" to="." method="_on_save_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/LoadGame" to="." method="_on_load_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/BorrarPartida" to="." method="_on_borrar_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/ExitGame" to="." method="_on_exit_game_pressed"]
 [connection signal="slot_selected" from="SlotSelector" to="." method="_on_slot_selected"]
 [connection signal="panel_closed" from="SlotSelector" to="." method="_on_panel_closed"]

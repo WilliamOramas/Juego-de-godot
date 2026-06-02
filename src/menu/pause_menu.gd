@@ -45,6 +45,10 @@ func _on_load_pressed() -> void:
 	_active_panel = $SlotSelector
 	$SlotSelector.show_panel("load")
 
+func _on_borrar_pressed() -> void:
+	_active_panel = $SlotSelector
+	$SlotSelector.show_panel("delete")
+
 func _on_slot_selected(slot: int, mode: String) -> void:
 	_pending_slot = slot
 	_pending_mode = mode
@@ -59,6 +63,9 @@ func _on_slot_selected(slot: int, mode: String) -> void:
 		else:
 			$ConfirmationDialog.dialog_text = "¿Sobrescribir SLOT %d?" % (slot + 1)
 			$ConfirmationDialog.popup_centered()
+	elif mode == "delete":
+		$ConfirmationDialog.dialog_text = "¿Borrar SLOT %d?" % (slot + 1)
+		$ConfirmationDialog.popup_centered()
 	else:
 		$ConfirmationDialog.dialog_text = "¿Cargar SLOT %d? Se perderá el progreso no guardado." % (slot + 1)
 		$ConfirmationDialog.popup_centered()
@@ -76,6 +83,10 @@ func _on_confirmation_confirmed() -> void:
 		var last_scene := SaveManager.load_game(_pending_slot)
 		if last_scene != "":
 			SceneManager.change_scene(last_scene)
+	elif _pending_mode == "delete":
+		SaveManager.reset_game(_pending_slot)
+		_active_panel = $SlotSelector
+		$SlotSelector.show_panel("delete")
 	_pending_slot = -1
 	_pending_mode = ""
 

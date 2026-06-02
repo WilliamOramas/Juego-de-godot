@@ -2,6 +2,8 @@ extends Control
 class_name MainMenu
 
 var _active_panel: Panel = null
+var _pending_slot: int = -1
+var _pending_mode: String = ""
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -46,15 +48,37 @@ func _on_continue_pressed() -> void:
 	_active_panel = $SlotSelector
 	$SlotSelector.show_panel("load")
 
+func _on_borrar_pressed() -> void:
+	_active_panel = $SlotSelector
+	$SlotSelector.show_panel("delete")
+
 func _on_slot_selected(slot: int, mode: String) -> void:
 	_active_panel = null
-	if mode == "new":
-		SaveManager.reset_game(slot)
-		SceneManager.change_scene("res://src/levels/school_hallway.tscn")
-	else:
-		var last_scene := SaveManager.load_game(slot)
-		if last_scene != "":
-			SceneManager.change_scene(last_scene)
+	match mode:
+		"new":
+			SaveManager.reset_game(slot)
+			SceneManager.change_scene("res://src/levels/school_hallway.tscn")
+		"load":
+			var last_scene := SaveManager.load_game(slot)
+			if last_scene != "":
+				SceneManager.change_scene(last_scene)
+		"delete":
+			_pending_slot = slot
+			_pending_mode = mode
+			$ConfirmationDialog.dialog_text = "¿Borrar SLOT %d?" % (slot + 1)
+			$ConfirmationDialog.popup_centered()
+
+func _on_confirmation_confirmed() -> void:
+	if _pending_mode == "delete":
+		SaveManager.reset_game(_pending_slot)
+		_active_panel = $SlotSelector
+		$SlotSelector.show_panel("delete")
+	_pending_slot = -1
+	_pending_mode = ""
+
+func _on_confirmation_canceled() -> void:
+	_pending_slot = -1
+	_pending_mode = ""
 
 func _on_opciones_pressed() -> void:
 	_active_panel = $OpcionesPanel

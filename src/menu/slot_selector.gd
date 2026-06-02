@@ -29,6 +29,8 @@ func show_panel(mode: String) -> void:
 			title_label.text = "CARGAR PARTIDA"
 		"save":
 			title_label.text = "GUARDAR PARTIDA"
+		"delete":
+			title_label.text = "BORRAR PARTIDA"
 	_update_slot_buttons()
 	modulate.a = 0.0
 	visible = true
@@ -65,7 +67,7 @@ func _update_slot_buttons() -> void:
 		var btn := slot_buttons[i]
 		if info.get("empty", true):
 			btn.text = "SLOT %d — VACÍO" % (i + 1)
-			btn.disabled = (_mode == "load" and info.get("empty", true))
+			btn.disabled = ((_mode == "load" or _mode == "delete") and info.get("empty", true))
 		else:
 			var scene_path: String = info.get("last_scene", "")
 			var scene_name: String = _scene_display_name(scene_path)

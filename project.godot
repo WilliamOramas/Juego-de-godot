@@ -20,10 +20,10 @@ boot_splash/bg_color=Color(0.30692276, 0.30692267, 0.30692264, 1)
 Global="*res://src/levels/global.gd"
 SaveManager="*res://src/singleton/save_manager.gd"
 EventBus="*res://src/singleton/event_bus.gd"
-QuestManager="*res://src/singleton/quest_manager.gd"
-MiniGameManager="*res://src/singleton/mini_game_manager.gd"
 SceneManager="*res://src/singleton/scene_manager.gd"
 DialogBox="*res://src/menu/dialog_box.tscn"
+QuestManager="*res://src/singleton/quest_manager.gd"
+MiniGameManager="*res://src/singleton/mini_game_manager.gd"
 
 [display]
 
@@ -32,6 +32,10 @@ window/size/viewport_height=600
 window/size/mode=2
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/zylann.editor_debugger/plugin.cfg")
 
 [input]
 

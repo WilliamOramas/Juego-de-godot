@@ -111,6 +111,11 @@ func flush(override_last_scene: String = "") -> void:
 	_dirty = false
 	_save_game(active_slot, override_last_scene)
 
+func save_to_slot(slot: int) -> void:
+	active_slot = slot
+	_dirty = false
+	_save_game(slot)
+
 func _save_game(slot: int, override_last_scene: String = "") -> void:
 	var data := _build_game_data(override_last_scene)
 	var json := JSON.stringify(data, "\t")

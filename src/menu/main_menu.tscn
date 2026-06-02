@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://dxr0kqygwudel" path="res://src/menu/controles_panel.tscn" id="9_controls"]
 [ext_resource type="PackedScene" uid="uid://b7w4ojuqxa3qw" path="res://src/menu/opciones_panel.tscn" id="10_opciones"]
 [ext_resource type="PackedScene" uid="uid://c67ppnxp05lt0" path="res://src/menu/creditos_panel.tscn" id="11_creditos"]
+[ext_resource type="PackedScene" path="res://src/menu/slot_selector.tscn" id="12_slot"]
 
 [sub_resource type="Theme" id="Theme_g2ne3"]
 
@@ -57,7 +58,7 @@ theme_override_fonts/font = ExtResource("4_such8")
 theme_override_font_sizes/font_size = 46
 text = "VitaLPixeL"
 
-[node name="Start_Game" parent="MarginContainer/VBoxContainer" unique_id=364183220 instance=ExtResource("1_1k071")]
+[node name="Jugar" parent="MarginContainer/VBoxContainer" instance=ExtResource("1_1k071")]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("6_such8")
@@ -92,6 +93,33 @@ theme_override_font_sizes/font_size = 18
 text = "SALIDA
 "
 
+[node name="SubmenuButtons" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+visible = false
+
+[node name="Nueva_Partida" parent="MarginContainer/SubmenuButtons" unique_id=364183220 instance=ExtResource("1_1k071")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("6_such8")
+theme_override_font_sizes/font_size = 18
+text = "NUEVA PARTIDA"
+
+[node name="Cargar_Partida" parent="MarginContainer/SubmenuButtons" instance=ExtResource("1_1k071")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("6_such8")
+theme_override_font_sizes/font_size = 18
+text = "CARGAR PARTIDA"
+
+[node name="Volver" parent="MarginContainer/SubmenuButtons" instance=ExtResource("1_1k071")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("6_such8")
+theme_override_font_sizes/font_size = 18
+text = "VOLVER"
+
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1813073952]
 stream = ExtResource("5_wkckh")
 autoplay = true
@@ -115,8 +143,12 @@ grow_vertical = 2
 [node name="ControlesPanel" parent="." instance=ExtResource("9_controls")]
 [node name="OpcionesPanel" parent="." instance=ExtResource("10_opciones")]
 [node name="CreditosPanel" parent="." instance=ExtResource("11_creditos")]
+[node name="SlotSelector" parent="." instance=ExtResource("12_slot")]
 
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Start_Game" to="." method="_on_start_game_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Jugar" to="." method="_on_jugar_pressed"]
+[connection signal="pressed" from="MarginContainer/SubmenuButtons/Nueva_Partida" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="MarginContainer/SubmenuButtons/Cargar_Partida" to="." method="_on_continue_pressed"]
+[connection signal="pressed" from="MarginContainer/SubmenuButtons/Volver" to="." method="_on_volver_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Opciones" to="." method="_on_opciones_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Controles" to="." method="_on_controles_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Creditos" to="." method="_on_creditos_pressed"]

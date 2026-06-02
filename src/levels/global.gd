@@ -14,6 +14,12 @@ var is_muted: bool = false
 ## Registro de NPCs con los que ya habló el jugador (key = npc_nombre)
 var dialogs_seen: Dictionary = {}
 
+## Posición guardada del jugador para restaurar al continuar partida
+var saved_player_position: Vector2 = Vector2.ZERO
+
+## Indica si hay una posición guardada pendiente de restaurar
+var pending_position_restore: bool = false
+
 ## Activa o desactiva el silenciado global del juego (Master bus)
 func set_mute(muted: bool) -> void:
 	is_muted = muted

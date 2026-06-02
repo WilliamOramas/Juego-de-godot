@@ -15,13 +15,16 @@ var step_timer: float = 0.0
 func _ready() -> void:
 	animation_tree.active = true
 	
-	# Si hay un spawn de destino configurado globalmente, nos posicionamos allí
+	# Posicionar al jugador según prioridad: 1) spawn de destino, 2) posición guardada (Continue), 3) posición por defecto
 	if Global.target_spawn_name != "":
 		var spawn_point := get_tree().current_scene.find_child(Global.target_spawn_name, true, false) as Marker2D
 		if spawn_point:
 			global_position = spawn_point.global_position
 		Global.target_spawn_name = ""
-		
+	elif Global.pending_position_restore:
+		global_position = Global.saved_player_position
+		Global.pending_position_restore = false
+
 	# Conexión automática con el gestor de escenas para deshabilitar controles durante fundidos
 	SceneManager.transition_started.connect(_on_transition_started)
 	SceneManager.transition_finished.connect(_on_transition_finished)

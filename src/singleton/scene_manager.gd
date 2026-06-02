@@ -61,6 +61,7 @@ func change_scene(target_path: String, target_spawn: String = "", return_spawn: 
 	if _changing_scene:
 		return
 	_changing_scene = true
+	EventBus.scene_changing.emit(target_path)
 	transition_started.emit()
 	
 	# Asegurarse de que el juego no esté pausado al cambiar de escena
@@ -104,6 +105,7 @@ func change_scene(target_path: String, target_spawn: String = "", return_spawn: 
 		SaveManager.flush(target_path)
 	_changing_scene = false
 	transition_finished.emit()
+	EventBus.scene_changed.emit(target_path)
 
 ## Pausa o reanuda el juego y notifica la señal
 func pause_game(pause: bool) -> void:

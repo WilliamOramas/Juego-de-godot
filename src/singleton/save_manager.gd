@@ -160,7 +160,7 @@ func _build_game_data(override_last_scene: String = "") -> Dictionary:
 	var data: Dictionary = {
 		"version": SAVE_VERSION,
 		"dialogs_seen": Global.dialogs_seen.duplicate(),
-		"quest_progress": {},
+		"quest_progress": QuestManager.get_quest_progress(),
 		"last_scene": last_scene,
 	}
 	var player := _get_player()
@@ -175,6 +175,8 @@ func _apply_game_data(data: Dictionary) -> String:
 	if data.has("dialogs_seen") and data["dialogs_seen"] is Dictionary:
 		for key in data["dialogs_seen"]:
 			Global.dialogs_seen[key] = data["dialogs_seen"][key]
+	if data.has("quest_progress") and data["quest_progress"] is Dictionary:
+		QuestManager.set_quest_progress(data["quest_progress"])
 	if data.has("player_position_x") and data.has("player_position_y"):
 		Global.saved_player_position = Vector2(data["player_position_x"], data["player_position_y"])
 		Global.pending_position_restore = true

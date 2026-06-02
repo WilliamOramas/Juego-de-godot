@@ -20,6 +20,7 @@ boot_splash/bg_color=Color(0.30692276, 0.30692267, 0.30692264, 1)
 Global="*res://src/levels/global.gd"
 SaveManager="*res://src/singleton/save_manager.gd"
 EventBus="*res://src/singleton/event_bus.gd"
+QuestManager="*res://src/singleton/quest_manager.gd"
 SceneManager="*res://src/singleton/scene_manager.gd"
 DialogBox="*res://src/menu/dialog_box.tscn"
 

@@ -21,6 +21,7 @@ Global="*res://src/levels/global.gd"
 SaveManager="*res://src/singleton/save_manager.gd"
 EventBus="*res://src/singleton/event_bus.gd"
 QuestManager="*res://src/singleton/quest_manager.gd"
+MiniGameManager="*res://src/singleton/mini_game_manager.gd"
 SceneManager="*res://src/singleton/scene_manager.gd"
 DialogBox="*res://src/menu/dialog_box.tscn"
 

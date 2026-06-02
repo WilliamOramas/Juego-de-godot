@@ -5,6 +5,7 @@ var completed_quests: Dictionary = {}
 
 func _ready() -> void:
 	EventBus.scene_changed.connect(_on_scene_changed)
+	EventBus.minigame_completed.connect(_on_minigame_completed)
 
 func start_quest(quest_data: Variant) -> void:
 	if quest_data == null:
@@ -94,6 +95,20 @@ func _on_scene_changed(scene_path: String) -> void:
 			if quest.objectives.get(obj.objective_id, false):
 				continue
 			if obj.type == QuestObjective.ObjectiveType.REACH_SCENE and obj.target_id == scene_path:
+				advance_objective(quest_id, obj.objective_id)
+
+func _on_minigame_completed(game_id: String, success: bool) -> void:
+	if not success:
+		return
+	for quest_id in active_quests:
+		var quest: Dictionary = active_quests[quest_id]
+		var qdata: Variant = quest.get("quest_data")
+		if not qdata:
+			continue
+		for obj in qdata.objectives:
+			if quest.objectives.get(obj.objective_id, false):
+				continue
+			if obj.type == QuestObjective.ObjectiveType.COMPLETE_MINIGAME and obj.target_id == game_id:
 				advance_objective(quest_id, obj.objective_id)
 
 func _load_quest_data(quest_id: String) -> Variant:

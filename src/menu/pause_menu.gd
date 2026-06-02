@@ -10,8 +10,6 @@ func _ready() -> void:
 	SceneManager.game_paused.connect(_on_game_paused)
 	$OpcionesPanel.panel_closed.connect(_on_panel_closed)
 	$ControlesPanel.panel_closed.connect(_on_panel_closed)
-	$SlotSelector.panel_closed.connect(_on_panel_closed)
-	$SlotSelector.slot_selected.connect(_on_slot_selected)
 
 func _on_panel_closed() -> void:
 	_active_panel = null

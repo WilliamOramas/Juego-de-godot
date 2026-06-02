@@ -6,6 +6,8 @@ signal panel_closed
 @onready var volume_label: Label = $VBoxContainer/VolumeContainer/ValueLabel
 @onready var fullscreen_check: CheckBox = $VBoxContainer/FullscreenContainer/CheckBox
 
+var _suppress_save: bool = false
+
 func _ready() -> void:
 	visible = false
 	modulate.a = 0.0
@@ -16,7 +18,9 @@ func _ready() -> void:
 
 func show_panel() -> void:
 	set_process_input(true)
+	_suppress_save = true
 	volume_slider.value = db_to_linear(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master"))) * 100
+	_suppress_save = false
 	volume_label.text = str(roundi(volume_slider.value))
 	_update_fullscreen_state()
 	modulate.a = 0.0
@@ -36,12 +40,15 @@ func _on_volume_changed(value: float) -> void:
 	volume_label.text = str(roundi(value))
 	var db = linear_to_db(value / 100.0)
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), db)
+	if not _suppress_save:
+		SaveManager.save_settings()
 
 func _on_fullscreen_toggled(toggled: bool) -> void:
 	if toggled:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	SaveManager.save_settings()
 
 func _update_fullscreen_state() -> void:
 	var mode = DisplayServer.window_get_mode()

@@ -60,7 +60,7 @@ var _anim_timer: float = 0.0
 var _anim_frame: int = 0
 var _patrol_dir: float = 1.0 # 1 = derecha/abajo, -1 = izquierda/arriba
 var _player_in_range: Player = null # Referencia al jugador en rango de interacción
-var _prompt_instance: Control = null
+var _interact: InteractableComponent
 
 func _ready() -> void:
 	# 1. Aplicar textura, frame y modulación
@@ -83,6 +83,10 @@ func _ready() -> void:
 	
 	# Inicializar tiempos de espera
 	_state_timer = randf_range(wait_time_min, wait_time_max)
+
+	_interact = InteractableComponent.new()
+	add_child(_interact)
+	_interact.setup(self, Vector2(-14, -82), _on_interact_pressed)
 
 func _physics_process(delta: float) -> void:
 	# 1. Si el jugador está interactuando (en rango), el NPC se detiene y lo mira
@@ -187,29 +191,14 @@ func _select_new_target() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body is Player:
 		_player_in_range = body
-		_show_prompt()
+		_interact.show_prompt()
 
 func _on_body_exited(body: Node2D) -> void:
 	if body is Player:
 		if _player_in_range == body:
 			_player_in_range = null
-		_remove_prompt()
+		_interact.remove_prompt()
 		DialogBox.hide_dialog()
-
-func _show_prompt() -> void:
-	_remove_prompt()
-	var prompt_scene = load(Global.INTERACT_PROMPT_PATH)
-	if prompt_scene:
-		_prompt_instance = prompt_scene.instantiate()
-		add_child(_prompt_instance)
-		_prompt_instance.position = Vector2(-14, -82)
-
-		_prompt_instance.setup(_on_interact_pressed)
-
-func _remove_prompt() -> void:
-	if _prompt_instance and is_instance_valid(_prompt_instance):
-		_prompt_instance.queue_free()
-	_prompt_instance = null
 
 func _on_interact_pressed() -> void:
 	if DialogBox.is_open:
@@ -224,17 +213,9 @@ func _on_interact_pressed() -> void:
 	else:
 		lines = dialog_lines_repeat.duplicate() if not dialog_lines_repeat.is_empty() else (dialog_lines.duplicate() if not dialog_lines.is_empty() else [dialog_text])
 
-	Global.dialogs_seen[key] = true
+	Global.mark_dialog_seen(key)
 
-	if _prompt_instance and _prompt_instance.has_method("set_button_visible"):
-		_prompt_instance.set_button_visible(false)
-
-	if DialogBox.dialog_finished.is_connected(_on_dialog_finished):
-		DialogBox.dialog_finished.disconnect(_on_dialog_finished)
-	DialogBox.dialog_finished.connect(_on_dialog_finished)
+	_interact.set_button_visible(false)
 	DialogBox.show_dialog(npc_name, lines)
 
-func _on_dialog_finished() -> void:
-	DialogBox.dialog_finished.disconnect(_on_dialog_finished)
-	if _prompt_instance and is_instance_valid(_prompt_instance) and _prompt_instance.has_method("set_button_visible"):
-		_prompt_instance.set_button_visible(true)
+

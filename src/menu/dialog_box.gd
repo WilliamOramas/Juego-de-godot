@@ -155,5 +155,4 @@ func _on_hide_finished() -> void:
 
 func _clear_dialog_finished() -> void:
 	dialog_finished.emit()
-	for connection in dialog_finished.get_connections():
-		dialog_finished.disconnect(connection.callable)
+	EventBus.dialog_finished.emit()

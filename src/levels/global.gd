@@ -18,3 +18,11 @@ var dialogs_seen: Dictionary = {}
 func set_mute(muted: bool) -> void:
 	is_muted = muted
 	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), muted)
+	if SaveManager:
+		SaveManager.save_settings()
+
+## Marca un NPC como visto
+func mark_dialog_seen(key: String) -> void:
+	dialogs_seen[key] = true
+	if SaveManager:
+		SaveManager.mark_dirty()

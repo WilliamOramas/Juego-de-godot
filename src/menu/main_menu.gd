@@ -19,6 +19,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _on_start_game_pressed() -> void:
+	SaveManager.reset_game()
 	SceneManager.change_scene("res://src/levels/school_hallway.tscn")
 
 func _on_opciones_pressed() -> void:

@@ -37,6 +37,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 		get_viewport().set_input_as_handled()
+		SaveManager.save_settings()
 		return
 
 	# Capturar la tecla Escape/Pause para abrir el menú de pausa
@@ -64,7 +65,10 @@ func change_scene(target_path: String, target_spawn: String = "", return_spawn: 
 	
 	# Asegurarse de que el juego no esté pausado al cambiar de escena
 	get_tree().paused = false
-	
+
+	# Guardar estado antes de la transición
+	SaveManager.flush()
+
 	if _anim:
 		_anim.play("fade_out")
 		await _anim.animation_finished

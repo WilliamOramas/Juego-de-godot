@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_pause"]
 [ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
 [ext_resource type="Texture2D" uid="uid://bejib1kp3kfe1" path="res://src/assets/sprites/npc_spritesheet_alt.png" id="6_teacher_tex"]
-[ext_resource type="Script" path="res://src/levels/level_limits.gd" id="7_limits"]
+[ext_resource type="Script" uid="uid://dtl581vlfbxui" path="res://src/levels/level_limits.gd" id="7_limits"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left"]
 size = Vector2(13, 500)
@@ -24,7 +24,7 @@ size = Vector2(237.92375, 23)
 size = Vector2(500, 10)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_student_desk"]
-size = Vector2(33, 12)
+size = Vector2(33, 22)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_teacher_desk"]
 size = Vector2(118.5, 16.5)
@@ -89,70 +89,70 @@ shape = SubResource("RectangleShape2D_floor_bottom")
 position = Vector2(74, 180)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR1C1" unique_id=1048219211]
-position = Vector2(1, -20)
+position = Vector2(1, -16)
 shape = SubResource("RectangleShape2D_student_desk")
 
 [node name="DeskR1C2" type="StaticBody2D" parent="Furniture" unique_id=1580922578]
 position = Vector2(154, 180)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR1C2" unique_id=1464796100]
-position = Vector2(1, -19)
+position = Vector2(1, -16)
 shape = SubResource("RectangleShape2D_student_desk")
 
 [node name="DeskR1C3" type="StaticBody2D" parent="Furniture" unique_id=1210901258]
 position = Vector2(234, 180)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR1C3" unique_id=2120087736]
-position = Vector2(1, -20)
+position = Vector2(1, -16)
 shape = SubResource("RectangleShape2D_student_desk")
 
 [node name="DeskR1C4" type="StaticBody2D" parent="Furniture" unique_id=920245053]
 position = Vector2(314, 180)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR1C4" unique_id=1851440283]
-position = Vector2(1, -19)
+position = Vector2(1, -16)
 shape = SubResource("RectangleShape2D_student_desk")
 
 [node name="DeskR1C5" type="StaticBody2D" parent="Furniture" unique_id=1174035467]
 position = Vector2(389, 180)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR1C5" unique_id=1445913179]
-position = Vector2(2, -18)
+position = Vector2(1, -16)
 shape = SubResource("RectangleShape2D_student_desk")
 
 [node name="DeskR2C1" type="StaticBody2D" parent="Furniture" unique_id=1692150421]
 position = Vector2(74, 260)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR2C1" unique_id=2126143249]
-position = Vector2(1, -19)
+position = Vector2(1, -16)
 shape = SubResource("RectangleShape2D_student_desk")
 
 [node name="DeskR2C2" type="StaticBody2D" parent="Furniture" unique_id=723418138]
 position = Vector2(154, 260)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR2C2" unique_id=1814354396]
-position = Vector2(1, -18)
+position = Vector2(1, -15)
 shape = SubResource("RectangleShape2D_student_desk")
 
 [node name="DeskR2C3" type="StaticBody2D" parent="Furniture" unique_id=1528766868]
 position = Vector2(234, 260)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR2C3" unique_id=2025176630]
-position = Vector2(1, -19)
+position = Vector2(1, -16)
 shape = SubResource("RectangleShape2D_student_desk")
 
 [node name="DeskR2C4" type="StaticBody2D" parent="Furniture" unique_id=1334403411]
 position = Vector2(314, 260)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR2C4" unique_id=1515920236]
-position = Vector2(1, -19)
+position = Vector2(1, -16)
 shape = SubResource("RectangleShape2D_student_desk")
 
 [node name="DeskR2C5" type="StaticBody2D" parent="Furniture" unique_id=1263324072]
 position = Vector2(389, 260)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR2C5" unique_id=416229921]
-position = Vector2(2, -19)
+position = Vector2(2, -16)
 shape = SubResource("RectangleShape2D_student_desk")
 
 [node name="DeskR3C1" type="StaticBody2D" parent="Furniture" unique_id=1015666848]

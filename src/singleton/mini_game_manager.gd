@@ -14,6 +14,8 @@ func launch_minigame(scene_path: String, game_id: String) -> void:
 	instance.game_completed.connect(_on_minigame_completed)
 	add_child(instance)
 	_active_minigame = instance
+	var viewport_img: Image = get_viewport().get_texture().get_image()
+	instance.set_background_image(viewport_img)
 	EventBus.minigame_started.emit(game_id)
 	instance.start()
 

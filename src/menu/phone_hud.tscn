@@ -99,12 +99,14 @@ layout_mode = 0
 offset_left = 18.0
 offset_top = 160.0
 offset_right = 162.0
-offset_bottom = 180.0
+offset_bottom = 200.0
 theme_override_colors/font_color = Color(0.227451, 0.886275, 0.886275, 1)
 theme_override_fonts/font = ExtResource("6_font")
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 10
+autowrap_mode = 2
 text = "PIXEL v1.0"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="FacePlayer" type="AnimationPlayer" parent="Phone" unique_id=324248874]
 libraries/ = SubResource("AnimationLibrary_face")

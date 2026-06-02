@@ -20,6 +20,12 @@ var saved_player_position: Vector2 = Vector2.ZERO
 ## Indica si hay una posición guardada pendiente de restaurar
 var pending_position_restore: bool = false
 
+## Indica si el estudiante murió durante un minijuego
+var student_died: bool = false
+
+## Posición a la que el jugador debe acercarse antes del minijuego de primeros auxilios
+var fainting_approach_pos: Vector2 = Vector2.ZERO
+
 ## Activa o desactiva el silenciado global del juego (Master bus)
 func set_mute(muted: bool) -> void:
 	is_muted = muted

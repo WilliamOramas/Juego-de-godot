@@ -10,6 +10,8 @@ var input_vector: Vector2 = Vector2.ZERO
 @onready var animation_tree: AnimationTree = $AnimationTree
 @onready var step_sound: AudioStreamPlayer = $StepSound
 
+var _is_approaching: bool = false
+
 var step_timer: float = 0.0
 
 func _ready() -> void:
@@ -33,9 +35,10 @@ func _physics_process(_delta: float) -> void:
 	if control_enabled:
 		get_input()
 		animate_player(_delta)
+	elif _is_approaching:
+		velocity = Vector2.ZERO
 	else:
 		velocity = Vector2.ZERO
-		# Forzar animación idle cuando no hay control
 		animation_tree.set("parameters/conditions/idle", true)
 		animation_tree.set("parameters/conditions/walk", false)
 		
@@ -71,6 +74,21 @@ func _on_transition_started() -> void:
 	control_enabled = false
 
 func _on_transition_finished() -> void:
+	control_enabled = true
+
+func approach_position(target: Vector2) -> void:
+	control_enabled = false
+	_is_approaching = true
+	var dir := (target - global_position).normalized()
+	animation_tree.set("parameters/walk/blend_position", dir)
+	animation_tree.set("parameters/conditions/idle", false)
+	animation_tree.set("parameters/conditions/walk", true)
+	var tween := create_tween().set_trans(Tween.TRANS_QUINT)
+	tween.tween_property(self, "global_position", target, 1.2)
+	await tween.finished
+	animation_tree.set("parameters/conditions/idle", true)
+	animation_tree.set("parameters/conditions/walk", false)
+	_is_approaching = false
 	control_enabled = true
 
 func set_camera_limits(left: int, top: int, right: int, bottom: int) -> void:

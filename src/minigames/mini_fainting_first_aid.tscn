@@ -1,0 +1,190 @@
+[gd_scene format=3 uid="uid://brvb1vq0h76oi"]
+
+[ext_resource type="Script" uid="uid://cjxvm0kmxxan8" path="res://src/minigames/mini_fainting_first_aid.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://src/minigames/mini_game_base.tscn" id="2_base"]
+[ext_resource type="AudioStream" uid="uid://dbq2h86spyohm" path="res://src/assets/sounds/correct.wav" id="3_correct"]
+[ext_resource type="AudioStream" uid="uid://cjaq5tl3lanbq" path="res://src/assets/sounds/wrong.wav" id="4_wrong"]
+[ext_resource type="AudioStream" uid="uid://cn6u1iywkuf6l" path="res://src/assets/sounds/step.wav" id="5_step"]
+[ext_resource type="AudioStream" uid="uid://bm4grfjgebhqc" path="res://src/assets/sounds/success_fanfare.wav" id="6_success"]
+[ext_resource type="AudioStream" uid="uid://b66svau71u142" path="res://src/assets/sounds/fail_sound.wav" id="7_fail"]
+[ext_resource type="Texture2D" uid="uid://wdokcqoj31fe" path="res://src/assets/sprites/patient_lying.png" id="8_patient"]
+
+[node name="MiniFaintingFirstAid" unique_id=806309109 instance=ExtResource("2_base")]
+script = ExtResource("1_script")
+
+[node name="Background" parent="." index="0"]
+layout_mode = 3
+
+[node name="GameContainer" parent="." index="1"]
+layout_mode = 3
+
+[node name="InstructionLabel" type="Label" parent="GameContainer" index="0" unique_id=228527046]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.05
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_right = 300.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="HelpLabel" type="Label" parent="GameContainer" index="1" unique_id=365702817]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.05
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = 76.0
+offset_right = 250.0
+offset_bottom = 111.0
+theme_override_colors/font_color = Color(0.7, 0.7, 0.9, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="TimerLabel" type="Label" parent="GameContainer" index="2" unique_id=1081575669]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -60.0
+offset_top = 8.0
+offset_right = 60.0
+offset_bottom = 36.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HeartsLabel" type="Label" parent="GameContainer" index="3" unique_id=1326157985]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -100.0
+offset_bottom = 40.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 2
+
+[node name="StepLabel" type="Label" parent="GameContainer" index="4" unique_id=982373464]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 14
+
+[node name="FeedbackLabel" type="Label" parent="GameContainer" index="5" unique_id=1528400705]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -9.0
+offset_top = 91.0
+offset_right = 224.0
+offset_bottom = 131.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DialLabel" type="Label" parent="GameContainer" index="6" unique_id=1549764728]
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -150.0
+offset_right = 120.0
+offset_bottom = -110.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 1, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ProgressBar" type="TextureProgressBar" parent="GameContainer" index="7" unique_id=1178175127]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 12.0
+offset_top = 94.0
+offset_right = 212.0
+offset_bottom = 134.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 50.0
+
+[node name="PatientSprite" type="Sprite2D" parent="GameContainer" index="8" unique_id=1313720225]
+position = Vector2(291.00003, 367.00003)
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("8_patient")
+centered = false
+
+[node name="PulsePoint" type="ColorRect" parent="GameContainer" index="9" unique_id=1104421566]
+visible = false
+layout_mode = 0
+offset_left = 344.0
+offset_top = 444.0
+offset_right = 356.0
+offset_bottom = 456.0
+color = Color(0.5, 0.5, 1, 0.3)
+
+[node name="HeartIcon" type="ColorRect" parent="GameContainer" index="10" unique_id=108333938]
+visible = false
+layout_mode = 0
+offset_left = 380.0
+offset_top = 460.0
+offset_right = 408.0
+offset_bottom = 488.0
+color = Color(1, 0.3, 0.3, 0)
+
+[node name="CorrectSound" type="AudioStreamPlayer" parent="." index="2" unique_id=1736137967]
+stream = ExtResource("3_correct")
+
+[node name="WrongSound" type="AudioStreamPlayer" parent="." index="3" unique_id=2118269853]
+stream = ExtResource("4_wrong")
+
+[node name="StepSound" type="AudioStreamPlayer" parent="." index="4" unique_id=446346948]
+stream = ExtResource("5_step")
+
+[node name="SuccessFanfare" type="AudioStreamPlayer" parent="." index="5" unique_id=1905023926]
+stream = ExtResource("6_success")
+
+[node name="FailSound" type="AudioStreamPlayer" parent="." index="6" unique_id=1121766527]
+stream = ExtResource("7_fail")

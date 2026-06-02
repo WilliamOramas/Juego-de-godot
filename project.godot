@@ -24,6 +24,7 @@ SceneManager="*res://src/singleton/scene_manager.gd"
 DialogBox="*res://src/menu/dialog_box.tscn"
 QuestManager="*res://src/singleton/quest_manager.gd"
 MiniGameManager="*res://src/singleton/mini_game_manager.gd"
+PhoneHud="*res://src/menu/phone_hud.tscn"
 
 [display]
 

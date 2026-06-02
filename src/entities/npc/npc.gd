@@ -22,6 +22,9 @@ class_name NPC
 ## (Legacy) Texto de diálogo de una línea — se usa si dialog_lines está vacío
 @export var dialog_text: String = "¡Hola!"
 
+## Misión que inicia este NPC al hablarle por primera vez
+@export var quest_to_start: Resource = null
+
 ## Tipo de comportamiento o rutina lógica para el NPC
 @export_enum("Libre (Radio)", "Patrulla Horizontal", "Patrulla Vertical", "Estático") var routine_type: String = "Libre (Radio)"
 
@@ -158,7 +161,7 @@ func _physics_process(delta: float) -> void:
 			# Animación del movimiento coordinada con las 4 direcciones
 			_anim_timer += delta
 			# Escalar la velocidad de animación proporcionalmente a la velocidad física
-			var anim_speed_factor := 0.15
+			var anim_speed_factor: float = 0.15
 			if speed > 0.0:
 				anim_speed_factor = 0.15 * (20.0 / speed)
 			if _anim_timer >= anim_speed_factor:
@@ -217,5 +220,11 @@ func _on_interact_pressed() -> void:
 
 	_interact.set_button_visible(false)
 	DialogBox.show_dialog(npc_name, lines)
+	if is_first and quest_to_start != null and quest_to_start is QuestData:
+		QuestManager.start_quest(quest_to_start)
+		if quest_to_start.objectives.size() > 0:
+			var first_obj = quest_to_start.objectives[0]
+			if first_obj.type == QuestObjective.ObjectiveType.TALK_TO_NPC and first_obj.target_id == npc_name:
+				QuestManager.advance_objective(quest_to_start.quest_id, first_obj.objective_id)
 
 

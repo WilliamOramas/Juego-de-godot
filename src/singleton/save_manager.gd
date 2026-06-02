@@ -1,8 +1,8 @@
 extends Node
 
-const SETTINGS_PATH := "user://settings.save"
-const SAVE_SLOT_COUNT := 3
-const SAVE_VERSION := 1
+const SETTINGS_PATH: String = "user://settings.save"
+const SAVE_SLOT_COUNT: int = 3
+const SAVE_VERSION: int = 1
 
 var active_slot: int = 0
 var _loading: bool = false
@@ -77,7 +77,9 @@ func reset_game(slot: int) -> void:
 	_dirty = false
 	var path := get_save_path(slot)
 	if FileAccess.file_exists(path):
-		DirAccess.remove_absolute(path)
+		var err: Error = DirAccess.remove_absolute(path)
+		if err != OK:
+			push_warning("Failed to remove save file: " + str(err))
 
 func has_game_save(slot: int) -> bool:
 	return FileAccess.file_exists(get_save_path(slot))
@@ -98,6 +100,8 @@ func get_save_info(slot: int) -> Dictionary:
 	return {
 		"empty": false,
 		"last_scene": data.get("last_scene", ""),
+		"timestamp": data.get("timestamp", 0),
+		"student_died": data.get("student_died", false),
 	}
 
 func mark_dirty() -> void:
@@ -162,6 +166,8 @@ func _build_game_data(override_last_scene: String = "") -> Dictionary:
 		"dialogs_seen": Global.dialogs_seen.duplicate(),
 		"quest_progress": QuestManager.get_quest_progress(),
 		"last_scene": last_scene,
+		"timestamp": Time.get_unix_time_from_system(),
+		"student_died": Global.student_died,
 	}
 	var player := _get_player()
 	if player:
@@ -180,4 +186,6 @@ func _apply_game_data(data: Dictionary) -> String:
 	if data.has("player_position_x") and data.has("player_position_y"):
 		Global.saved_player_position = Vector2(data["player_position_x"], data["player_position_y"])
 		Global.pending_position_restore = true
+	if data.has("student_died"):
+		Global.student_died = data["student_died"]
 	return data.get("last_scene", "")

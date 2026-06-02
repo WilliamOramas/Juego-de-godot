@@ -52,6 +52,8 @@ func _on_slot_selected(slot: int, mode: String) -> void:
 		var info: Dictionary = SaveManager.get_save_info(slot)
 		if info.get("empty", true):
 			SaveManager.save_to_slot(slot)
+			$SlotSelector.show_save_feedback(slot)
+			await get_tree().create_timer(1.2).timeout
 			$SlotSelector.hide_panel()
 			_active_panel = null
 		else:
@@ -64,6 +66,8 @@ func _on_slot_selected(slot: int, mode: String) -> void:
 func _on_confirmation_confirmed() -> void:
 	if _pending_mode == "save":
 		SaveManager.save_to_slot(_pending_slot)
+		$SlotSelector.show_save_feedback(_pending_slot)
+		await get_tree().create_timer(1.2).timeout
 		$SlotSelector.hide_panel()
 		_active_panel = null
 	elif _pending_mode == "load":

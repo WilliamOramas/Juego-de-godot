@@ -43,6 +43,22 @@ func hide_panel() -> void:
 		set_process_input(false)
 	)
 
+func _format_timestamp(unix: int) -> String:
+	if unix <= 0:
+		return ""
+	var dt := Time.get_datetime_dict_from_unix_time(unix)
+	return "%02d/%02d/%d %02d:%02d" % [dt["day"], dt["month"], dt["year"], dt["hour"], dt["minute"]]
+
+func _scene_display_name(scene_path: String) -> String:
+	var name_map := {
+		"school_hallway": "PASILLO",
+		"infirmary": "ENFERMERÍA",
+		"classroom_1": "AULA 1",
+		"classroom_2": "AULA 2",
+	}
+	var key := scene_path.get_file().trim_suffix(".tscn")
+	return name_map.get(key, key.to_upper())
+
 func _update_slot_buttons() -> void:
 	for i in SaveManager.SAVE_SLOT_COUNT:
 		var info: Dictionary = SaveManager.get_save_info(i)
@@ -52,9 +68,23 @@ func _update_slot_buttons() -> void:
 			btn.disabled = (_mode == "load" and info.get("empty", true))
 		else:
 			var scene_path: String = info.get("last_scene", "")
-			var scene_name: String = scene_path.get_file().trim_suffix(".tscn").to_upper()
-			btn.text = "SLOT %d — %s" % [(i + 1), scene_name]
+			var scene_name: String = _scene_display_name(scene_path)
+			var time_str: String = _format_timestamp(info.get("timestamp", 0))
+			if time_str != "":
+				btn.text = "SLOT %d — %s\n%s" % [(i + 1), scene_name, time_str]
+			else:
+				btn.text = "SLOT %d — %s" % [(i + 1), scene_name]
 			btn.disabled = false
+
+func show_save_feedback(slot: int) -> void:
+	var btn := slot_buttons[slot]
+	var original := btn.text
+	btn.text = "✓ PARTIDA GUARDADA"
+	var tween = create_tween()
+	tween.set_delay(1.0)
+	tween.tween_callback(func():
+		btn.text = original
+	)
 
 func _on_slot_pressed(slot: int) -> void:
 	slot_selected.emit(slot, _mode)

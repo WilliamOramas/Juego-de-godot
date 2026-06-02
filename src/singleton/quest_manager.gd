@@ -112,4 +112,7 @@ func _on_minigame_completed(game_id: String, success: bool) -> void:
 				advance_objective(quest_id, obj.objective_id)
 
 func _load_quest_data(quest_id: String) -> Variant:
+	var path := "res://src/quests/%s.tres" % quest_id
+	if ResourceLoader.exists(path):
+		return load(path)
 	return null

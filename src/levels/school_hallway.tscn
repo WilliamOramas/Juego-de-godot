@@ -8,7 +8,9 @@
 [ext_resource type="Texture2D" uid="uid://dkgmjjeegd37j" path="res://src/assets/sprites/np1.png" id="6_np1"]
 [ext_resource type="Texture2D" uid="uid://dwjewrpd3ccur" path="res://src/assets/sprites/objeto_alerta_piso.png" id="7_objeto"]
 [ext_resource type="PackedScene" uid="uid://b2vxwqo0r0pyg" path="res://src/menu/objeto_interactivo.tscn" id="8_objeto"]
-[ext_resource type="Script" path="res://src/levels/level_limits.gd" id="9_limits"]
+[ext_resource type="Script" uid="uid://dtl581vlfbxui" path="res://src/levels/level_limits.gd" id="9_limits"]
+[ext_resource type="Script" uid="uid://q8irhcv5yxjm" path="res://src/entities/fainting_trigger.gd" id="10_trigger"]
+[ext_resource type="AudioStream" uid="uid://d37vi1rnlv68q" path="res://src/assets/sounds/music_fondo_uni.mp3" id="11_pgpuf"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_top"]
 size = Vector2(334, 86)
@@ -35,16 +37,17 @@ size = Vector2(5, 591)
 size = Vector2(853, 152)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_interior8"]
-size = Vector2(6, 4)
+size = Vector2(3.5, 8.75)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
-size = Vector2(4, 7)
+size = Vector2(32, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(48, 48)
 
 [node name="Main" type="Node2D" unique_id=1905237382]
 y_sort_enabled = true
 script = ExtResource("9_limits")
-camera_right = 853
-camera_bottom = 749
 
 [node name="Background" type="Sprite2D" parent="." unique_id=1439525713]
 z_index = -1
@@ -117,11 +120,11 @@ position = Vector2(174, 117)
 shape = SubResource("RectangleShape2D_interior8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Interior8" unique_id=1650414783]
-position = Vector2(170, 357.5)
+position = Vector2(97, 521)
 shape = SubResource("RectangleShape2D_interior8")
 
 [node name="Player" parent="." unique_id=2051864525 instance=ExtResource("3_player")]
-position = Vector2(353, 142)
+position = Vector2(428, 199)
 
 [node name="DoorToClassroomLeft" type="Area2D" parent="." unique_id=1581816247]
 position = Vector2(49, 127)
@@ -172,7 +175,7 @@ dialog_lines_repeat = Array[String](["Todavía no empieza el examen y ya siento 
 wander_radius = 40.0
 
 [node name="EstudiantePasilloEnfermo" parent="." unique_id=622006352 instance=ExtResource("5_npc")]
-position = Vector2(650, 150)
+position = Vector2(612, 149)
 sprite_frame = 15
 sprite_modulate = Color(0.85, 0.9, 1, 1)
 npc_name = "Pedro"
@@ -181,7 +184,7 @@ dialog_lines_repeat = Array[String](["Todavía me duele... mejor me voy a casa."
 wander_radius = 40.0
 
 [node name="EstudiantePasilloTranquilo" parent="." unique_id=282534089 instance=ExtResource("5_npc")]
-position = Vector2(428, 350)
+position = Vector2(280, 567)
 sprite_texture = ExtResource("6_np1")
 npc_name = "Jorge"
 dialog_lines = Array[String](["Uff, qué día tan pesado. Tres exámenes en una semana es una locura.", "El de matemáticas me fue mal, pero el de historia creo que lo salvé.", "Ojalá el profesor de inglés haya visto mi tarea a tiempo."])
@@ -193,6 +196,19 @@ position = Vector2(780, 551)
 sprite_texture = ExtResource("7_objeto")
 dialog_lines = Array[String](["No puedes pasar aun..."])
 
+[node name="FaintingTrigger" type="Area2D" parent="." unique_id=330823648]
+position = Vector2(719, 629)
+collision_mask = 3
+script = ExtResource("10_trigger")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FaintingTrigger" unique_id=1750824346]
+position = Vector2(21, 0)
+shape = SubResource("RectangleShape2D_trigger")
+
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=514008989]
 
 [node name="PauseMenu" parent="CanvasLayer" unique_id=198726533 instance=ExtResource("4_x75wc")]
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=2071413797]
+stream = ExtResource("11_pgpuf")
+autoplay = true

@@ -83,10 +83,9 @@ func show_save_feedback(slot: int) -> void:
 	var original := btn.text
 	btn.text = "✓ PARTIDA GUARDADA"
 	var tween = create_tween()
-	tween.set_delay(1.0)
 	tween.tween_callback(func():
 		btn.text = original
-	)
+	).set_delay(1.0)
 
 func _on_slot_pressed(slot: int) -> void:
 	slot_selected.emit(slot, _mode)

@@ -80,6 +80,7 @@ func _on_confirmation_confirmed() -> void:
 	elif _pending_mode == "load":
 		$SlotSelector.hide_panel()
 		_active_panel = null
+		PhoneHud.reset()
 		var last_scene := SaveManager.load_game(_pending_slot)
 		if last_scene != "":
 			SceneManager.change_scene(last_scene)

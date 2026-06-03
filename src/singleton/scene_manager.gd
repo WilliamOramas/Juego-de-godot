@@ -100,8 +100,6 @@ func change_scene(target_path: String, target_spawn: String = "", return_spawn: 
 		_anim.play("fade_in")
 		await _anim.animation_finished
 	
-	if target_path != "res://src/menu/main_menu.tscn":
-		SaveManager.flush(target_path)
 	_changing_scene = false
 	transition_finished.emit()
 	EventBus.scene_changed.emit(target_path)

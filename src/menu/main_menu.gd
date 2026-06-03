@@ -59,6 +59,7 @@ func _on_slot_selected(slot: int, mode: String) -> void:
 			SaveManager.reset_game(slot)
 			SceneManager.change_scene("res://src/levels/school_hallway.tscn")
 		"load":
+			PhoneHud.reset()
 			var last_scene := SaveManager.load_game(slot)
 			if last_scene != "":
 				SceneManager.change_scene(last_scene)

@@ -16,6 +16,7 @@ var step_timer: float = 0.0
 
 func _ready() -> void:
 	animation_tree.active = true
+	add_to_group("player")
 	
 	# Posicionar al jugador según prioridad: 1) spawn de destino, 2) posición guardada (Continue), 3) posición por defecto
 	if Global.target_spawn_name != "":

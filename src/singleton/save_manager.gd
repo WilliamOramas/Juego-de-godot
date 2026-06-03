@@ -152,10 +152,7 @@ func load_game(slot: int) -> String:
 	return last_scene
 
 func _get_player() -> Player:
-	var scene := get_tree().current_scene
-	if not scene:
-		return null
-	return scene.find_child("Player", true, false) as Player
+	return get_tree().get_first_node_in_group("player") as Player
 
 func _build_game_data(override_last_scene: String = "") -> Dictionary:
 	var last_scene := override_last_scene
@@ -168,6 +165,7 @@ func _build_game_data(override_last_scene: String = "") -> Dictionary:
 		"last_scene": last_scene,
 		"timestamp": Time.get_unix_time_from_system(),
 		"student_died": Global.student_died,
+		"return_spawn_name": Global.return_spawn_name,
 	}
 	var player := _get_player()
 	if player:
@@ -188,4 +186,6 @@ func _apply_game_data(data: Dictionary) -> String:
 		Global.pending_position_restore = true
 	if data.has("student_died"):
 		Global.student_died = data["student_died"]
+	if data.has("return_spawn_name"):
+		Global.return_spawn_name = data["return_spawn_name"]
 	return data.get("last_scene", "")

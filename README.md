@@ -11,6 +11,7 @@ Este proyecto está especialmente diseñado para estudiantes universitarios de l
 * **Enmanuel Bracho**
 * **Oscar Petit**
 * **Javier Garcia**
+* **Jose Manzanares**
 
 ---
 

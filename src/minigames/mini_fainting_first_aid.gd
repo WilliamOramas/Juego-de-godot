@@ -97,10 +97,72 @@ var _tap_timeout: float = 0.0
 var _state: String = "playing"
 var _state_timer: float = 0.0
 
+var _keycap_rect: TextureRect
+var _hearts_box: HBoxContainer
+var _ecg_line: Control
+
 func _ready() -> void:
 	super()
 	_time_remaining = TIME_LIMIT
 	progress_bar.visible = false
+	
+	# Apply CRT Shader
+	var mat = ShaderMaterial.new()
+	mat.shader = load("res://src/minigames/retro_crt.gdshader")
+	mat.set_shader_parameter("vignette_intensity", 0.4)
+	mat.set_shader_parameter("vignette_opacity", 0.8)
+	mat.set_shader_parameter("vignette_color", Color.BLACK)
+	background.material = mat
+	
+	# Restyle texts to diegetic positions
+	instruction_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	instruction_label.position = Vector2(80, 180)
+	instruction_label.size = Vector2(500, 60)
+	instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	
+	help_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	help_label.position = Vector2(80, 250)
+	help_label.size = Vector2(500, 80)
+	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	
+	step_label.position = Vector2(20, 20)
+	timer_label.position = Vector2(340, 15)
+	
+	# Keycap
+	_keycap_rect = TextureRect.new()
+	_keycap_rect.texture = load("res://src/assets/sprites/keycap_q.svg")
+	_keycap_rect.position = Vector2(80, 350)
+	_keycap_rect.size = Vector2(32, 32)
+	_keycap_rect.visible = false
+	game_container.add_child(_keycap_rect)
+	
+	# Progress bar reposition
+	progress_bar.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	progress_bar.position = Vector2(130, 350)
+	
+	# Hearts Box
+	hearts_label.visible = false
+	_hearts_box = HBoxContainer.new()
+	_hearts_box.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_hearts_box.position = Vector2(650, 15)
+	_hearts_box.size = Vector2(120, 32)
+	_hearts_box.alignment = BoxContainer.ALIGNMENT_END
+	game_container.add_child(_hearts_box)
+	for i in range(3):
+		var tr = TextureRect.new()
+		tr.texture = load("res://src/assets/sprites/heart_pixel.svg")
+		tr.custom_minimum_size = Vector2(32, 32)
+		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_hearts_box.add_child(tr)
+		
+	# ECG Line Control
+	_ecg_line = Control.new()
+	_ecg_line.position = Vector2(0, 0)
+	_ecg_line.size = Vector2(800, 600)
+	_ecg_line.draw.connect(_on_ecg_draw)
+	game_container.add_child(_ecg_line)
+	
 	_reset_step()
 
 func _reset_step() -> void:
@@ -166,14 +228,21 @@ func _update_dial_label() -> void:
 func _update_ui() -> void:
 	var step = STEP_DATA[_current_step]
 	instruction_label.text = step.instruction
-	help_label.text = "[ " + step.help + " ]"
+	help_label.text = step.help.replace("[Q] ", "").replace("[Q]", "")
 	step_label.text = "Paso %d/%d" % [_current_step + 1, STEP_DATA.size()]
-	hearts_label.text = ""
-	for i in _lives:
-		hearts_label.text += "❤"
+	if _hearts_box:
+		for i in range(_hearts_box.get_child_count()):
+			var child = _hearts_box.get_child(i)
+			if i < _lives:
+				child.modulate.a = 1.0
+			else:
+				child.modulate.a = 0.2
 	feedback_label.text = ""
 	_hold_penalized = false
 	progress_bar.visible = (step.type == StepType.HOLD_3 or step.type == StepType.HOLD_ELEVATE)
+	if _keycap_rect:
+		var needs_keycap = (step.type == StepType.HOLD_3 or step.type == StepType.HOLD_ELEVATE or step.type == StepType.TAP or step.type == StepType.TIMED_PRESS or step.type == StepType.ECG)
+		_keycap_rect.visible = needs_keycap
 	_update_timer_label()
 	_update_patient_color()
 	_update_dial_label()
@@ -198,6 +267,13 @@ func _lose_life(msg: String) -> void:
 		_ecg_tween.kill()
 		_ecg_tween = null
 	_lives -= 1
+	if _hearts_box:
+		for i in range(_hearts_box.get_child_count()):
+			var child = _hearts_box.get_child(i)
+			if i < _lives:
+				child.modulate.a = 1.0
+			else:
+				child.modulate.a = 0.2
 	feedback_label.modulate = Color.RED
 	feedback_label.text = "✗ " + msg
 	var wrong: AudioStreamPlayer = get_node_or_null("WrongSound")
@@ -224,9 +300,23 @@ func _on_step_ok() -> void:
 	_state = "step_ok_delay"
 	_state_timer = 0.8
 
+var _ecg_time: float = 0.0
+
 func _process(delta: float) -> void:
 	if not _is_running:
 		return
+	
+	_ecg_time += delta
+	if _ecg_line:
+		_ecg_line.queue_redraw()
+		
+	if Input.is_action_pressed("Phone"):
+		if _keycap_rect and _keycap_rect.texture != null:
+			_keycap_rect.texture = load("res://src/assets/sprites/keycap_q_pressed.svg")
+	else:
+		if _keycap_rect and _keycap_rect.texture != null:
+			_keycap_rect.texture = load("res://src/assets/sprites/keycap_q.svg")
+			
 	if _state == "step_ok_delay":
 		_state_timer -= delta
 		if _state_timer <= 0:
@@ -433,3 +523,34 @@ func _do_ecg_beat(step: Dictionary) -> void:
 		_ecg_tween.finished.connect(func():
 			_ecg_tween = null
 		)
+
+func _on_ecg_draw() -> void:
+	if not _ecg_line: return
+	var points = PackedVector2Array()
+	var w = _ecg_line.size.x
+	var base_y = 90.0
+	
+	# Frecuencia basada en vidas
+	var freq = 1.0
+	if _lives == 2: freq = 1.5
+	elif _lives == 1: freq = 2.5
+	elif _lives <= 0: freq = 0.0 # flatline
+	
+	var color = Color(0.2, 1.0, 0.2) # Verde (normal)
+	if _lives == 2: color = Color(1.0, 0.8, 0.2) # Amarillo
+	elif _lives <= 1: color = Color(1.0, 0.2, 0.2) # Rojo
+	
+	for x in range(0, int(w), 4):
+		var nx = x / w
+		var y = base_y
+		if freq > 0.0:
+			var phase = fmod(nx * 5.0 - _ecg_time * freq, 1.0)
+			if phase > 0.4 and phase < 0.6:
+				var spike = sin((phase - 0.4) * 5.0 * PI)
+				y += spike * 30.0
+		points.append(Vector2(x, y))
+		
+	if points.size() > 1:
+		for i in range(points.size() - 1):
+			_ecg_line.draw_line(points[i], points[i+1], color, 2.0, true)
+

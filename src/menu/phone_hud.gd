@@ -15,6 +15,8 @@ const SCENARIO_TIMEOUT: float = 30.0
 var _mode: PhoneMode = PhoneMode.HOME
 var _message_queue: Array[Dictionary] = []
 var _scenario_timer: float = 0.0
+var _dialog_active: bool = false
+var _was_visible_before_dialog: bool = false
 
 
 func _ready() -> void:
@@ -24,10 +26,12 @@ func _ready() -> void:
 	face_anim.play("talk")
 	EventBus.scene_changing.connect(_on_scene_changing)
 	EventBus.minigame_completed.connect(_on_minigame_completed)
+	EventBus.dialog_started.connect(_on_dialog_started)
+	EventBus.dialog_finished.connect(_on_dialog_finished)
 
 
 func _process(delta: float) -> void:
-	if _mode == PhoneMode.SCENARIO:
+	if _mode == PhoneMode.SCENARIO and not _dialog_active:
 		_scenario_timer -= delta
 		if _scenario_timer <= 0:
 			_dismiss_message()
@@ -35,6 +39,8 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _mode == PhoneMode.LAUNCHING:
+		return
+	if _dialog_active:
 		return
 	if get_tree().current_scene is MainMenu:
 		return
@@ -125,8 +131,7 @@ func _dismiss_message() -> void:
 
 
 func _on_scene_changing(_scene_path: String) -> void:
-	if _mode == PhoneMode.SCENARIO or _mode == PhoneMode.MESSAGE:
-		reset()
+	reset()
 
 
 func _on_minigame_completed(game_id: String, success: bool) -> void:
@@ -134,6 +139,22 @@ func _on_minigame_completed(game_id: String, success: bool) -> void:
 		return
 	var text := "Emergencia resuelta.\nEstudiante estabilizado." if success else "Falleció el estudiante."
 	push_notification("PIXEL v1.0", text, false, "")
+
+
+func _on_dialog_started() -> void:
+	_dialog_active = true
+	_was_visible_before_dialog = visible
+	if visible:
+		close_phone()
+
+
+func _on_dialog_finished() -> void:
+	_dialog_active = false
+	if _was_visible_before_dialog or not _message_queue.is_empty():
+		_was_visible_before_dialog = false
+		open_phone()
+	else:
+		_was_visible_before_dialog = false
 
 
 func _launch_scenario() -> void:

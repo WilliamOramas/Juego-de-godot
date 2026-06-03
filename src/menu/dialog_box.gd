@@ -45,6 +45,7 @@ func show_dialog(npc_name: String, lines: Array[String]) -> void:
 	_slide_tween.tween_property(panel, "offset_top", -170.0, 0.3)
 	_slide_tween.finished.connect(_start_typewriter)
 	audio_select.play()
+	EventBus.dialog_started.emit()
 
 func _start_typewriter() -> void:
 	if _current_line >= _lines.size():

@@ -101,11 +101,14 @@ var _keycap_rect: TextureRect
 var _hearts_box: HBoxContainer
 var _ecg_line: Control
 
+var _shake_timer: float = 0.0
+
 func _ready() -> void:
 	super()
 	_time_remaining = TIME_LIMIT
 	progress_bar.visible = false
-	
+	_shake_timer = 0.5
+
 	# Apply CRT Shader
 	var mat = ShaderMaterial.new()
 	mat.shader = load("res://src/minigames/retro_crt.gdshader")
@@ -113,39 +116,69 @@ func _ready() -> void:
 	mat.set_shader_parameter("vignette_opacity", 0.8)
 	mat.set_shader_parameter("vignette_color", Color.BLACK)
 	background.material = mat
-	
+
 	# Restyle texts to diegetic positions
-	instruction_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	instruction_label.position = Vector2(80, 180)
-	instruction_label.size = Vector2(500, 60)
+	instruction_label.set_anchors_preset(Control.PRESET_CENTER)
+	instruction_label.offset_left = -320
+	instruction_label.offset_top = -120
+	instruction_label.offset_right = 180
+	instruction_label.offset_bottom = -60
 	instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	
-	help_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	help_label.position = Vector2(80, 250)
-	help_label.size = Vector2(500, 80)
+	help_label.set_anchors_preset(Control.PRESET_CENTER)
+	help_label.offset_left = -320
+	help_label.offset_top = -50
+	help_label.offset_right = 180
+	help_label.offset_bottom = 30
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	
-	step_label.position = Vector2(20, 20)
-	timer_label.position = Vector2(340, 15)
+	step_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	step_label.offset_left = 20
+	step_label.offset_top = 20
+	
+	timer_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	timer_label.offset_left = -50
+	timer_label.offset_top = 15
+	timer_label.offset_right = 50
 	
 	# Keycap
 	_keycap_rect = TextureRect.new()
 	_keycap_rect.texture = load("res://src/assets/sprites/keycap_q.svg")
-	_keycap_rect.position = Vector2(80, 350)
-	_keycap_rect.size = Vector2(32, 32)
+	_keycap_rect.set_anchors_preset(Control.PRESET_CENTER)
+	_keycap_rect.offset_left = -320
+	_keycap_rect.offset_top = 50
+	_keycap_rect.offset_right = -288
+	_keycap_rect.offset_bottom = 82
 	_keycap_rect.visible = false
 	game_container.add_child(_keycap_rect)
 	
 	# Progress bar reposition
-	progress_bar.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	progress_bar.position = Vector2(130, 350)
-	
+	progress_bar.set_anchors_preset(Control.PRESET_CENTER)
+	progress_bar.offset_left = -270
+	progress_bar.offset_top = 50
+	progress_bar.offset_bottom = 82
+
+	# Reparent the patient to the world to enable Y-sorting against the player
+	patient_sprite.centered = true
+	var world = get_tree().current_scene
+	if world:
+		patient_sprite.get_parent().remove_child(patient_sprite)
+		world.add_child(patient_sprite)
+		patient_sprite.global_position = Vector2(700, 600)
+		var main_camera = get_viewport().get_camera_2d()
+		if main_camera:
+			patient_sprite.scale = patient_sprite.scale / main_camera.zoom
+	else:
+		patient_sprite.position = Vector2(647, 401)
+
 	# Hearts Box
 	hearts_label.visible = false
 	_hearts_box = HBoxContainer.new()
-	_hearts_box.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	_hearts_box.position = Vector2(650, 15)
-	_hearts_box.size = Vector2(120, 32)
+	_hearts_box.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	_hearts_box.offset_left = -150
+	_hearts_box.offset_top = 15
+	_hearts_box.offset_right = -30
+	_hearts_box.offset_bottom = 47
 	_hearts_box.alignment = BoxContainer.ALIGNMENT_END
 	game_container.add_child(_hearts_box)
 	for i in range(3):
@@ -155,14 +188,32 @@ func _ready() -> void:
 		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		_hearts_box.add_child(tr)
-		
+
 	# ECG Line Control
 	_ecg_line = Control.new()
-	_ecg_line.position = Vector2(0, 0)
-	_ecg_line.size = Vector2(800, 600)
+	_ecg_line.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_ecg_line.offset_left = 0
+	_ecg_line.offset_top = 0
+	_ecg_line.offset_right = 0
+	_ecg_line.offset_bottom = 0
 	_ecg_line.draw.connect(_on_ecg_draw)
 	game_container.add_child(_ecg_line)
+
+	# Audio Setup
+	var bgm_player = AudioStreamPlayer.new()
+	bgm_player.stream = load("res://src/assets/sounds/Waiting_For_The_Lock.mp3")
+	bgm_player.volume_db = -8.0
+	game_container.add_child(bgm_player)
+	bgm_player.play(109.0) # Start from 1:49
+	bgm_player.finished.connect(func(): bgm_player.play(109.0))
 	
+	var heart_player = AudioStreamPlayer.new()
+	heart_player.stream = load("res://src/assets/sounds/freesound_community-corazon-66362.mp3")
+	heart_player.volume_db = 0.0
+	game_container.add_child(heart_player)
+	heart_player.play()
+	heart_player.finished.connect(func(): heart_player.play())
+
 	_reset_step()
 
 func _reset_step() -> void:
@@ -305,18 +356,30 @@ var _ecg_time: float = 0.0
 func _process(delta: float) -> void:
 	if not _is_running:
 		return
+
+	var trauma = 0.0
+	if _shake_timer > 0:
+		_shake_timer -= delta
+		trauma = (_shake_timer / 0.5) * 15.0
 	
+	var main_camera = get_viewport().get_camera_2d()
+	if main_camera:
+		var time = Time.get_ticks_msec() / 1000.0
+		var wobble_x = sin(time * 2.5) * 1.5 + cos(time * 1.7) * 2.0
+		var wobble_y = cos(time * 3.1) * 1.5 + sin(time * 1.3) * 2.0
+		main_camera.offset = Vector2(wobble_x, wobble_y) + Vector2(randf_range(-trauma, trauma), randf_range(-trauma, trauma))
+
 	_ecg_time += delta
 	if _ecg_line:
 		_ecg_line.queue_redraw()
-		
+
 	if Input.is_action_pressed("Phone"):
 		if _keycap_rect and _keycap_rect.texture != null:
 			_keycap_rect.texture = load("res://src/assets/sprites/keycap_q_pressed.svg")
 	else:
 		if _keycap_rect and _keycap_rect.texture != null:
 			_keycap_rect.texture = load("res://src/assets/sprites/keycap_q.svg")
-			
+
 	if _state == "step_ok_delay":
 		_state_timer -= delta
 		if _state_timer <= 0:
@@ -529,17 +592,17 @@ func _on_ecg_draw() -> void:
 	var points = PackedVector2Array()
 	var w = _ecg_line.size.x
 	var base_y = 90.0
-	
+
 	# Frecuencia basada en vidas
 	var freq = 1.0
 	if _lives == 2: freq = 1.5
 	elif _lives == 1: freq = 2.5
 	elif _lives <= 0: freq = 0.0 # flatline
-	
+
 	var color = Color(0.2, 1.0, 0.2) # Verde (normal)
 	if _lives == 2: color = Color(1.0, 0.8, 0.2) # Amarillo
 	elif _lives <= 1: color = Color(1.0, 0.2, 0.2) # Rojo
-	
+
 	for x in range(0, int(w), 4):
 		var nx = x / w
 		var y = base_y
@@ -549,8 +612,12 @@ func _on_ecg_draw() -> void:
 				var spike = sin((phase - 0.4) * 5.0 * PI)
 				y += spike * 30.0
 		points.append(Vector2(x, y))
-		
+
 	if points.size() > 1:
 		for i in range(points.size() - 1):
 			_ecg_line.draw_line(points[i], points[i+1], color, 2.0, true)
 
+func _exit_tree() -> void:
+	var main_camera = get_viewport().get_camera_2d()
+	if main_camera:
+		main_camera.offset = Vector2.ZERO

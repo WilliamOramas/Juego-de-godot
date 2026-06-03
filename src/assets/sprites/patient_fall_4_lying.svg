@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
+	<!-- Head -->
+	<rect x="2" y="26" width="6" height="6" fill="#fcdfb6" />
+	<rect x="4" y="26" width="4" height="6" fill="#5c3a21" />
+	<!-- Arm extending left -->
+	<rect x="0" y="28" width="4" height="4" fill="#fcdfb6" />
+	<!-- Body -->
+	<rect x="8" y="26" width="12" height="6" fill="#40e0d0" />
+	<!-- Legs straight -->
+	<rect x="20" y="28" width="10" height="4" fill="#8b5a2b" />
+	<!-- Feet -->
+	<rect x="30" y="28" width="2" height="4" fill="#111111" />
+</svg>

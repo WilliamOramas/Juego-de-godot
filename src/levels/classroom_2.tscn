@@ -239,7 +239,7 @@ position = Vector2(270, 420)
 [node name="EstudianteSalon" parent="." unique_id=835562264 instance=ExtResource("6_npc")]
 position = Vector2(192, 268)
 sprite_texture = ExtResource("5_np2")
-npc_name = "Ana"
+npc_name = "Antonio"
 dialog_lines = Array[String](["Hola, ¿viniste a estudiar? Este salón está más tranquilo.", "El profe de ciencias dejó una tarea bien difícil, ¿ya la hiciste?", "Si quieres te presto mis apuntes, tengo todo el temario."])
 dialog_lines_repeat = Array[String](["Otra vez aquí estudiando. Eres más aplicado de lo que pareces.", "La biblioteca está llena, mejor quédate aquí."])
 wander_radius = 40.0

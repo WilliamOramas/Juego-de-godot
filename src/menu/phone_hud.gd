@@ -183,65 +183,27 @@ func _play_fainting_cinematic() -> void:
 	var canvas := CanvasLayer.new()
 	canvas.layer = 100
 	tree.current_scene.add_child(canvas)
-	
-	var black := ColorRect.new()
-	black.color = Color.BLACK
-	black.modulate.a = 0.0
-	black.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	canvas.add_child(black)
-	
-	# Fade to black
-	var tw1 = tree.create_tween()
-	tw1.tween_property(black, "modulate:a", 1.0, 0.5)
+
+	var blur_shader := load("res://src/singleton/time_blur.gdshader")
+	var mat := ShaderMaterial.new()
+	mat.shader = blur_shader
+	mat.set_shader_parameter("wipe_progress", 0.0)
+
+	var overlay := ColorRect.new()
+	overlay.material = mat
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	canvas.add_child(overlay)
+
+	var tw1 := tree.create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw1.tween_property(mat, "shader_parameter/wipe_progress", 1.0, 0.6)
 	await tw1.finished
-	
-	# Move camera
-	var camera: Camera2D = tree.current_scene.get_viewport().get_camera_2d()
-	var old_cam_pos = Vector2.ZERO
-	if camera:
-		old_cam_pos = camera.global_position
-		camera.global_position = Vector2(700, 600)
-		
-	# Create animated sprite
-	var falling_sprite := AnimatedSprite2D.new()
-	var frames := SpriteFrames.new()
-	frames.add_animation("fall")
-	frames.set_animation_speed("fall", 5.0)
-	frames.set_animation_loop("fall", false)
-	
-	for i in range(1, 5):
-		var path = "res://src/assets/sprites/patient_fall_%d" % i
-		if i == 4:
-			path = "res://src/assets/sprites/patient_fall_4_lying.svg"
-		else:
-			path += ".svg"
-		frames.add_frame("fall", load(path))
-		
-	falling_sprite.sprite_frames = frames
-	falling_sprite.scale = Vector2(2.5, 2.5)
-	falling_sprite.global_position = Vector2(850, 450)
-	tree.current_scene.add_child(falling_sprite)
-	
-	# Fade in from black
-	var tw2 = tree.create_tween()
-	tw2.tween_property(black, "modulate:a", 0.0, 0.5)
+
+	await tree.create_timer(0.3).timeout
+
+	var tw2 := tree.create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw2.tween_property(mat, "shader_parameter/wipe_progress", 2.0, 0.6)
 	await tw2.finished
-	
-	# Play falling
-	falling_sprite.play("fall")
-	var tw3 = tree.create_tween()
-	tw3.tween_property(falling_sprite, "global_position", Vector2(700, 600), 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	await falling_sprite.animation_finished
-	await tree.create_timer(1.0).timeout
-	
-	# Fade to black again
-	var tw4 = tree.create_tween()
-	tw4.tween_property(black, "modulate:a", 1.0, 0.5)
-	await tw4.finished
-	
-	if camera:
-		camera.global_position = old_cam_pos
-	falling_sprite.queue_free()
+
 	canvas.queue_free()
 
 

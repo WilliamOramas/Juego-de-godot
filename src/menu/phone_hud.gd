@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 enum PhoneMode { HOME, MESSAGE, SCENARIO, LAUNCHING }
+enum Mood { NORMAL, HAPPY, SAD, ANGRY, TALK }
 
 const MINIGAME_PATH: String = "res://src/minigames/mini_fainting_first_aid.tscn"
 const MINIGAME_ID: String = "fainting_first_aid"
@@ -17,6 +18,7 @@ var _message_queue: Array[Dictionary] = []
 var _scenario_timer: float = 0.0
 var _dialog_active: bool = false
 var _was_visible_before_dialog: bool = false
+var _current_mood: Mood = Mood.TALK
 
 
 func _ready() -> void:
@@ -60,6 +62,21 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 # ─── Public API ────────────────────────────────────────
+
+func set_mood(mood: Mood) -> void:
+	_current_mood = mood
+	match mood:
+		Mood.NORMAL:
+			face_anim.play("normal")
+		Mood.HAPPY:
+			face_anim.play("happy")
+		Mood.SAD:
+			face_anim.play("sad")
+		Mood.ANGRY:
+			face_anim.play("angry")
+		Mood.TALK:
+			face_anim.play("talk")
+
 
 func push_notification(title: String, body: String, sound: bool = false, scenario_id: String = "") -> void:
 	var msg: Dictionary = {
@@ -222,6 +239,24 @@ func open_phone() -> void:
 	slide_sound.play()
 	if _mode == PhoneMode.HOME:
 		status_label.text = "PIXEL v1.0"
+		
+	_demo_moods()
+
+
+func _demo_moods() -> void:
+	set_mood(Mood.NORMAL)
+	await get_tree().create_timer(1.5).timeout
+	if not visible: return
+	set_mood(Mood.HAPPY)
+	await get_tree().create_timer(1.5).timeout
+	if not visible: return
+	set_mood(Mood.SAD)
+	await get_tree().create_timer(1.5).timeout
+	if not visible: return
+	set_mood(Mood.ANGRY)
+	await get_tree().create_timer(1.5).timeout
+	if not visible: return
+	set_mood(Mood.TALK)
 
 
 func close_phone() -> void:

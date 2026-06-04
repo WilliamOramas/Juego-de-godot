@@ -11,6 +11,8 @@
 [ext_resource type="Script" uid="uid://dtl581vlfbxui" path="res://src/levels/level_limits.gd" id="9_limits"]
 [ext_resource type="Script" uid="uid://q8irhcv5yxjm" path="res://src/entities/fainting_trigger.gd" id="10_trigger"]
 [ext_resource type="AudioStream" uid="uid://d37vi1rnlv68q" path="res://src/assets/sounds/music_fondo_uni.mp3" id="11_pgpuf"]
+[ext_resource type="Resource" path="res://src/quests/quest_introduction.tres" id="12_qintro"]
+[ext_resource type="Resource" path="res://src/quests/quest_exploration.tres" id="13_qexplore"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_top"]
 size = Vector2(334, 86)
@@ -173,6 +175,7 @@ npc_name = "Luis"
 dialog_lines = Array[String](["¡El examen de matemáticas es hoy! Estoy muy nervioso.", "No he dormido nada estudiando fórmulas y todavía no me sé ninguna.", "Ojalá el profesor ponga algo fácil... como sumas."])
 dialog_lines_repeat = Array[String](["Todavía no empieza el examen y ya siento que voy a reprobar.", "Mis manos no dejan de temblar, hermano."])
 wander_radius = 40.0
+quest_to_start = ExtResource("12_qintro")
 
 [node name="EstudiantePasilloEnfermo" parent="." unique_id=622006352 instance=ExtResource("5_npc")]
 position = Vector2(612, 149)
@@ -190,6 +193,7 @@ npc_name = "Jorge"
 dialog_lines = Array[String](["Uff, qué día tan pesado. Tres exámenes en una semana es una locura.", "El de matemáticas me fue mal, pero el de historia creo que lo salvé.", "Ojalá el profesor de inglés haya visto mi tarea a tiempo."])
 dialog_lines_repeat = Array[String](["Sigo estudiando para los exámenes, no me queda de otra.", "Al menos ya casi es viernes, eso es lo único que me anima."])
 wander_radius = 40.0
+quest_to_start = ExtResource("13_qexplore")
 
 [node name="ObjetoPuerta" parent="." unique_id=1442141130 instance=ExtResource("8_objeto")]
 position = Vector2(780, 551)

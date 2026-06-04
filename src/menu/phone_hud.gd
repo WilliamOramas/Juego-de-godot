@@ -1,7 +1,7 @@
 extends CanvasLayer
 
-enum PhoneMode { HOME, MESSAGE, SCENARIO, LAUNCHING }
-enum Mood { NORMAL, HAPPY, SAD, ANGRY, TALK }
+enum PhoneMode {HOME, MESSAGE, SCENARIO, LAUNCHING}
+enum Mood {NORMAL, HAPPY, SAD, ANGRY, TALK}
 
 const MINIGAME_PATH: String = "res://src/minigames/mini_fainting_first_aid.tscn"
 const MINIGAME_ID: String = "fainting_first_aid"
@@ -30,6 +30,9 @@ func _ready() -> void:
 	EventBus.minigame_completed.connect(_on_minigame_completed)
 	EventBus.dialog_started.connect(_on_dialog_started)
 	EventBus.dialog_finished.connect(_on_dialog_finished)
+	EventBus.quest_started.connect(_on_quest_event)
+	EventBus.objective_advanced.connect(_on_quest_event)
+	EventBus.quest_completed.connect(_on_quest_event)
 
 
 func _process(delta: float) -> void:
@@ -46,9 +49,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if get_tree().current_scene is MainMenu:
 		return
+	if get_tree().paused and not MiniGameManager.is_minigame_active():
+		return
+
+	if event.is_action_pressed("quest_log"):
+		if _quest_log_panel != null and is_instance_valid(_quest_log_panel):
+			_close_quest_log()
+		else:
+			_open_quest_log()
+		get_viewport().set_input_as_handled()
+		return
+
 	if event.is_action_pressed("Phone"):
-		if get_tree().paused and not MiniGameManager.is_minigame_active():
-			return
 		match _mode:
 			PhoneMode.SCENARIO:
 				_launch_scenario()
@@ -91,6 +103,9 @@ func push_notification(title: String, body: String, sound: bool = false, scenari
 
 
 func reset() -> void:
+	if _quest_log_panel != null and is_instance_valid(_quest_log_panel):
+		_quest_log_panel.queue_free()
+	_quest_log_panel = null
 	_mode = PhoneMode.HOME
 	_message_queue.clear()
 	_scenario_timer = 0.0
@@ -113,7 +128,7 @@ func cancel_scenario() -> void:
 func _show_next_message() -> void:
 	if _message_queue.is_empty():
 		_mode = PhoneMode.HOME
-		status_label.text = "PIXEL v1.0"
+		_update_status_label()
 		if not visible:
 			return
 		open_phone()
@@ -224,6 +239,20 @@ func _play_fainting_cinematic() -> void:
 	canvas.queue_free()
 
 
+func _update_status_label() -> void:
+	var active_count := QuestManager.active_quests.size()
+	if active_count > 0:
+		status_label.text = "PIXEL v1.0\nMisiones: " + str(active_count) + " activas"
+	else:
+		status_label.text = "PIXEL v1.0"
+
+func _on_quest_event(_a: String = "", _b: String = "", _c: String = "") -> void:
+	if _quest_log_panel != null and is_instance_valid(_quest_log_panel):
+		_quest_log_panel.populate(QuestManager.active_quests, QuestManager.completed_quests)
+	if visible and _mode == PhoneMode.HOME:
+		_update_status_label()
+
+
 # ─── Phone UI ──────────────────────────────────────────
 
 func toggle_phone() -> void:
@@ -239,24 +268,6 @@ func open_phone() -> void:
 	slide_sound.play()
 	if _mode == PhoneMode.HOME:
 		status_label.text = "PIXEL v1.0"
-		
-	_demo_moods()
-
-
-func _demo_moods() -> void:
-	set_mood(Mood.NORMAL)
-	await get_tree().create_timer(1.5).timeout
-	if not visible: return
-	set_mood(Mood.HAPPY)
-	await get_tree().create_timer(1.5).timeout
-	if not visible: return
-	set_mood(Mood.SAD)
-	await get_tree().create_timer(1.5).timeout
-	if not visible: return
-	set_mood(Mood.ANGRY)
-	await get_tree().create_timer(1.5).timeout
-	if not visible: return
-	set_mood(Mood.TALK)
 
 
 func close_phone() -> void:
@@ -266,3 +277,21 @@ func close_phone() -> void:
 	slide_sound.play()
 	await anim.animation_finished
 	visible = false
+
+var _quest_log_panel: QuestLogPanel = null
+
+func _open_quest_log() -> void:
+	if _quest_log_panel == null or not is_instance_valid(_quest_log_panel):
+		_quest_log_panel = QuestLogPanel.new()
+		_quest_log_panel.closed.connect(_on_quest_log_closed)
+		get_tree().current_scene.add_child(_quest_log_panel)
+	_quest_log_panel.populate(QuestManager.active_quests, QuestManager.completed_quests)
+
+func _close_quest_log() -> void:
+	if _quest_log_panel != null and is_instance_valid(_quest_log_panel):
+		_quest_log_panel.close()
+		await _quest_log_panel.closed
+	_quest_log_panel = null
+
+func _on_quest_log_closed() -> void:
+	_quest_log_panel = null

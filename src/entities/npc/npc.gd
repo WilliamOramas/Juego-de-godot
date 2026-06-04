@@ -226,5 +226,6 @@ func _on_interact_pressed() -> void:
 			var first_obj = quest_to_start.objectives[0]
 			if first_obj.type == QuestObjective.ObjectiveType.TALK_TO_NPC and first_obj.target_id == npc_name:
 				QuestManager.advance_objective(quest_to_start.quest_id, first_obj.objective_id)
+	QuestManager.advance_talk_objectives(npc_name)
 
 

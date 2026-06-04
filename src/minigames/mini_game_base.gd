@@ -30,13 +30,21 @@ func end(success: bool) -> void:
 	if not _is_running:
 		return
 	_is_running = false
-	get_tree().paused = false
 	process_mode = PROCESS_MODE_INHERIT
-	var tween = create_tween()
-	tween.tween_property(background, "modulate:a", 0.0, 0.3)
-	await tween.finished
-	hide()
-	emit_signal("game_completed", game_id, success)
+	
+	if SceneManager and SceneManager.has_method("play_time_passage"):
+		SceneManager.play_time_passage(1.5, func():
+			get_tree().paused = false
+			hide()
+			game_completed.emit(game_id, success)
+		)
+	else:
+		get_tree().paused = false
+		var tween = create_tween()
+		tween.tween_property(background, "modulate:a", 0.0, 0.3)
+		await tween.finished
+		hide()
+		game_completed.emit(game_id, success)
 
 func get_result() -> bool:
 	return false

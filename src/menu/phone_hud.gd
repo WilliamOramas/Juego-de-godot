@@ -203,7 +203,7 @@ func _play_fainting_cinematic() -> void:
 		camera.global_position = Vector2(700, 600)
 		
 	# Create animated sprite
-	var anim := AnimatedSprite2D.new()
+	var falling_sprite := AnimatedSprite2D.new()
 	var frames := SpriteFrames.new()
 	frames.add_animation("fall")
 	frames.set_animation_speed("fall", 5.0)
@@ -217,10 +217,10 @@ func _play_fainting_cinematic() -> void:
 			path += ".svg"
 		frames.add_frame("fall", load(path))
 		
-	anim.sprite_frames = frames
-	anim.scale = Vector2(2.5, 2.5)
-	anim.global_position = Vector2(850, 450)
-	tree.current_scene.add_child(anim)
+	falling_sprite.sprite_frames = frames
+	falling_sprite.scale = Vector2(2.5, 2.5)
+	falling_sprite.global_position = Vector2(850, 450)
+	tree.current_scene.add_child(falling_sprite)
 	
 	# Fade in from black
 	var tw2 = tree.create_tween()
@@ -228,10 +228,10 @@ func _play_fainting_cinematic() -> void:
 	await tw2.finished
 	
 	# Play falling
-	anim.play("fall")
+	falling_sprite.play("fall")
 	var tw3 = tree.create_tween()
-	tw3.tween_property(anim, "global_position", Vector2(700, 600), 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	await anim.animation_finished
+	tw3.tween_property(falling_sprite, "global_position", Vector2(700, 600), 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	await falling_sprite.animation_finished
 	await tree.create_timer(1.0).timeout
 	
 	# Fade to black again
@@ -241,7 +241,7 @@ func _play_fainting_cinematic() -> void:
 	
 	if camera:
 		camera.global_position = old_cam_pos
-	anim.queue_free()
+	falling_sprite.queue_free()
 	canvas.queue_free()
 
 

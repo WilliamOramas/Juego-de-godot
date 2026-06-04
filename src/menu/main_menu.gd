@@ -28,10 +28,10 @@ func _has_any_save() -> bool:
 			return true
 	return false
 
-func _show_game_buttons(show: bool) -> void:
-	$MarginContainer/VBoxContainer.visible = not show
-	$MarginContainer/SubmenuButtons.visible = show
-	if show:
+func _show_game_buttons(show_submenu: bool) -> void:
+	$MarginContainer/VBoxContainer.visible = not show_submenu
+	$MarginContainer/SubmenuButtons.visible = show_submenu
+	if show_submenu:
 		$MarginContainer/SubmenuButtons/Cargar_Partida.disabled = not _has_any_save()
 
 func _on_jugar_pressed() -> void:

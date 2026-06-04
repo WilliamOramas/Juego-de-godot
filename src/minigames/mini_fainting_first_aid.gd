@@ -182,12 +182,12 @@ func _ready() -> void:
 	_hearts_box.alignment = BoxContainer.ALIGNMENT_END
 	game_container.add_child(_hearts_box)
 	for i in range(3):
-		var tr = TextureRect.new()
-		tr.texture = load("res://src/assets/sprites/heart_pixel.svg")
-		tr.custom_minimum_size = Vector2(32, 32)
-		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		_hearts_box.add_child(tr)
+		var heart_rect = TextureRect.new()
+		heart_rect.texture = load("res://src/assets/sprites/heart_pixel.svg")
+		heart_rect.custom_minimum_size = Vector2(32, 32)
+		heart_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		heart_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_hearts_box.add_child(heart_rect)
 
 	# ECG Line Control
 	_ecg_line = Control.new()
@@ -213,6 +213,37 @@ func _ready() -> void:
 	game_container.add_child(heart_player)
 	heart_player.play()
 	heart_player.finished.connect(func(): heart_player.play())
+
+	# Custom style for PulsePoint (pulsing carotid target ring)
+	var pulse = get_node_or_null("GameContainer/PulsePoint")
+	if pulse:
+		pulse.custom_minimum_size = Vector2(48, 48)
+		pulse.size = Vector2(48, 48)
+		pulse.position = Vector2(326, 426)
+		var style = StyleBoxFlat.new()
+		style.bg_color = Color(0.0, 0.75, 1.0, 0.25) # Semi-transparent Cyan
+		style.border_width_left = 4
+		style.border_width_top = 4
+		style.border_width_right = 4
+		style.border_width_bottom = 4
+		style.border_color = Color(0.0, 0.9, 1.0, 1.0) # Glowing Bright Cyan border
+		style.corner_radius_top_left = 24
+		style.corner_radius_top_right = 24
+		style.corner_radius_bottom_left = 24
+		style.corner_radius_bottom_right = 24
+		style.anti_aliasing = true
+		style.anti_aliasing_size = 1.0
+		pulse.add_theme_stylebox_override("panel", style)
+		pulse.pivot_offset = Vector2(24, 24) # Centered for scale animations
+
+	# Set texture and pivot for HeartIcon (Step 7)
+	var heart_icon_node = get_node_or_null("GameContainer/HeartIcon")
+	if heart_icon_node:
+		heart_icon_node.custom_minimum_size = Vector2(32, 32)
+		heart_icon_node.size = Vector2(32, 32)
+		heart_icon_node.position = Vector2(378, 458)
+		heart_icon_node.texture = load("res://src/assets/sprites/heart_pixel.svg")
+		heart_icon_node.pivot_offset = Vector2(16, 16) # Centered for scale animations
 
 	_reset_step()
 
@@ -297,6 +328,19 @@ func _update_ui() -> void:
 	_update_timer_label()
 	_update_patient_color()
 	_update_dial_label()
+
+	# Controlar visibilidad y estado de reposo de los puntos táctiles sobre el paciente
+	var pulse = get_node_or_null("GameContainer/PulsePoint")
+	if pulse:
+		pulse.visible = (step.type == StepType.TIMED_PRESS)
+		pulse.modulate.a = 0.2
+		pulse.scale = Vector2(1.0, 1.0)
+		
+	var heart = get_node_or_null("GameContainer/HeartIcon")
+	if heart:
+		heart.visible = (step.type == StepType.ECG)
+		heart.modulate.a = 0.15
+		heart.scale = Vector2(1.0, 1.0)
 
 func _advance_step() -> void:
 	_current_step += 1
@@ -429,6 +473,23 @@ func _process(delta: float) -> void:
 		StepType.TAP:
 			_handle_tap(delta, step)
 
+	# Alinear dinámicamente los indicadores sobre el cuerpo del paciente en la pantalla
+	if patient_sprite and is_instance_valid(patient_sprite) and patient_sprite.texture:
+		var texture_size = patient_sprite.texture.get_size()
+		
+		var pulse = get_node_or_null("GameContainer/PulsePoint")
+		if pulse and pulse.visible:
+			var local_pos_pulse = Vector2(23.6, 33.2) - (texture_size / 2.0)
+			var screen_pos_pulse = patient_sprite.get_global_transform_with_canvas() * local_pos_pulse
+			pulse.position = screen_pos_pulse - pulse.size / 2.0
+			
+		var heart = get_node_or_null("GameContainer/HeartIcon")
+		if heart and heart.visible:
+			var local_pos_heart = Vector2(41.2, 42.8) - (texture_size / 2.0)
+			var screen_pos_heart = patient_sprite.get_global_transform_with_canvas() * local_pos_heart
+			heart.position = screen_pos_heart - heart.size / 2.0
+
+
 func _input(event: InputEvent) -> void:
 	if not _is_running:
 		return
@@ -511,16 +572,31 @@ func _handle_timed_press(delta: float, _step: Dictionary) -> void:
 		_pulse_window = 0.0
 		var pulse = get_node_or_null("GameContainer/PulsePoint")
 		if pulse:
-			pulse.visible = true
-			pulse.modulate.a = 0.3
 			if _pulse_tween:
 				_pulse_tween.kill()
-			_pulse_tween = create_tween()
-			_pulse_tween.tween_property(pulse, "modulate:a", 1.0, 0.4)
-			_pulse_tween.tween_property(pulse, "modulate:a", 0.3, 0.5)
-			_pulse_tween.tween_callback(func():
-				pulse.visible = false
-				pulse.modulate.a = 0.3
+			_pulse_tween = create_tween().set_parallel(true)
+			
+			# First beat: quick expansion and bright fade in from resting state (1.0 scale, 0.2 alpha)
+			_pulse_tween.tween_property(pulse, "modulate:a", 1.0, 0.15)
+			_pulse_tween.tween_property(pulse, "scale", Vector2(1.25, 1.25), 0.15)
+			
+			# Contraction
+			var chain1 = _pulse_tween.chain().set_parallel(true)
+			chain1.tween_property(pulse, "modulate:a", 0.4, 0.15)
+			chain1.tween_property(pulse, "scale", Vector2(0.9, 0.9), 0.15)
+			
+			# Second beat: surge
+			var chain2 = chain1.chain().set_parallel(true)
+			chain2.tween_property(pulse, "modulate:a", 1.0, 0.15)
+			chain2.tween_property(pulse, "scale", Vector2(1.4, 1.4), 0.15)
+			
+			# Return to resting state (1.0 scale, 0.2 alpha)
+			var chain3 = chain2.chain().set_parallel(true)
+			chain3.tween_property(pulse, "modulate:a", 0.2, 0.55)
+			chain3.tween_property(pulse, "scale", Vector2(1.0, 1.0), 0.55)
+			
+			# End callback
+			chain3.chain().tween_callback(func():
 				if _pulse_active:
 					_pulse_active = false
 					_pulse_skipped = true
@@ -556,8 +632,8 @@ func _handle_ecg(delta: float, step: Dictionary) -> void:
 				_ecg_tween = null
 			var heart = get_node_or_null("GameContainer/HeartIcon")
 			if heart:
-				heart.visible = false
-				heart.modulate.a = 0.0
+				heart.scale = Vector2(1.0, 1.0)
+				heart.modulate.a = 0.15
 			_lose_life("¡Presioná Q cuando el corazón parpadee!")
 	else:
 		if _ecg_tween:
@@ -574,16 +650,30 @@ func _do_ecg_beat(step: Dictionary) -> void:
 	_ecg_timeout = 0.0
 	var heart = get_node_or_null("GameContainer/HeartIcon")
 	if heart:
-		heart.visible = true
-		heart.scale = Vector2(1, 1)
 		if _ecg_tween:
 			_ecg_tween.kill()
 		_ecg_tween = create_tween().set_parallel(true)
-		_ecg_tween.tween_property(heart, "modulate:a", 1.0, 0.25)
-		_ecg_tween.tween_property(heart, "scale", Vector2(1.15, 1.15), 0.25)
-		_ecg_tween.tween_property(heart, "modulate:a", 0.0, 0.8).set_delay(0.3)
-		_ecg_tween.tween_property(heart, "scale", Vector2(1, 1), 0.8).set_delay(0.3)
-		_ecg_tween.finished.connect(func():
+		
+		# First beat: quick expansion and bright fade in from resting state (1.0 scale, 0.15 alpha)
+		_ecg_tween.tween_property(heart, "modulate:a", 1.0, 0.15)
+		_ecg_tween.tween_property(heart, "scale", Vector2(1.2, 1.2), 0.15)
+		
+		# Contraction
+		var chain1 = _ecg_tween.chain().set_parallel(true)
+		chain1.tween_property(heart, "modulate:a", 0.4, 0.1)
+		chain1.tween_property(heart, "scale", Vector2(0.95, 0.95), 0.1)
+		
+		# Second beat: surge
+		var chain2 = chain1.chain().set_parallel(true)
+		chain2.tween_property(heart, "modulate:a", 1.0, 0.15)
+		chain2.tween_property(heart, "scale", Vector2(1.35, 1.35), 0.15)
+		
+		# Return to resting state (1.0 scale, 0.15 alpha)
+		var chain3 = chain2.chain().set_parallel(true)
+		chain3.tween_property(heart, "modulate:a", 0.15, 0.5)
+		chain3.tween_property(heart, "scale", Vector2(1.0, 1.0), 0.5)
+		
+		chain3.chain().tween_callback(func():
 			_ecg_tween = null
 		)
 
@@ -618,6 +708,9 @@ func _on_ecg_draw() -> void:
 			_ecg_line.draw_line(points[i], points[i+1], color, 2.0, true)
 
 func _exit_tree() -> void:
+	# Limpiar el sprite del paciente que fue reparenteado al mundo
+	if patient_sprite and is_instance_valid(patient_sprite):
+		patient_sprite.queue_free()
 	var main_camera = get_viewport().get_camera_2d()
 	if main_camera:
 		main_camera.offset = Vector2.ZERO

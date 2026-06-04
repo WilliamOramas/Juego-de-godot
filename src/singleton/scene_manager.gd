@@ -14,6 +14,7 @@ var _anim: AnimationPlayer = null
 
 ## Flag para evitar cambios de escena dobles
 var _changing_scene: bool = false
+var _blur_overlay: ColorRect = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -28,6 +29,21 @@ func _ready() -> void:
 		push_error("SceneManager: No se encontró AnimationPlayer en scene_transition")
 		return
 	_anim.play("fade_in")
+
+	# Instanciar el shader de barrido temporal de forma dinámica
+	var blur_shader = load("res://src/singleton/time_blur.gdshader")
+	if blur_shader:
+		var mat = ShaderMaterial.new()
+		mat.shader = blur_shader
+		mat.set_shader_parameter("wipe_progress", 0.0)
+		
+		_blur_overlay = ColorRect.new()
+		_blur_overlay.name = "TimeBlurOverlay"
+		_blur_overlay.material = mat
+		_blur_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		_blur_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_blur_overlay.visible = false
+		_transition.add_child(_blur_overlay)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F11:
@@ -108,3 +124,42 @@ func change_scene(target_path: String, target_spawn: String = "", return_spawn: 
 func pause_game(pause: bool) -> void:
 	get_tree().paused = pause
 	game_paused.emit(pause)
+
+## Reproduce una transición de barrido a negro horizontal limpio para indicar el paso del tiempo
+func play_time_passage(duration: float = 1.5, mid_callback: Callable = Callable()) -> void:
+	if _changing_scene or not _blur_overlay:
+		if mid_callback.is_valid():
+			mid_callback.call()
+		return
+		
+	_changing_scene = true
+	_blur_overlay.visible = true
+	transition_started.emit()
+	
+	var mat = _blur_overlay.material as ShaderMaterial
+	mat.set_shader_parameter("wipe_progress", 0.0)
+	
+	# Tween para cubrir la pantalla con negro con un barrido horizontal de izquierda a derecha (0.0 -> 1.0)
+	var tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(mat, "shader_parameter/wipe_progress", 1.0, duration * 0.4)
+	
+	await tween.finished
+	
+	# Ejecutar el callback (limpieza del minijuego) con la pantalla completamente negra
+	if mid_callback.is_valid():
+		mid_callback.call()
+		
+	# Pequeña pausa con la pantalla en negro para denotar el paso del tiempo
+	await get_tree().create_timer(0.6).timeout
+	
+	# Tween para descorrer el barrido hacia la derecha revelando la escena (1.0 -> 2.0)
+	var tween_back = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween_back.tween_property(mat, "shader_parameter/wipe_progress", 2.0, duration * 0.4)
+	
+	await tween_back.finished
+	
+	_blur_overlay.visible = false
+	mat.set_shader_parameter("wipe_progress", 0.0) # Resetear para futura transición
+	_changing_scene = false
+	transition_finished.emit()
+

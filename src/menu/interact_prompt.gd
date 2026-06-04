@@ -24,8 +24,8 @@ func _on_interact_pressed() -> void:
 	if _on_interact_callback.is_valid():
 		_on_interact_callback.call()
 
-func set_button_visible(is_visible: bool) -> void:
-	prompt_texture.visible = is_visible
+func set_button_visible(is_shown: bool) -> void:
+	prompt_texture.visible = is_shown
 
 func _unhandled_input(event: InputEvent) -> void:
 	if get_tree().paused:

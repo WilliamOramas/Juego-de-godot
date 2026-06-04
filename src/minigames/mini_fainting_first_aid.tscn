@@ -156,23 +156,24 @@ scale = Vector2(2.5, 2.5)
 texture = ExtResource("8_patient")
 centered = false
 
-[node name="PulsePoint" type="ColorRect" parent="GameContainer" index="9" unique_id=1104421566]
+[node name="PulsePoint" type="Panel" parent="GameContainer" index="9" unique_id=1104421566]
 visible = false
 layout_mode = 0
-offset_left = 344.0
-offset_top = 444.0
-offset_right = 356.0
-offset_bottom = 456.0
-color = Color(0.5, 0.5, 1, 0.3)
+offset_left = 326.0
+offset_top = 426.0
+offset_right = 374.0
+offset_bottom = 474.0
 
-[node name="HeartIcon" type="ColorRect" parent="GameContainer" index="10" unique_id=108333938]
+[node name="HeartIcon" type="TextureRect" parent="GameContainer" index="10" unique_id=108333938]
 visible = false
 layout_mode = 0
-offset_left = 380.0
-offset_top = 460.0
-offset_right = 408.0
-offset_bottom = 488.0
-color = Color(1, 0.3, 0.3, 0)
+offset_left = 378.0
+offset_top = 458.0
+offset_right = 410.0
+offset_bottom = 490.0
+expand_mode = 1
+stretch_mode = 5
+
 
 [node name="CorrectSound" type="AudioStreamPlayer" parent="." index="2" unique_id=1736137967]
 stream = ExtResource("3_correct")

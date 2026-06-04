@@ -27,9 +27,9 @@ func remove_prompt() -> void:
 		prompt_instance.queue_free()
 	prompt_instance = null
 
-func set_button_visible(is_visible: bool) -> void:
+func set_button_visible(is_shown: bool) -> void:
 	if prompt_instance and is_instance_valid(prompt_instance) and prompt_instance.has_method("set_button_visible"):
-		prompt_instance.set_button_visible(is_visible)
+		prompt_instance.set_button_visible(is_shown)
 
 func _on_interact_pressed() -> void:
 	if interact_callback.is_valid():

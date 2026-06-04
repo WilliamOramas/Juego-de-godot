@@ -6,8 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://deq33brrv05w" path="res://src/assets/sprites/robot_face_blink.svg" id="4_face_blink"]
 [ext_resource type="Texture2D" uid="uid://cgts18igrxvkv" path="res://src/assets/sprites/robot_face_talk.svg" id="5_face_talk"]
 [ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="6_font"]
-[ext_resource type="AudioStream" uid="uid://dn2xh3l4m5n6p" path="res://src/assets/sounds/phone_notification.wav" id="7_notification"]
-[ext_resource type="AudioStream" uid="uid://cq7r8s9t0u1v2" path="res://src/assets/sounds/phone_slide.wav" id="8_slide"]
+[ext_resource type="AudioStream" uid="uid://c1q6l3pp76yjx" path="res://src/assets/sounds/phone_notification.wav" id="7_notification"]
+[ext_resource type="AudioStream" uid="uid://c0m34l3vved6t" path="res://src/assets/sounds/phone_slide.wav" id="8_slide"]
 
 [sub_resource type="Animation" id="Animation_talk"]
 resource_name = "talk"

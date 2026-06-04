@@ -267,7 +267,7 @@ func open_phone() -> void:
 	anim.play("slide_in")
 	slide_sound.play()
 	if _mode == PhoneMode.HOME:
-		status_label.text = "PIXEL v1.0"
+		_update_status_label()
 
 
 func close_phone() -> void:

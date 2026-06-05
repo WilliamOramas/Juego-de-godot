@@ -192,6 +192,7 @@ sprite_texture = ExtResource("6_np1")
 npc_name = "Jorge"
 dialog_lines = Array[String](["Uff, qué día tan pesado. Tres exámenes en una semana es una locura.", "El de matemáticas me fue mal, pero el de historia creo que lo salvé.", "Ojalá el profesor de inglés haya visto mi tarea a tiempo."])
 dialog_lines_repeat = Array[String](["Sigo estudiando para los exámenes, no me queda de otra.", "Al menos ya casi es viernes, eso es lo único que me anima."])
+dialog_lines_blocked = Array[String](["Eh, todavía no he terminado de hablar con los demás. Primero ve a ver cómo están Luis y Pedro, ¿sí?"])
 wander_radius = 40.0
 quest_to_start = ExtResource("13_qexplore")
 

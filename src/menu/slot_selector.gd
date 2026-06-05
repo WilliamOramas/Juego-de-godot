@@ -72,10 +72,12 @@ func _update_slot_buttons() -> void:
 			var scene_path: String = info.get("last_scene", "")
 			var scene_name: String = _scene_display_name(scene_path)
 			var time_str: String = _format_timestamp(info.get("timestamp", 0))
+			var score_val: int = info.get("score", 0)
+			var grade_val: String = info.get("grade", "?")
 			if time_str != "":
-				btn.text = "SLOT %d — %s\n%s" % [(i + 1), scene_name, time_str]
+				btn.text = "SLOT %d — %s  |  %d pts [%s]\n%s" % [(i + 1), scene_name, score_val, grade_val, time_str]
 			else:
-				btn.text = "SLOT %d — %s" % [(i + 1), scene_name]
+				btn.text = "SLOT %d — %s  |  %d pts [%s]" % [(i + 1), scene_name, score_val, grade_val]
 			btn.disabled = false
 
 func show_save_feedback(slot: int) -> void:

@@ -155,5 +155,7 @@ func _on_hide_finished() -> void:
 	_clear_dialog_finished()
 
 func _clear_dialog_finished() -> void:
+	if npc_name_label.text != "" and _lines.size() > 0:
+		JournalManager.add_dialog_entry(npc_name_label.text, _lines)
 	dialog_finished.emit()
 	EventBus.dialog_finished.emit()

@@ -32,4 +32,5 @@ script = ExtResource("1_kf0m2")
 quest_id = "quest_emergency"
 quest_name = "Emergencia médica"
 description = "El enfermero te ha pedido que estés atento. Un estudiante podría necesitar ayuda. Dirígete a la enfermería y prepárate para actuar."
+requires_quest = "quest_exploration"
 objectives = [SubResource("Resource_1111"), SubResource("Resource_2222"), SubResource("Resource_3333")]

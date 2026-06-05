@@ -74,6 +74,9 @@ func reset_game(slot: int) -> void:
 	Global.dialogs_seen.clear()
 	Global.pending_position_restore = false
 	Global.saved_player_position = Vector2.ZERO
+	ScoreManager.reset()
+	JournalManager.clear()
+	QuestManager.set_quest_progress({})
 	_dirty = false
 	var path := get_save_path(slot)
 	if FileAccess.file_exists(path):
@@ -97,11 +100,15 @@ func get_save_info(slot: int) -> Dictionary:
 	if parsed == null or not (parsed is Dictionary):
 		return {"empty": true}
 	var data := parsed as Dictionary
+	var score_data := data.get("score_stats", {}) as Dictionary
 	return {
 		"empty": false,
 		"last_scene": data.get("last_scene", ""),
 		"timestamp": data.get("timestamp", 0),
 		"student_died": data.get("student_died", false),
+		"score": score_data.get("score", 0),
+		"grade": score_data.get("grade", "?"),
+		"quests_completed": score_data.get("quests_completed", 0),
 	}
 
 func mark_dirty() -> void:
@@ -136,6 +143,16 @@ func load_game(slot: int) -> String:
 		return ""
 	active_slot = slot
 	_loading = true
+
+	Global.dialogs_seen.clear()
+	Global.pending_position_restore = false
+	Global.saved_player_position = Vector2.ZERO
+	Global.return_spawn_name = ""
+	Global.student_died = false
+	QuestManager.set_quest_progress({})
+	ScoreManager.reset()
+	JournalManager.clear()
+
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		_loading = false
@@ -166,6 +183,8 @@ func _build_game_data(override_last_scene: String = "") -> Dictionary:
 		"timestamp": Time.get_unix_time_from_system(),
 		"student_died": Global.student_died,
 		"return_spawn_name": Global.return_spawn_name,
+		"score_stats": ScoreManager.get_stats(),
+		"journal_entries": JournalManager.serialize(),
 	}
 	var player := _get_player()
 	if player:
@@ -177,8 +196,7 @@ func _apply_game_data(data: Dictionary) -> String:
 	if data.get("version", 0) != SAVE_VERSION:
 		return ""
 	if data.has("dialogs_seen") and data["dialogs_seen"] is Dictionary:
-		for key in data["dialogs_seen"]:
-			Global.dialogs_seen[key] = data["dialogs_seen"][key]
+		Global.dialogs_seen = data["dialogs_seen"].duplicate()
 	if data.has("quest_progress") and data["quest_progress"] is Dictionary:
 		QuestManager.set_quest_progress(data["quest_progress"])
 	if data.has("player_position_x") and data.has("player_position_y"):
@@ -188,4 +206,17 @@ func _apply_game_data(data: Dictionary) -> String:
 		Global.student_died = data["student_died"]
 	if data.has("return_spawn_name"):
 		Global.return_spawn_name = data["return_spawn_name"]
+	if data.has("score_stats"):
+		var s := data["score_stats"] as Dictionary
+		ScoreManager.minigame_passed = s.get("minigame_passed", false)
+		ScoreManager.student_saved = s.get("student_saved", false)
+		ScoreManager.lives_remaining = s.get("lives_remaining", 0)
+		ScoreManager.time_remaining = s.get("time_remaining", 0.0)
+		ScoreManager.errors_count = s.get("errors_count", 0)
+		ScoreManager.total_errors = s.get("total_errors", 0)
+		ScoreManager.quests_completed = s.get("quests_completed", 0)
+		ScoreManager.npcs_talked = s.get("npcs_talked", 0)
+		ScoreManager.minigame_attempts = s.get("minigame_attempts", 0)
+	if data.has("journal_entries"):
+		JournalManager.deserialize(data["journal_entries"] as Array)
 	return data.get("last_scene", "")

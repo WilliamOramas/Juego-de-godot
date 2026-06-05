@@ -19,6 +19,9 @@ class_name NPC
 ## Diálogo alternativo al volver a hablar con el NPC (si está vacío, repite dialog_lines)
 @export var dialog_lines_repeat: Array[String] = []
 
+## Diálogo cuando la misión de este NPC está bloqueada por requisitos
+@export var dialog_lines_blocked: Array[String] = []
+
 ## (Legacy) Texto de diálogo de una línea — se usa si dialog_lines está vacío
 @export var dialog_text: String = "¡Hola!"
 
@@ -201,7 +204,8 @@ func _on_body_exited(body: Node2D) -> void:
 		if _player_in_range == body:
 			_player_in_range = null
 		_interact.remove_prompt()
-		DialogBox.hide_dialog()
+		if DialogBox:
+			DialogBox.hide_dialog()
 
 func _on_interact_pressed() -> void:
 	if DialogBox.is_open:
@@ -210,22 +214,35 @@ func _on_interact_pressed() -> void:
 	var key = "npc_" + name
 	var is_first = not Global.dialogs_seen.has(key)
 	var lines: Array[String]
+	var is_blocked := false
 
-	if is_first:
-		lines = dialog_lines.duplicate() if not dialog_lines.is_empty() else [dialog_text]
+	if quest_to_start != null and quest_to_start is QuestData:
+		var qd := quest_to_start as QuestData
+		var qid := qd.quest_id
+		var needs := qd.requires_quest
+		if not QuestManager.is_quest_completed(qid) and not QuestManager.is_quest_active(qid):
+			if needs != "" and not QuestManager.is_quest_completed(needs):
+				is_blocked = true
+
+	if is_blocked:
+		lines = dialog_lines_blocked.duplicate() if not dialog_lines_blocked.is_empty() else [dialog_text]
+		# No marcar como visto: la próxima vez seguirá intentando iniciar la quest
 	else:
-		lines = dialog_lines_repeat.duplicate() if not dialog_lines_repeat.is_empty() else (dialog_lines.duplicate() if not dialog_lines.is_empty() else [dialog_text])
-
-	Global.mark_dialog_seen(key)
+		if is_first:
+			lines = dialog_lines.duplicate() if not dialog_lines.is_empty() else [dialog_text]
+		else:
+			lines = dialog_lines_repeat.duplicate() if not dialog_lines_repeat.is_empty() else (dialog_lines.duplicate() if not dialog_lines.is_empty() else [dialog_text])
+		Global.mark_dialog_seen(key)
 
 	_interact.set_button_visible(false)
 	DialogBox.show_dialog(npc_name, lines)
-	if is_first and quest_to_start != null and quest_to_start is QuestData:
-		QuestManager.start_quest(quest_to_start)
-		if quest_to_start.objectives.size() > 0:
-			var first_obj = quest_to_start.objectives[0]
+
+	if not is_blocked and is_first and quest_to_start != null and quest_to_start is QuestData:
+		var qd := quest_to_start as QuestData
+		var started := QuestManager.start_quest(qd)
+		if started and qd.objectives.size() > 0:
+			var first_obj = qd.objectives[0]
 			if first_obj.type == QuestObjective.ObjectiveType.TALK_TO_NPC and first_obj.target_id == npc_name:
-				QuestManager.advance_objective(quest_to_start.quest_id, first_obj.objective_id)
+				QuestManager.advance_objective(qd.quest_id, first_obj.objective_id)
+
 	QuestManager.advance_talk_objectives(npc_name)
-
-

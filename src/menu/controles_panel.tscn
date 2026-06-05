@@ -93,6 +93,22 @@ theme_override_font_sizes/font_size = 14
 text = "M  —  Misiones"
 horizontal_alignment = 1
 
+[node name="KeyJournal" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "J  —  Bitácora (con teléfono)"
+horizontal_alignment = 1
+
+[node name="KeyStats" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "K  —  Stats (con teléfono)"
+horizontal_alignment = 1
+
 [node name="KeyFullscreen" type="Label" parent="VBoxContainer" unique_id=855268403]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)

@@ -3,6 +3,9 @@ class_name MiniFaintingFirstAid
 
 enum StepType { HOLD_3, TIMED_PRESS, DIAL_112, HOLD_ELEVATE, TAP, ECG }
 
+const KEYCAP_NORMAL = preload("res://src/assets/sprites/keycap_q.svg")
+const KEYCAP_PRESSED = preload("res://src/assets/sprites/keycap_q_pressed.svg")
+
 const STEP_DATA: Array = [
 	{
 		"instruction": "La persona está en el suelo.\n¿Qué hacés primero?",
@@ -159,7 +162,6 @@ func _ready() -> void:
 	progress_bar.offset_bottom = 82
 
 	# Reparent the patient to the world to enable Y-sorting against the player
-	patient_sprite.centered = true
 	var world = get_tree().current_scene
 	if world:
 		patient_sprite.get_parent().remove_child(patient_sprite)
@@ -342,6 +344,36 @@ func _update_ui() -> void:
 		heart.modulate.a = 0.15
 		heart.scale = Vector2(1.0, 1.0)
 
+func end(success: bool) -> void:
+	if not _is_running:
+		return
+	_is_running = false
+	process_mode = PROCESS_MODE_INHERIT
+	ScoreManager.record_minigame_result(success, _lives, _time_remaining)
+	if success:
+		JournalManager.add_system_entry("Minijuego completado", "Se realizaron todos los pasos de primeros auxilios correctamente.")
+	else:
+		JournalManager.add_system_entry("Minijuego fallido", "No se pudieron completar los primeros auxilios.")
+
+	if SceneManager and SceneManager.has_method("play_time_passage"):
+		SceneManager.play_time_passage(1.5, func():
+			show_end_screen(success)
+		)
+	else:
+		show_end_screen(success)
+
+func show_end_screen(success: bool) -> void:
+	var screen := EndScreen.new()
+	screen.setup(success)
+	screen.continue_pressed.connect(_on_end_screen_continue.bind(success))
+	add_child(screen)
+
+
+func _on_end_screen_continue(success: bool) -> void:
+	get_tree().paused = false
+	hide()
+	game_completed.emit(game_id, success)
+
 func _advance_step() -> void:
 	_current_step += 1
 	if _current_step >= STEP_DATA.size():
@@ -374,6 +406,11 @@ func _lose_life(msg: String) -> void:
 	var wrong: AudioStreamPlayer = get_node_or_null("WrongSound")
 	if wrong:
 		wrong.play()
+	ScoreManager.record_minigame_step(false)
+	JournalManager.add_minigame_entry(
+		"Error en paso %d" % (_current_step + 1),
+		msg
+	)
 	if _lives <= 0:
 		var fail: AudioStreamPlayer = get_node_or_null("FailSound")
 		if fail: fail.play()
@@ -381,6 +418,7 @@ func _lose_life(msg: String) -> void:
 		Global.student_died = true
 		_state = "death_delay"
 		_state_timer = 2.5
+		JournalManager.add_system_entry("Estudiante fallecido", "No se pudieron completar los primeros auxilios a tiempo.")
 		return
 	_state = "step_fail_delay"
 	_state_timer = 1.5
@@ -392,6 +430,11 @@ func _on_step_ok() -> void:
 	var correct: AudioStreamPlayer = get_node_or_null("CorrectSound")
 	if correct:
 		correct.play()
+	ScoreManager.record_minigame_step(true)
+	JournalManager.add_minigame_entry(
+		"Paso %d superado" % (_current_step + 1),
+		step.feedback_ok
+	)
 	_state = "step_ok_delay"
 	_state_timer = 0.8
 
@@ -418,11 +461,11 @@ func _process(delta: float) -> void:
 		_ecg_line.queue_redraw()
 
 	if Input.is_action_pressed("Phone"):
-		if _keycap_rect and _keycap_rect.texture != null:
-			_keycap_rect.texture = load("res://src/assets/sprites/keycap_q_pressed.svg")
+		if _keycap_rect and _keycap_rect.texture != KEYCAP_PRESSED:
+			_keycap_rect.texture = KEYCAP_PRESSED
 	else:
-		if _keycap_rect and _keycap_rect.texture != null:
-			_keycap_rect.texture = load("res://src/assets/sprites/keycap_q.svg")
+		if _keycap_rect and _keycap_rect.texture != KEYCAP_NORMAL:
+			_keycap_rect.texture = KEYCAP_NORMAL
 
 	if _state == "step_ok_delay":
 		_state_timer -= delta

@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
 [ext_resource type="Texture2D" uid="uid://ckfk1i1404ys6" path="res://src/assets/sprites/npc_spritesheet.png" id="6_nurse_tex"]
 [ext_resource type="Script" uid="uid://dtl581vlfbxui" path="res://src/levels/level_limits.gd" id="7_limits"]
+[ext_resource type="Resource" path="res://src/quests/quest_emergency.tres" id="8_quest_emergency"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left_bottom"]
 size = Vector2(2, 219)
@@ -136,7 +137,9 @@ sprite_texture = ExtResource("6_nurse_tex")
 npc_name = "Enfermero"
 dialog_lines = Array[String](["Hola, joven. ¿Te sientes mal?", "Siéntate en la camilla y te tomo la temperatura.", "No te preocupes, solo es un chequeo rápido."])
 dialog_lines_repeat = Array[String](["¿Otra vez con malestar? Deberías ir al médico general.", "Toma, aquí tienes un poco de agua y una pastilla."])
+dialog_lines_blocked = Array[String](["Todavía no es momento, joven. Primero conoce bien las instalaciones y luego hablammos de lo que hay que hacer."])
 routine_type = "Estático"
+quest_to_start = ExtResource("8_quest_emergency")
 
 [node name="Furniture" type="Node2D" parent="." unique_id=653743026]
 

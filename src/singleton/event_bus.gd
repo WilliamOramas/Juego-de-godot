@@ -19,3 +19,10 @@ signal quest_started(quest_id: String, quest_name: String)
 signal objective_advanced(quest_id: String, objective_id: String, description: String)
 @warning_ignore("unused_signal")
 signal quest_completed(quest_id: String, quest_name: String)
+
+@warning_ignore("unused_signal")
+signal score_updated
+@warning_ignore("unused_signal")
+signal journal_entry_added(entry: Resource)
+@warning_ignore("unused_signal")
+signal quest_blocked(quest_id: String, required_quest_id: String)

@@ -48,4 +48,5 @@ script = ExtResource("1_kf0m2")
 quest_id = "quest_exploration"
 quest_name = "Explora las aulas"
 description = "Los salones están abiertos. Visita el Aula 1 y el Aula 2 para conocer a los que aún están ahí."
+requires_quest = "quest_introduction"
 objectives = [SubResource("Resource_1111"), SubResource("Resource_2222"), SubResource("Resource_3333"), SubResource("Resource_4444"), SubResource("Resource_5555")]

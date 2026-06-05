@@ -13,11 +13,14 @@ func _ready() -> void:
 	EventBus.objective_advanced.connect(_on_objective_advanced)
 	EventBus.quest_completed.connect(_on_quest_completed)
 
-func start_quest(quest_data: Variant) -> void:
+func start_quest(quest_data: Variant) -> bool:
 	if quest_data == null:
-		return
+		return false
 	if active_quests.has(quest_data.quest_id) or completed_quests.has(quest_data.quest_id):
-		return
+		return false
+	if quest_data.requires_quest != "" and not completed_quests.has(quest_data.requires_quest):
+		EventBus.quest_blocked.emit(quest_data.quest_id, quest_data.requires_quest)
+		return false
 	var objectives: Dictionary = {}
 	for obj in quest_data.objectives:
 		objectives[obj.objective_id] = false
@@ -27,6 +30,7 @@ func start_quest(quest_data: Variant) -> void:
 	}
 	SaveManager.mark_dirty()
 	EventBus.quest_started.emit(quest_data.quest_id, quest_data.quest_name)
+	return true
 
 func advance_objective(quest_id: String, objective_id: String) -> void:
 	if not active_quests.has(quest_id):
@@ -151,13 +155,16 @@ func _load_quest_data(quest_id: String) -> Variant:
 
 func _on_quest_started(_qid: String, qname: String) -> void:
 	_show_notification("Nueva misi\u00f3n: \"" + qname + "\"", Color.GOLD)
+	JournalManager.add_quest_entry("Misión iniciada", qname)
 
 func _on_objective_advanced(_qid: String, _oid: String, desc: String) -> void:
 	if desc != "":
 		_show_notification(desc, Color.GREEN_YELLOW)
+		JournalManager.add_quest_entry("Objetivo completado", desc)
 
 func _on_quest_completed(_qid: String, qname: String) -> void:
 	_show_notification("\u2B50 \u00a1Misi\u00f3n completada: \"" + qname + "\"!", Color.GOLD)
+	JournalManager.add_quest_entry("Misión completada", qname)
 
 func _show_notification(text: String, color: Color) -> void:
 	_notif_queue.append({"text": text, "color": color})

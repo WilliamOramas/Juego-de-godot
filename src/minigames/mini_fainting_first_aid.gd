@@ -24,8 +24,8 @@ const STEP_DATA: Array = [
 		"feedback_fail": "Tenés que mantener Q para verificar.",
 	},
 	{
-		"instruction": "¿Y el pulso carotídeo?",
-		"help": "Paso 3: Verificar pulso carotídeo.\n[Q] Presioná cuando el punto parpadee.\n¡No te lo saltes!",
+		"instruction": "Palpá el pulso carotídeo",
+		"help": "Esperá el indicador → Presioná Q cuando parpadee",
 		"type": StepType.TIMED_PRESS,
 		"target": 1,
 		"window": 1.0,
@@ -96,6 +96,7 @@ var _ecg_timeout: float = 0.0
 var _time_remaining: float
 var _hold_penalized: bool = false
 var _tap_timeout: float = 0.0
+var _pulse_prompt: Label
 
 var _state: String = "playing"
 var _state_timer: float = 0.0
@@ -238,6 +239,14 @@ func _ready() -> void:
 		pulse.add_theme_stylebox_override("panel", style)
 		pulse.pivot_offset = Vector2(24, 24) # Centered for scale animations
 
+	# Prompt label for Step 3 (pulse check)
+	_pulse_prompt = Label.new()
+	_pulse_prompt.add_theme_font_size_override("font_size", 18)
+	_pulse_prompt.add_theme_color_override("font_color", Color(0.65, 0.1, 0.08, 1))
+	_pulse_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_pulse_prompt.visible = false
+	game_container.add_child(_pulse_prompt)
+
 	# Set texture and pivot for HeartIcon (Step 7)
 	var heart_icon_node = get_node_or_null("GameContainer/HeartIcon")
 	if heart_icon_node:
@@ -270,6 +279,9 @@ func _reset_step() -> void:
 	_tap_timeout = 0.0
 	_state = "playing"
 	_state_timer = 0.0
+	if _pulse_prompt:
+		_pulse_prompt.text = ""
+		_pulse_prompt.visible = false
 	_update_ui()
 
 func _update_timer_label() -> void:
@@ -525,6 +537,11 @@ func _process(delta: float) -> void:
 			var local_pos_pulse = Vector2(23.6, 33.2) - (texture_size / 2.0)
 			var screen_pos_pulse = patient_sprite.get_global_transform_with_canvas() * local_pos_pulse
 			pulse.position = screen_pos_pulse - pulse.size / 2.0
+			if _pulse_prompt:
+				_pulse_prompt.position = screen_pos_pulse + Vector2(-60, 40)
+				_pulse_prompt.visible = _pulse_prompt.text != ""
+		elif _pulse_prompt:
+			_pulse_prompt.visible = false
 			
 		var heart = get_node_or_null("GameContainer/HeartIcon")
 		if heart and heart.visible:
@@ -610,9 +627,14 @@ func _handle_hold(delta: float, step: Dictionary) -> void:
 
 func _handle_timed_press(delta: float, _step: Dictionary) -> void:
 	_pulse_window += delta
-	if _pulse_window >= 2.0 and not _pulse_active and not _pulse_skipped:
+	if _pulse_window < 2.0 and not _pulse_active and not _pulse_skipped:
+		if _pulse_prompt:
+			_pulse_prompt.text = "Preparate para palpar el pulso..."
+	elif _pulse_window >= 2.0 and not _pulse_active and not _pulse_skipped:
 		_pulse_active = true
 		_pulse_window = 0.0
+		if _pulse_prompt:
+			_pulse_prompt.text = "¡PRESIONÁ Q AHORA!"
 		var pulse = get_node_or_null("GameContainer/PulsePoint")
 		if pulse:
 			if _pulse_tween:
@@ -643,6 +665,8 @@ func _handle_timed_press(delta: float, _step: Dictionary) -> void:
 				if _pulse_active:
 					_pulse_active = false
 					_pulse_skipped = true
+					if _pulse_prompt:
+						_pulse_prompt.text = ""
 					_lose_life("¡Te saltaste el pulso carotídeo! Es obligatorio.")
 				_retry_timed_press()
 				_pulse_tween = null
@@ -651,6 +675,8 @@ func _handle_timed_press(delta: float, _step: Dictionary) -> void:
 		if _pulse_window > 1.5:
 			_pulse_active = false
 			_pulse_skipped = true
+			if _pulse_prompt:
+				_pulse_prompt.text = ""
 			_lose_life("¡Te saltaste el pulso carotídeo! Es obligatorio.")
 			_retry_timed_press()
 

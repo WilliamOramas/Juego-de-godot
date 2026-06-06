@@ -136,6 +136,41 @@ func _save_game(slot: int, override_last_scene: String = "") -> void:
 		return
 	file.store_string(json)
 	file.close()
+	sync_to_cloud()
+
+func sync_to_cloud() -> void:
+	if not Supabase.is_logged_in(): return
+	var combined_saves = {}
+	for i in SAVE_SLOT_COUNT:
+		var path = get_save_path(i)
+		if FileAccess.file_exists(path):
+			var file = FileAccess.open(path, FileAccess.READ)
+			if file:
+				var json_str = file.get_as_text()
+				file.close()
+				var parsed = JSON.parse_string(json_str)
+				if typeof(parsed) == TYPE_DICTIONARY:
+					combined_saves["slot_" + str(i)] = parsed
+	Supabase.push_cloud_saves(combined_saves)
+
+func sync_from_cloud(callback: Callable = Callable()) -> void:
+	if not Supabase.is_logged_in():
+		if callback.is_valid(): callback.call(false)
+		return
+	Supabase.pull_cloud_saves(func(success, save_data, _error):
+		if success and typeof(save_data) == TYPE_DICTIONARY:
+			for i in SAVE_SLOT_COUNT:
+				var key = "slot_" + str(i)
+				if save_data.has(key):
+					var d = save_data[key]
+					var file = FileAccess.open(get_save_path(i), FileAccess.WRITE)
+					if file:
+						file.store_string(JSON.stringify(d, "\t"))
+						file.close()
+			if callback.is_valid(): callback.call(true)
+		else:
+			if callback.is_valid(): callback.call(false)
+	)
 
 func load_game(slot: int) -> String:
 	var path := get_save_path(slot)

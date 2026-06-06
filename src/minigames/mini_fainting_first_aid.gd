@@ -752,15 +752,14 @@ func _on_ecg_draw() -> void:
 	var w = _ecg_line.size.x
 	var base_y = 90.0
 
-	# Frecuencia basada en vidas
 	var freq = 1.0
 	if _lives == 2: freq = 1.5
 	elif _lives == 1: freq = 2.5
-	elif _lives <= 0: freq = 0.0 # flatline
+	elif _lives <= 0: freq = 0.0
 
-	var color = Color(0.2, 1.0, 0.2) # Verde (normal)
-	if _lives == 2: color = Color(1.0, 0.8, 0.2) # Amarillo
-	elif _lives <= 1: color = Color(1.0, 0.2, 0.2) # Rojo
+	var color = Color(0.2, 1.0, 0.2)
+	if _lives == 2: color = Color(1.0, 0.8, 0.2)
+	elif _lives <= 1: color = Color(1.0, 0.2, 0.2)
 
 	for x in range(0, int(w), 4):
 		var nx = x / w

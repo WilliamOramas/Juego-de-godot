@@ -20,6 +20,11 @@ func _ready() -> void:
 	Supabase.auth_completed.connect(_on_auth_completed)
 	_update_ui_mode()
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("Pause"):
+		get_viewport().set_input_as_handled()
+		_on_close_pressed()
+
 func _update_ui_mode() -> void:
 	info_label.text = ""
 	info_label.add_theme_color_override("font_color", Color(0.8, 0.2, 0.2)) # Darker Red for normal messages on light bg

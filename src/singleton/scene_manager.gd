@@ -59,7 +59,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	# Capturar la tecla Escape/Pause para abrir el menú de pausa
 	if event.is_action_pressed("Pause"):
 		# No permitir pausar durante la transición de escena, si estamos en el menú principal, o durante un minijuego
-		if _changing_scene or get_tree().current_scene == null or get_tree().current_scene is MainMenu:
+		if _changing_scene or get_tree().current_scene == null or get_tree().current_scene is MainMenu or get_tree().current_scene is LoginPanel:
 			return
 		if MiniGameManager.is_minigame_active():
 			return

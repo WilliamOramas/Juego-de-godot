@@ -16,3 +16,6 @@ mono_crash.*.json
 /build/
 /exports/
 export_presets.cfg
+
+# Local configs
+supabase.cfg

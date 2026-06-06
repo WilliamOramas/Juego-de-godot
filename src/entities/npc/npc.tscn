@@ -8,6 +8,82 @@ size = Vector2(23, 51)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_detect"]
 
+[sub_resource type="Animation" id="Animation_walk_down"]
+resource_name = "walk_down"
+length = 0.6
+loop_mode = 1
+step = 0.15
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3, 0.45000002, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [4, 3, 2, 1, 0]
+}
+
+[sub_resource type="Animation" id="Animation_walk_up"]
+resource_name = "walk_up"
+length = 0.6
+loop_mode = 1
+step = 0.15
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3, 0.45000002, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [10, 11, 12, 13, 14]
+}
+
+[sub_resource type="Animation" id="Animation_idle_down"]
+resource_name = "idle_down"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [5]
+}
+
+[sub_resource type="Animation" id="Animation_idle_up"]
+resource_name = "idle_up"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [15]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_npc"]
+_data = {
+&"walk_down": SubResource("Animation_walk_down"),
+&"walk_up": SubResource("Animation_walk_up"),
+&"idle_down": SubResource("Animation_idle_down"),
+&"idle_up": SubResource("Animation_idle_up")
+}
+
 [node name="NPC" type="CharacterBody2D" unique_id=2089166072]
 collision_layer = 8
 script = ExtResource("1_script")
@@ -17,6 +93,9 @@ texture = ExtResource("2_texture")
 hframes = 5
 vframes = 4
 frame = 5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1234567890]
+libraries/ = SubResource("AnimationLibrary_npc")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1911506111]
 position = Vector2(-1, 21.5)

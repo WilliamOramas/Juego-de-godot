@@ -42,7 +42,7 @@ func show_dialog(npc_name: String, lines: Array[String]) -> void:
 
 	panel.offset_top = 0
 	_slide_tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	_slide_tween.tween_property(panel, "offset_top", -170.0, 0.3)
+	_slide_tween.tween_property(panel, "offset_top", -170.0, AnimHelper.DIALOG_SLIDE_IN)
 	_slide_tween.finished.connect(_start_typewriter)
 	audio_select.play()
 	EventBus.dialog_started.emit()
@@ -68,8 +68,8 @@ func _start_blink() -> void:
 	_stop_blink()
 	continue_prompt.modulate.a = 1.0
 	_blink_tween = create_tween().set_loops()
-	_blink_tween.tween_property(continue_prompt, "modulate:a", 0.2, 0.5)
-	_blink_tween.tween_property(continue_prompt, "modulate:a", 1.0, 0.5)
+	_blink_tween.tween_property(continue_prompt, "modulate:a", 0.2, AnimHelper.BLINK_SPEED)
+	_blink_tween.tween_property(continue_prompt, "modulate:a", 1.0, AnimHelper.BLINK_SPEED)
 
 func _on_type_timer_timeout() -> void:
 	if get_tree().paused:
@@ -136,7 +136,7 @@ func hide_dialog() -> void:
 		return
 
 	_slide_tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	_slide_tween.tween_property(panel, "offset_top", 0.0, 0.25)
+	_slide_tween.tween_property(panel, "offset_top", 0.0, AnimHelper.DIALOG_SLIDE_OUT)
 	_slide_tween.finished.connect(_on_hide_finished)
 	audio_select.play()
 

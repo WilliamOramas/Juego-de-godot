@@ -294,32 +294,7 @@ func _launch_scenario() -> void:
 	MiniGameManager.launch_minigame(scenario.path, scenario.id)
 
 func _play_fainting_cinematic() -> void:
-	var tree := get_tree()
-	var canvas := CanvasLayer.new()
-	canvas.layer = 100
-	tree.current_scene.add_child(canvas)
-
-	var blur_shader := load("res://src/singleton/time_blur.gdshader")
-	var mat := ShaderMaterial.new()
-	mat.shader = blur_shader
-	mat.set_shader_parameter("wipe_progress", 0.0)
-
-	var overlay := ColorRect.new()
-	overlay.material = mat
-	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	canvas.add_child(overlay)
-
-	var tw1 := tree.create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tw1.tween_property(mat, "shader_parameter/wipe_progress", 1.0, 0.6)
-	await tw1.finished
-
-	await tree.create_timer(0.3).timeout
-
-	var tw2 := tree.create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tw2.tween_property(mat, "shader_parameter/wipe_progress", 2.0, 0.6)
-	await tw2.finished
-
-	canvas.queue_free()
+	await SceneManager.play_wipe()
 
 
 func _update_status_label() -> void:

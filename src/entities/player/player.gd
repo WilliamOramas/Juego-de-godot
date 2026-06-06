@@ -89,7 +89,7 @@ func approach_position(target: Vector2) -> void:
 	animation_tree.set("parameters/conditions/idle", false)
 	animation_tree.set("parameters/conditions/walk", true)
 	var tween := create_tween().set_trans(Tween.TRANS_QUINT)
-	tween.tween_property(self, "global_position", target, 1.2)
+	tween.tween_property(self, "global_position", target, AnimHelper.PLAYER_APPROACH)
 	await tween.finished
 	animation_tree.set("parameters/conditions/idle", true)
 	animation_tree.set("parameters/conditions/walk", false)

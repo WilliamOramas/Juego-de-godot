@@ -165,3 +165,32 @@ func play_time_passage(duration: float = 1.5, mid_callback: Callable = Callable(
 	_changing_scene = false
 	transition_finished.emit()
 
+## Reproduce un barrido horizontal sin cambio de escena (cinemática, etc.)
+## Crea un overlay temporal, lo anima y lo destruye al terminar.
+func play_wipe(wipe_in_time: float = 0.6, pause: float = 0.3, wipe_out_time: float = 0.6) -> void:
+	var canvas := CanvasLayer.new()
+	canvas.layer = 100
+	add_child(canvas)
+
+	var blur_shader := load("res://src/singleton/time_blur.gdshader")
+	var mat := ShaderMaterial.new()
+	mat.shader = blur_shader
+	mat.set_shader_parameter("wipe_progress", 0.0)
+
+	var overlay := ColorRect.new()
+	overlay.material = mat
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	canvas.add_child(overlay)
+
+	var tw1 := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw1.tween_property(mat, "shader_parameter/wipe_progress", 1.0, wipe_in_time)
+	await tw1.finished
+
+	await get_tree().create_timer(pause).timeout
+
+	var tw2 := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw2.tween_property(mat, "shader_parameter/wipe_progress", 2.0, wipe_out_time)
+	await tw2.finished
+
+	canvas.queue_free()
+

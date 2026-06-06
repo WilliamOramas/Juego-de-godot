@@ -55,6 +55,7 @@ class_name NPC
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var detection_area: Area2D = $DetectionArea
+@onready var _anim_player: AnimationPlayer = $AnimationPlayer
 
 # Variables de control lógico
 var _start_position: Vector2 = Vector2.ZERO
@@ -62,8 +63,7 @@ var _target_position: Vector2 = Vector2.ZERO
 var _state_timer: float = 0.0
 var _walk_timer: float = 0.0
 var _is_waiting: bool = true
-var _anim_timer: float = 0.0
-var _anim_frame: int = 0
+var _facing_down: bool = true
 var _patrol_dir: float = 1.0 # 1 = derecha/abajo, -1 = izquierda/arriba
 var _player_in_range: Player = null # Referencia al jugador en rango de interacción
 var _interact: InteractableComponent
@@ -74,6 +74,9 @@ func _ready() -> void:
 		sprite.texture = sprite_texture
 	sprite.frame = sprite_frame
 	sprite.modulate = sprite_modulate
+	
+	_facing_down = sprite_frame == 5
+	_play_idle()
 	
 	# 3. Redimensionar dinámicamente el rango de detección del jugador
 	var detect_shape = detection_area.get_node_or_null("CollisionShape2D")
@@ -95,89 +98,64 @@ func _ready() -> void:
 	_interact.setup(self, Vector2(-14, -82), _on_interact_pressed)
 
 func _physics_process(delta: float) -> void:
-	# 1. Si el jugador está interactuando (en rango), el NPC se detiene y lo mira
 	if _player_in_range != null:
 		velocity = Vector2.ZERO
-		# move_and_slide() # Quitamos move_and_slide() para evitar atascos físicos ("efecto pegado")
-		
 		var to_player = _player_in_range.global_position - global_position
 		if abs(to_player.x) > abs(to_player.y):
-			if to_player.x > 0:
-				sprite.frame = 15 # Mirar arriba/derecha
-			else:
-				sprite.frame = 5  # Mirar abajo/izquierda
+			_facing_down = to_player.x <= 0
 		else:
-			if to_player.y > 0:
-				sprite.frame = 5  # Mirar abajo/izquierda
-			else:
-				sprite.frame = 15 # Mirar arriba/derecha
-		sprite.flip_h = false
+			_facing_down = to_player.y > 0
+		_play_idle()
 		return
 
 	if routine_type == "Estático":
 		velocity = Vector2.ZERO
-		sprite.frame = sprite_frame
-		sprite.flip_h = false
+		_play_idle()
 		return
-		
-	# Procesar temporizadores y cambio de objetivos
+
 	if _is_waiting:
 		velocity = Vector2.ZERO
-		sprite.frame = sprite_frame
-		sprite.flip_h = false
-		
+		_play_idle()
 		_state_timer -= delta
 		if _state_timer <= 0.0:
 			_is_waiting = false
 			_walk_timer = 0.0
 			_select_new_target()
 	else:
-		# Incrementar temporizador de caminata para evitar atascos permanentes
 		_walk_timer += delta
 		if _walk_timer >= max_walk_time:
 			_is_waiting = true
 			_state_timer = randf_range(wait_time_min, wait_time_max)
-			# Guardar última dirección para la pose estática
 			if velocity.x < 0 or velocity.y > 0:
-				sprite_frame = 5
+				_facing_down = true
 			else:
-				sprite_frame = 15
+				_facing_down = false
+			_play_idle()
 			return
 
-		# Mover hacia el objetivo
 		var to_target = _target_position - global_position
 		if to_target.length() < 5.0:
-			# Llegó al objetivo, comenzar a esperar
 			_is_waiting = true
 			_state_timer = randf_range(wait_time_min, wait_time_max)
-			# Guardar última dirección para la pose estática
 			if velocity.x < 0 or velocity.y > 0:
-				sprite_frame = 5
+				_facing_down = true
 			else:
-				sprite_frame = 15
+				_facing_down = false
+			_play_idle()
 		else:
-			# Seguir caminando hacia el objetivo
 			var move_dir = to_target.normalized()
 			velocity = move_dir * speed
 			move_and_slide()
-			
-			# Animación del movimiento coordinada con las 4 direcciones
-			_anim_timer += delta
-			# Escalar la velocidad de animación proporcionalmente a la velocidad física
-			var anim_speed_factor: float = 0.15
-			if speed > 0.0:
-				anim_speed_factor = 0.15 * (20.0 / speed)
-			if _anim_timer >= anim_speed_factor:
-				_anim_timer = 0.0
-				_anim_frame = (_anim_frame + 1) % 5
-				
-				if move_dir.x < 0 or move_dir.y > 0:
-					# Izquierda o Abajo (frames 0-4, sin flip)
-					sprite.frame = _anim_frame
-				else:
-					# Derecha o Arriba (frames 10-14, sin flip)
-					sprite.frame = 10 + _anim_frame
-				sprite.flip_h = false
+			_facing_down = move_dir.x < 0 or move_dir.y > 0
+			_play_walk()
+
+func _play_idle() -> void:
+	_anim_player.play("idle_down" if _facing_down else "idle_up")
+
+func _play_walk() -> void:
+	var anim = "walk_down" if _facing_down else "walk_up"
+	var speed_scale = speed / 20.0
+	_anim_player.play(anim, -1, speed_scale)
 
 func _select_new_target() -> void:
 	if routine_type == "Libre (Radio)":

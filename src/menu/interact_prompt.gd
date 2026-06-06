@@ -12,13 +12,13 @@ func setup(on_interact: Callable) -> void:
 	pivot_offset = size / 2.0
 	scale = Vector2.ZERO
 	var tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "scale", Vector2.ONE, 0.25)
+	tween.tween_property(self, "scale", Vector2.ONE, AnimHelper.PROMPT_POP_IN)
 	tween.tween_callback(_start_float)
 
 func _start_float() -> void:
 	_float_tween = create_tween().set_loops()
-	_float_tween.tween_property(self, "position:y", position.y - 6, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	_float_tween.tween_property(self, "position:y", position.y + 6, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_float_tween.tween_property(self, "position:y", position.y - 6, AnimHelper.PROMPT_FLOAT).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_float_tween.tween_property(self, "position:y", position.y + 6, AnimHelper.PROMPT_FLOAT).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 func _on_interact_pressed() -> void:
 	if _on_interact_callback.is_valid():

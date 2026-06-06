@@ -24,14 +24,10 @@ func show_panel() -> void:
 	volume_label.text = str(roundi(volume_slider.value))
 	_update_fullscreen_state()
 	modulate.a = 0.0
-	visible = true
-	var tween = create_tween()
-	tween.tween_property(self, "modulate:a", 1.0, 0.15)
+	AnimHelper.fade_in(self)
 
 func hide_panel() -> void:
-	var tween = create_tween()
-	tween.tween_property(self, "modulate:a", 0.0, 0.1)
-	tween.tween_callback(func():
+	AnimHelper.fade_out(self, AnimHelper.FADE_OUT_DURATION, func():
 		visible = false
 		set_process_input(false)
 	)

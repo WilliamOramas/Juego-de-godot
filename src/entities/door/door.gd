@@ -1,5 +1,5 @@
-class_name Door
 extends Area2D
+class_name Door
 
 @export_file("*.tscn") var target_scene_path: String
 @export var target_spawn_name: String = ""

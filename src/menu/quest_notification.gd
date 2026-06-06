@@ -1,5 +1,5 @@
-class_name QuestNotification
 extends CanvasLayer
+class_name QuestNotification
 
 signal done
 

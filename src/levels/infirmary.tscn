@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://ckfk1i1404ys6" path="res://src/assets/sprites/npc_spritesheet.png" id="6_nurse_tex"]
 [ext_resource type="Script" uid="uid://dtl581vlfbxui" path="res://src/levels/level_limits.gd" id="7_limits"]
 [ext_resource type="Resource" path="res://src/quests/quest_emergency.tres" id="8_quest_emergency"]
+[ext_resource type="Script" path="res://src/entities/cpr_trigger.gd" id="9_cpr_trigger"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left_bottom"]
 size = Vector2(2, 219)
@@ -41,6 +42,9 @@ size = Vector2(32, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bed"]
 size = Vector2(10, 7)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cpr"]
+size = Vector2(64, 64)
 
 [node name="Infirmary" type="Node2D" unique_id=1175055387]
 y_sort_enabled = true
@@ -152,3 +156,11 @@ shape = SubResource("RectangleShape2D_bed")
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1542440028]
 
 [node name="PauseMenu" parent="CanvasLayer" unique_id=348394732 instance=ExtResource("4_pause")]
+
+[node name="CPRTrigger" type="Area2D" parent="." unique_id=999888777]
+position = Vector2(280, 170)
+collision_mask = 3
+script = ExtResource("9_cpr_trigger")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CPRTrigger" unique_id=999888778]
+shape = SubResource("RectangleShape2D_cpr")

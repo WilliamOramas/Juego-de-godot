@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://df67f3x"]
+[gd_scene format=3 uid="uid://df67f3x"]
 
 [ext_resource type="Script" path="res://src/menu/login_panel.gd" id="1_script"]
 

@@ -1,5 +1,5 @@
-class_name Player
 extends CharacterBody2D
+class_name Player
 # collision_layer = 3 en player.tscn → Capas 1 (Mundo) + 2 (Player)
 
 @export var speed: float = 60.0

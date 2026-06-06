@@ -73,7 +73,7 @@ func register(email: String, password: String) -> void:
 	if err != OK:
 		auth_completed.emit(false, "Error al enviar petición HTTP")
 
-func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
+func _on_request_completed(result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
 	if result != HTTPRequest.RESULT_SUCCESS:
 		auth_completed.emit(false, "Error de red.")
 		return

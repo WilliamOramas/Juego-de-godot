@@ -1,5 +1,5 @@
-class_name InteractableComponent
 extends Node
+class_name InteractableComponent
 
 var prompt_instance: Control = null
 var interact_callback: Callable

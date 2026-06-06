@@ -1,5 +1,5 @@
-class_name QuestLogPanel
 extends CanvasLayer
+class_name QuestLogPanel
 
 signal closed
 

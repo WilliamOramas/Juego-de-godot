@@ -1,5 +1,5 @@
-class_name InteractPrompt
 extends PanelContainer
+class_name InteractPrompt
 
 var _on_interact_callback: Callable
 var _float_tween: Tween = null

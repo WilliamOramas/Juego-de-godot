@@ -1,5 +1,5 @@
-class_name JournalPanel
 extends PhonePanel
+class_name JournalPanel
 
 const CATEGORIES := [
 	{"name": "Todo", "value": -1},

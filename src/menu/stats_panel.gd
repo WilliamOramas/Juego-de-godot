@@ -1,5 +1,5 @@
-class_name StatsPanel
 extends PhonePanel
+class_name StatsPanel
 
 
 func build_ui() -> void:

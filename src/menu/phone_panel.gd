@@ -1,5 +1,5 @@
-class_name PhonePanel
 extends CanvasLayer
+class_name PhonePanel
 
 signal closed
 

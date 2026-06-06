@@ -1,5 +1,5 @@
-class_name EndScreen
 extends CanvasLayer
+class_name EndScreen
 
 signal continue_pressed
 

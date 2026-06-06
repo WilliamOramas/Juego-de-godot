@@ -5,14 +5,17 @@ const SAVE_SLOT_COUNT: int = 3
 const SAVE_VERSION: int = 1
 
 var active_slot: int = 0
+var active_is_cloud: bool = false
 var _loading: bool = false
 var _dirty: bool = false
 
 func _ready() -> void:
 	load_settings()
 
-func get_save_path(slot: int) -> String:
-	return "user://savegame_%d.save" % slot
+func get_save_path(slot: int, is_cloud: bool) -> String:
+	if is_cloud and Supabase.is_logged_in():
+		return "user://savegame_%s_%d.save" % [Supabase.user_id, slot]
+	return "user://savegame_local_%d.save" % slot
 
 # ─── Settings (always persist) ────────────────────────────────
 
@@ -69,8 +72,9 @@ func _apply_settings(data: Dictionary) -> void:
 
 # ─── Game Progress (slot-based) ──────────────────────────────
 
-func reset_game(slot: int) -> void:
+func reset_game(slot: int, is_cloud: bool) -> void:
 	active_slot = slot
+	active_is_cloud = is_cloud
 	Global.dialogs_seen.clear()
 	Global.pending_position_restore = false
 	Global.saved_player_position = Vector2.ZERO
@@ -78,17 +82,17 @@ func reset_game(slot: int) -> void:
 	JournalManager.clear()
 	QuestManager.set_quest_progress({})
 	_dirty = false
-	var path := get_save_path(slot)
+	var path := get_save_path(slot, is_cloud)
 	if FileAccess.file_exists(path):
 		var err: Error = DirAccess.remove_absolute(path)
 		if err != OK:
 			push_warning("Failed to remove save file: " + str(err))
 
-func has_game_save(slot: int) -> bool:
-	return FileAccess.file_exists(get_save_path(slot))
+func has_game_save(slot: int, is_cloud: bool) -> bool:
+	return FileAccess.file_exists(get_save_path(slot, is_cloud))
 
-func get_save_info(slot: int) -> Dictionary:
-	var path := get_save_path(slot)
+func get_save_info(slot: int, is_cloud: bool) -> Dictionary:
+	var path := get_save_path(slot, is_cloud)
 	if not FileAccess.file_exists(path):
 		return {"empty": true}
 	var file := FileAccess.open(path, FileAccess.READ)
@@ -120,29 +124,31 @@ func flush(override_last_scene: String = "") -> void:
 	if not _dirty and override_last_scene == "":
 		return
 	_dirty = false
-	_save_game(active_slot, override_last_scene)
+	_save_game(active_slot, active_is_cloud, override_last_scene)
 
-func save_to_slot(slot: int) -> void:
+func save_to_slot(slot: int, is_cloud: bool) -> void:
 	active_slot = slot
+	active_is_cloud = is_cloud
 	_dirty = false
-	_save_game(slot)
+	_save_game(slot, is_cloud)
 
-func _save_game(slot: int, override_last_scene: String = "") -> void:
+func _save_game(slot: int, is_cloud: bool, override_last_scene: String = "") -> void:
 	var data := _build_game_data(override_last_scene)
 	var json := JSON.stringify(data, "\t")
-	var file := FileAccess.open(get_save_path(slot), FileAccess.WRITE)
+	var file := FileAccess.open(get_save_path(slot, is_cloud), FileAccess.WRITE)
 	if file == null:
 		push_error("SaveManager: No se pudo guardar partida slot %d" % slot)
 		return
 	file.store_string(json)
 	file.close()
-	sync_to_cloud()
+	if is_cloud:
+		sync_to_cloud()
 
 func sync_to_cloud() -> void:
 	if not Supabase.is_logged_in(): return
 	var combined_saves = {}
 	for i in SAVE_SLOT_COUNT:
-		var path = get_save_path(i)
+		var path = get_save_path(i, true)
 		if FileAccess.file_exists(path):
 			var file = FileAccess.open(path, FileAccess.READ)
 			if file:
@@ -163,7 +169,7 @@ func sync_from_cloud(callback: Callable = Callable()) -> void:
 				var key = "slot_" + str(i)
 				if save_data.has(key):
 					var d = save_data[key]
-					var file = FileAccess.open(get_save_path(i), FileAccess.WRITE)
+					var file = FileAccess.open(get_save_path(i, true), FileAccess.WRITE)
 					if file:
 						file.store_string(JSON.stringify(d, "\t"))
 						file.close()
@@ -172,11 +178,12 @@ func sync_from_cloud(callback: Callable = Callable()) -> void:
 			if callback.is_valid(): callback.call(false)
 	)
 
-func load_game(slot: int) -> String:
-	var path := get_save_path(slot)
+func load_game(slot: int, is_cloud: bool) -> String:
+	var path := get_save_path(slot, is_cloud)
 	if not FileAccess.file_exists(path):
 		return ""
 	active_slot = slot
+	active_is_cloud = is_cloud
 	_loading = true
 
 	Global.dialogs_seen.clear()

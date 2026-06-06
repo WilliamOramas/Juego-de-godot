@@ -3,6 +3,7 @@ class_name Player
 # collision_layer = 3 en player.tscn → Capas 1 (Mundo) + 2 (Player)
 
 @export var speed: float = 60.0
+@export var run_speed: float = 120.0
 @export var control_enabled: bool = true
 
 var input_vector: Vector2 = Vector2.ZERO
@@ -46,9 +47,9 @@ func _physics_process(_delta: float) -> void:
 	move_and_slide()
 
 func get_input() -> void:
-	# Usamos el vector de entrada directamente (get_vector ya viene normalizado)
 	input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	velocity = input_vector * speed
+	var current_speed = run_speed if Input.is_key_pressed(KEY_SHIFT) and input_vector != Vector2.ZERO else speed
+	velocity = input_vector * current_speed
 
 func animate_player(delta: float = 0.0) -> void:
 	if velocity == Vector2.ZERO:
@@ -58,15 +59,18 @@ func animate_player(delta: float = 0.0) -> void:
 	else:
 		animation_tree.set("parameters/conditions/idle", false)
 		animation_tree.set("parameters/conditions/walk", true)
-		
+
+		var is_running := Input.is_key_pressed(KEY_SHIFT)
+		var step_interval := 0.18 if is_running else 0.3
+
 		if delta > 0.0:
 			step_timer += delta
-			if step_timer >= 0.3:
+			if step_timer >= step_interval:
 				step_timer = 0.0
 				if step_sound:
 					step_sound.pitch_scale = randf_range(0.85, 1.15)
 					step_sound.play()
-		
+
 		# Solo intentamos asignar si el parámetro existe en el árbol
 		animation_tree.set("parameters/walk/blend_position", input_vector)
 		animation_tree.set("parameters/idle/blend_position", input_vector)

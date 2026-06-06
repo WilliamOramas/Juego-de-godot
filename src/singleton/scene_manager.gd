@@ -63,6 +63,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		if MiniGameManager.is_minigame_active():
 			return
+		if not DialogBox or not is_instance_valid(DialogBox):
+			return
 		if get_tree().paused:
 			DialogBox.show_for_pause()
 			pause_game(false)

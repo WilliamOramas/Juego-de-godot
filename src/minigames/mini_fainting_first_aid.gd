@@ -361,7 +361,7 @@ func end(success: bool) -> void:
 		return
 	_is_running = false
 	process_mode = PROCESS_MODE_INHERIT
-	ScoreManager.record_minigame_result(success, _lives, _time_remaining)
+	ScoreManager.record_minigame_result("fainting_first_aid", success, _lives, _time_remaining)
 	if success:
 		JournalManager.add_system_entry("Minijuego completado", "Se realizaron todos los pasos de primeros auxilios correctamente.")
 	else:

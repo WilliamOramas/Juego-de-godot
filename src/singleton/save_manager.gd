@@ -208,11 +208,14 @@ func _apply_game_data(data: Dictionary) -> String:
 		Global.return_spawn_name = data["return_spawn_name"]
 	if data.has("score_stats"):
 		var s := data["score_stats"] as Dictionary
-		ScoreManager.minigame_passed = s.get("minigame_passed", false)
-		ScoreManager.student_saved = s.get("student_saved", false)
-		ScoreManager.lives_remaining = s.get("lives_remaining", 0)
-		ScoreManager.time_remaining = s.get("time_remaining", 0.0)
-		ScoreManager.errors_count = s.get("errors_count", 0)
+		if s.has("minigame_results"):
+			ScoreManager.set_minigame_results(s["minigame_results"])
+		else:
+			ScoreManager.minigame_passed = s.get("minigame_passed", false)
+			ScoreManager.student_saved = s.get("student_saved", false)
+			ScoreManager.lives_remaining = s.get("lives_remaining", 0)
+			ScoreManager.time_remaining = s.get("time_remaining", 0.0)
+			ScoreManager.errors_count = s.get("errors_count", 0)
 		ScoreManager.total_errors = s.get("total_errors", 0)
 		ScoreManager.quests_completed = s.get("quests_completed", 0)
 		ScoreManager.npcs_talked = s.get("npcs_talked", 0)

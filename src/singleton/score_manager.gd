@@ -11,6 +11,8 @@ var npcs_talked: int = 0
 var minigame_attempts: int = 0
 
 var _step_errors: int = 0
+var _minigame_results: Dictionary = {}
+var _student_died: bool = false
 
 
 func _ready() -> void:
@@ -24,19 +26,22 @@ func record_minigame_step(success: bool) -> void:
 		_step_errors += 1
 
 
-func record_minigame_result(success: bool, lives: int, time: float) -> void:
-	minigame_passed = success
-	student_saved = success
-	lives_remaining = lives
-	time_remaining = time
-	errors_count = _step_errors
+func record_minigame_result(game_id: String, success: bool, lives: int, time: float) -> void:
+	_minigame_results[game_id] = {
+		"passed": success,
+		"lives": lives,
+		"time": time,
+		"errors": _step_errors,
+	}
 	total_errors += _step_errors
 	minigame_attempts += 1
 	_step_errors = 0
+	_recompute_summary()
 	EventBus.score_updated.emit()
 
 
 func record_student_death() -> void:
+	_student_died = true
 	student_saved = false
 	EventBus.score_updated.emit()
 
@@ -53,15 +58,44 @@ func record_npc_talked() -> void:
 		EventBus.score_updated.emit()
 
 
+func _recompute_summary() -> void:
+	var any_passed := false
+	var all_passed := true
+	var total_lives := 0
+	var total_time := 0.0
+	var total_err := 0
+
+	for r in _minigame_results.values():
+		total_lives += r.lives
+		total_time += r.time
+		total_err += r.errors
+		if r.passed:
+			any_passed = true
+		else:
+			all_passed = false
+
+	if _minigame_results.is_empty():
+		minigame_passed = false
+		student_saved = false
+	else:
+		minigame_passed = any_passed
+		student_saved = all_passed and not _student_died
+
+	lives_remaining = total_lives
+	time_remaining = total_time
+	errors_count = total_err
+
+
 func calculate_score() -> int:
 	var score: int = 0
-	if minigame_passed:
-		score += 1000
-		score += int(lives_remaining * 200)
-		score += int(time_remaining * 5)
-		score -= errors_count * 50
-	else:
-		score += errors_count * -25
+	for r in _minigame_results.values():
+		if r.passed:
+			score += 1000
+			score += int(r.lives * 200)
+			score += int(r.time * 5)
+			score -= r.errors * 50
+		else:
+			score += r.errors * -25
 	return max(score, 0)
 
 
@@ -91,10 +125,23 @@ func get_stats() -> Dictionary:
 		"minigame_attempts": minigame_attempts,
 		"score": calculate_score(),
 		"grade": get_grade(),
+		"minigame_results": _minigame_results.duplicate(true),
 	}
 
 
+func set_minigame_results(results: Dictionary) -> void:
+	_minigame_results = results.duplicate(true)
+	_recompute_summary()
+
+
+func get_minigame_results() -> Dictionary:
+	return _minigame_results.duplicate(true)
+
+
 func reset() -> void:
+	_minigame_results.clear()
+	_student_died = false
+	_step_errors = 0
 	minigame_passed = false
 	student_saved = false
 	lives_remaining = 0
@@ -104,7 +151,6 @@ func reset() -> void:
 	quests_completed = 0
 	npcs_talked = 0
 	minigame_attempts = 0
-	_step_errors = 0
 
 
 func _on_minigame_completed(_game_id: String, _success: bool) -> void:

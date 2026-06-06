@@ -14,6 +14,7 @@ var _is_login_request: bool = true
 func _ready() -> void:
 	_load_config()
 	_http_request = HTTPRequest.new()
+	_http_request.timeout = 10
 	add_child(_http_request)
 	_http_request.request_completed.connect(_on_request_completed)
 
@@ -74,11 +75,36 @@ func register(email: String, password: String) -> void:
 		auth_completed.emit(false, "Error al enviar petición HTTP")
 
 func _on_request_completed(result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
-	if result != HTTPRequest.RESULT_SUCCESS:
-		auth_completed.emit(false, "Error de red.")
+	match result:
+		HTTPRequest.RESULT_TIMEOUT:
+			auth_completed.emit(false, "La conexión tardó demasiado. Revisa tu internet.")
+			return
+		HTTPRequest.RESULT_CONNECTION_ERROR:
+			auth_completed.emit(false, "No se pudo conectar al servidor.")
+			return
+		HTTPRequest.RESULT_BODY_SIZE_LIMIT_EXCEEDED:
+			auth_completed.emit(false, "La respuesta del servidor es demasiado grande.")
+			return
+		HTTPRequest.RESULT_CANT_CONNECT:
+			auth_completed.emit(false, "No se pudo establecer conexión con el servidor.")
+			return
+		HTTPRequest.RESULT_CANT_RESOLVE:
+			auth_completed.emit(false, "No se pudo resolver la dirección del servidor.")
+			return
+		HTTPRequest.RESULT_REQUEST_FAILED:
+			auth_completed.emit(false, "La petición falló.")
+			return
+		HTTPRequest.RESULT_SUCCESS:
+			pass
+		_:
+			auth_completed.emit(false, "Error de red inesperado.")
+			return
+
+	var response_text := body.get_string_from_utf8()
+	if response_text == "" and body.size() > 0:
+		auth_completed.emit(false, "Respuesta inválida del servidor.")
 		return
-		
-	var response_text = body.get_string_from_utf8()
+
 	var json = JSON.parse_string(response_text)
 	
 	if response_code >= 200 and response_code < 300:
@@ -94,4 +120,16 @@ func _on_request_completed(result: int, response_code: int, _headers: PackedStri
 			error_msg = json["error_description"]
 		elif typeof(json) == TYPE_DICTIONARY and json.has("msg"):
 			error_msg = json["msg"]
+		elif typeof(json) == TYPE_DICTIONARY and json.has("message"):
+			error_msg = json["message"]
+		elif response_code == 400:
+			error_msg = "Solicitud inválida. Revisa tus datos."
+		elif response_code == 401:
+			error_msg = "Credenciales incorrectas."
+		elif response_code == 403:
+			error_msg = "Acceso denegado."
+		elif response_code == 404:
+			error_msg = "Servicio no encontrado."
+		elif response_code >= 500:
+			error_msg = "Error interno del servidor. Intenta más tarde."
 		auth_completed.emit(false, error_msg)

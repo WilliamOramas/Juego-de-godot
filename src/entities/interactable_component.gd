@@ -7,6 +7,9 @@ var parent_node: Node
 var prompt_offset: Vector2
 
 func setup(parent: Node, offset: Vector2, on_interact: Callable) -> void:
+	if not EventBus:
+		push_error("InteractableComponent: EventBus no disponible")
+		return
 	parent_node = parent
 	prompt_offset = offset
 	interact_callback = on_interact

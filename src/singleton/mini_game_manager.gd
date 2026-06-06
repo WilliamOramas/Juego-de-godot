@@ -1,6 +1,25 @@
 extends Node
 
+const SCENARIOS: Dictionary = {
+	"fainting_first_aid": {
+		"path": "res://src/minigames/mini_fainting_first_aid.tscn",
+		"id": "fainting_first_aid",
+		"cinematic": true,
+	},
+	"cpr": {
+		"path": "res://src/minigames/mini_cpr.tscn",
+		"id": "cpr",
+		"cinematic": false,
+	},
+}
+
 var _active_minigame: MiniGameBase = null
+
+func get_scenario(scenario_id: String) -> Dictionary:
+	return SCENARIOS.get(scenario_id, {})
+
+func has_scenario(scenario_id: String) -> bool:
+	return SCENARIOS.has(scenario_id)
 
 func launch_minigame(scene_path: String, game_id: String) -> void:
 	if _active_minigame:

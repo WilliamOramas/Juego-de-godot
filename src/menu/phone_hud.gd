@@ -5,19 +5,6 @@ enum Mood {NORMAL, HAPPY, SAD, ANGRY, TALK}
 
 const SCENARIO_TIMEOUT: float = 30.0
 
-const SCENARIOS: Dictionary = {
-	"fainting_first_aid": {
-		"path": "res://src/minigames/mini_fainting_first_aid.tscn",
-		"id": "fainting_first_aid",
-		"cinematic": true,
-	},
-	"cpr": {
-		"path": "res://src/minigames/mini_cpr.tscn",
-		"id": "cpr",
-		"cinematic": false,
-	},
-}
-
 @onready var anim: AnimationPlayer = $AnimationPlayer
 @onready var face_anim: AnimationPlayer = $Phone/FacePlayer
 @onready var status_label: Label = $Phone/Status
@@ -256,7 +243,7 @@ func _on_scene_changing(_scene_path: String) -> void:
 
 
 func _on_minigame_completed(game_id: String, success: bool) -> void:
-	if not SCENARIOS.has(game_id):
+	if not MiniGameManager.has_scenario(game_id):
 		return
 	var texts: Dictionary = {
 		"fainting_first_aid": "Emergencia resuelta.\nEstudiante estabilizado." if success else "Falleció el estudiante.",
@@ -288,9 +275,9 @@ func _launch_scenario() -> void:
 		return
 	var msg: Dictionary = _message_queue[0]
 	var sid: String = msg.get("scenario_id", "")
-	if sid == "" or not SCENARIOS.has(sid):
+	if sid == "" or not MiniGameManager.has_scenario(sid):
 		return
-	var scenario: Dictionary = SCENARIOS[sid]
+	var scenario: Dictionary = MiniGameManager.get_scenario(sid)
 	_message_queue.pop_front()
 	_scenario_timer = 0.0
 	_mode = PhoneMode.LAUNCHING

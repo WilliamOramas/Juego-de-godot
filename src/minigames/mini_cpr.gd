@@ -563,7 +563,7 @@ func end(success: bool) -> void:
 		return
 	_is_running = false
 	process_mode = PROCESS_MODE_INHERIT
-	ScoreManager.record_minigame_result(success, _lives, _time_remaining)
+	ScoreManager.record_minigame_result("cpr", success, _lives, _time_remaining)
 	if success:
 		JournalManager.add_system_entry("RCP completada", "Se completaron 3 ciclos de RCP correctamente.")
 	else:

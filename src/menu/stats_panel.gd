@@ -43,17 +43,29 @@ func build_ui() -> void:
 
 func _populate(vbox: VBoxContainer) -> void:
 	var stats := ScoreManager.get_stats()
+	var results := ScoreManager.get_minigame_results()
 
 	_add_stat_row(vbox, "Puntaje total", str(stats.score), Color.GOLD)
 	_add_stat_row(vbox, "Rango", stats.grade, _grade_color(stats.grade))
 
 	vbox.add_child(HSeparator.new())
 
-	_add_stat_row(vbox, "Minijuego superado", _yes_no(stats.minigame_passed), _bool_color(stats.minigame_passed))
-	_add_stat_row(vbox, "Estudiante salvado", _yes_no(stats.student_saved), _bool_color(stats.student_saved))
-	_add_stat_row(vbox, "Vidas restantes", str(stats.lives_remaining), Color.WHITE)
-	_add_stat_row(vbox, "Tiempo restante", "%.1fs" % stats.time_remaining, Color.WHITE)
-	_add_stat_row(vbox, "Errores en minijuego", str(stats.errors_count), _error_color(stats.errors_count))
+	for id in results:
+		var r := results[id] as Dictionary
+		var label: String
+		match id:
+			"cpr": label = "RCP"
+			"fainting_first_aid": label = "Primeros Auxilios"
+			_: label = id
+		_add_stat_row(vbox, label + " — Superado", _yes_no(r.passed), _bool_color(r.passed))
+		_add_stat_row(vbox, label + " — Vidas", str(r.lives), Color.WHITE)
+		_add_stat_row(vbox, label + " — Tiempo", "%.1fs" % r.time, Color.WHITE)
+		_add_stat_row(vbox, label + " — Errores", str(r.errors), _error_color(r.errors))
+		vbox.add_child(HSeparator.new())
+
+	_add_stat_row(vbox, "Total vidas restantes", str(stats.lives_remaining), Color.WHITE)
+	_add_stat_row(vbox, "Total tiempo restante", "%.1fs" % stats.time_remaining, Color.WHITE)
+	_add_stat_row(vbox, "Total errores", str(stats.errors_count), _error_color(stats.errors_count))
 	_add_stat_row(vbox, "Intentos de minijuego", str(stats.minigame_attempts), Color.WHITE)
 
 	vbox.add_child(HSeparator.new())

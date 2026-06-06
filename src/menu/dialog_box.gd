@@ -23,7 +23,7 @@ var _slide_tween: Tween = null
 var _just_opened: bool = false
 var _was_open_before_pause: bool = false
 
-func _ready():
+func _ready() -> void:
 	visible = false
 
 func show_dialog(npc_name: String, lines: Array[String]) -> void:

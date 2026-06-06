@@ -4,6 +4,7 @@ class_name MainMenu
 var _active_panel: Control = null
 var _pending_slot: int = -1
 var _pending_mode: String = ""
+var _pending_is_cloud: bool = false
 var _user_popup: PopupMenu
 
 func _ready() -> void:
@@ -38,7 +39,9 @@ func _input(event: InputEvent) -> void:
 
 func _has_any_save() -> bool:
 	for i in SaveManager.SAVE_SLOT_COUNT:
-		if SaveManager.has_game_save(i):
+		if SaveManager.has_game_save(i, false):
+			return true
+		if Supabase.is_logged_in() and SaveManager.has_game_save(i, true):
 			return true
 	return false
 
@@ -66,26 +69,36 @@ func _on_borrar_pressed() -> void:
 	_active_panel = $SlotSelector
 	$SlotSelector.show_panel("delete")
 
-func _on_slot_selected(slot: int, mode: String) -> void:
+func _on_slot_selected(slot: int, mode: String, is_cloud: bool = false) -> void:
 	_active_panel = null
 	match mode:
 		"new":
-			SaveManager.reset_game(slot)
+			SaveManager.reset_game(slot, is_cloud)
 			SceneManager.change_scene("res://src/levels/school_hallway.tscn")
 		"load":
 			PhoneHud.reset()
-			var last_scene := SaveManager.load_game(slot)
+			var last_scene := SaveManager.load_game(slot, is_cloud)
 			if last_scene != "":
 				SceneManager.change_scene(last_scene)
 		"delete":
 			_pending_slot = slot
 			_pending_mode = mode
+			_pending_is_cloud = is_cloud
 			$ConfirmationDialog.dialog_text = "¿Borrar SLOT %d?" % (slot + 1)
 			$ConfirmationDialog.popup_centered()
+		"save":
+			SaveManager.save_to_slot(slot, is_cloud)
+			_active_panel = $SlotSelector
+			$SlotSelector.show_save_feedback(slot)
+		"save_cloud_and_local":
+			SaveManager.save_to_slot(slot, false)
+			SaveManager.save_to_slot(slot, true)
+			_active_panel = $SlotSelector
+			$SlotSelector.show_save_feedback(slot)
 
 func _on_confirmation_confirmed() -> void:
 	if _pending_mode == "delete":
-		SaveManager.reset_game(_pending_slot)
+		SaveManager.reset_game(_pending_slot, _pending_is_cloud)
 		_active_panel = $SlotSelector
 		$SlotSelector.show_panel("delete")
 	_pending_slot = -1

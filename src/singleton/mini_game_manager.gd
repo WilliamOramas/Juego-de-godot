@@ -39,6 +39,11 @@ func launch_minigame(scene_path: String, game_id: String) -> void:
 	instance.set_background_image(viewport_img)
 	EventBus.minigame_started.emit(game_id)
 	instance.start()
+	
+	# Iniciar sesión de telemetría en la base de datos
+	var db_escenario_id = 1 if game_id == "fainting_first_aid" else 2
+	if Supabase.is_logged_in():
+		Supabase.start_session(db_escenario_id, func(_s, _id, _e): pass)
 
 func _stop_bgm() -> void:
 	var scene := get_tree().current_scene

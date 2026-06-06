@@ -4,6 +4,7 @@ class_name PauseMenu
 var _active_panel: Panel = null
 var _pending_slot: int = -1
 var _pending_mode: String = ""
+var _pending_is_cloud: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
@@ -49,20 +50,30 @@ func _on_borrar_pressed() -> void:
 	_active_panel = $SlotSelector
 	$SlotSelector.show_panel("delete")
 
-func _on_slot_selected(slot: int, mode: String) -> void:
+func _on_slot_selected(slot: int, mode: String, is_cloud: bool = false) -> void:
 	_pending_slot = slot
 	_pending_mode = mode
+	_pending_is_cloud = is_cloud
 	if mode == "save":
-		var info: Dictionary = SaveManager.get_save_info(slot)
+		var info: Dictionary = SaveManager.get_save_info(slot, is_cloud)
 		if info.get("empty", true):
-			SaveManager.save_to_slot(slot)
+			SaveManager.save_to_slot(slot, is_cloud)
 			$SlotSelector.show_save_feedback(slot)
 			await get_tree().create_timer(1.2).timeout
-			$SlotSelector.hide_panel()
+			if is_instance_valid($SlotSelector):
+				$SlotSelector.hide_panel()
 			_active_panel = null
 		else:
 			$ConfirmationDialog.dialog_text = "¿Sobrescribir SLOT %d?" % (slot + 1)
 			$ConfirmationDialog.popup_centered()
+	elif mode == "save_cloud_and_local":
+		SaveManager.save_to_slot(slot, false)
+		SaveManager.save_to_slot(slot, true)
+		$SlotSelector.show_save_feedback(slot)
+		await get_tree().create_timer(1.2).timeout
+		if is_instance_valid($SlotSelector):
+			$SlotSelector.hide_panel()
+		_active_panel = null
 	elif mode == "delete":
 		$ConfirmationDialog.dialog_text = "¿Borrar SLOT %d?" % (slot + 1)
 		$ConfirmationDialog.popup_centered()
@@ -72,20 +83,21 @@ func _on_slot_selected(slot: int, mode: String) -> void:
 
 func _on_confirmation_confirmed() -> void:
 	if _pending_mode == "save":
-		SaveManager.save_to_slot(_pending_slot)
+		SaveManager.save_to_slot(_pending_slot, _pending_is_cloud)
 		$SlotSelector.show_save_feedback(_pending_slot)
 		await get_tree().create_timer(1.2).timeout
-		$SlotSelector.hide_panel()
+		if is_instance_valid($SlotSelector):
+			$SlotSelector.hide_panel()
 		_active_panel = null
 	elif _pending_mode == "load":
 		$SlotSelector.hide_panel()
 		_active_panel = null
 		PhoneHud.reset()
-		var last_scene := SaveManager.load_game(_pending_slot)
+		var last_scene := SaveManager.load_game(_pending_slot, _pending_is_cloud)
 		if last_scene != "":
 			SceneManager.change_scene(last_scene)
 	elif _pending_mode == "delete":
-		SaveManager.reset_game(_pending_slot)
+		SaveManager.reset_game(_pending_slot, _pending_is_cloud)
 		_active_panel = $SlotSelector
 		$SlotSelector.show_panel("delete")
 	_pending_slot = -1

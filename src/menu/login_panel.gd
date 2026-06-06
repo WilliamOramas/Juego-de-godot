@@ -70,8 +70,6 @@ func _on_auth_completed(success: bool, message: String) -> void:
 			info_label.add_theme_color_override("font_color", Color(0.2, 0.5, 0.8)) # Blue
 			
 			SaveManager.sync_from_cloud(func(_s):
-				# Siempre forzamos una subida después para que las partidas de invitado se guarden
-				SaveManager.sync_to_cloud()
 				SceneManager.change_scene("res://src/menu/main_menu.tscn")
 			)
 		else:

@@ -37,6 +37,22 @@ grow_vertical = 2
 theme_override_constants/separation = 8
 alignment = 1
 
+[node name="Tabs" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="TabLocal" parent="VBoxContainer/Tabs" instance=ExtResource("4_button")]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "LOCALES"
+
+[node name="TabCloud" parent="VBoxContainer/Tabs" instance=ExtResource("4_button")]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "EN LA NUBE"
+
 [node name="Title" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -82,3 +98,11 @@ theme_override_font_sizes/font_size = 18
 text = "VOLVER"
 
 [connection signal="pressed" from="VBoxContainer/CloseButton" to="." method="_on_close_pressed"]
+
+[node name="CloudConfirmDialog" type="ConfirmationDialog" parent="."]
+title = "Guardar en la Nube"
+initial_position = 2
+size = Vector2i(450, 100)
+ok_button_text = "Sí, subir a la Nube"
+cancel_button_text = "No, solo Local"
+dialog_text = "¿Deseas respaldar esta partida en la nube de tu cuenta?"

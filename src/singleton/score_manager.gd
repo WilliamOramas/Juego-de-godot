@@ -21,9 +21,12 @@ func _ready() -> void:
 	EventBus.dialog_finished.connect(_on_dialog_finished)
 
 
-func record_minigame_step(success: bool) -> void:
+func record_minigame_step(success: bool, action: String = "Acción médica", time_taken: float = 0.0, health: String = "Estable") -> void:
 	if not success:
 		_step_errors += 1
+		
+	if Supabase.current_session_id != -1:
+		Supabase.send_telemetry(Supabase.current_session_id, action, success, time_taken, health)
 
 
 func record_minigame_result(game_id: String, success: bool, lives: int, time: float) -> void:
@@ -38,6 +41,10 @@ func record_minigame_result(game_id: String, success: bool, lives: int, time: fl
 	_step_errors = 0
 	_recompute_summary()
 	EventBus.score_updated.emit()
+	
+	if Supabase.current_session_id != -1:
+		var resultado = "Salvado" if success and not _student_died else "Fallecido"
+		Supabase.finish_session(Supabase.current_session_id, resultado)
 
 
 func record_student_death() -> void:

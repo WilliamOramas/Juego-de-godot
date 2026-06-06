@@ -8,6 +8,7 @@ var supabase_url: String = ""
 var supabase_key: String = ""
 var access_token: String = ""
 var user_id: String = ""
+var current_session_id: int = -1
 
 var _http_request: HTTPRequest
 var _is_login_request: bool = true
@@ -207,6 +208,7 @@ func start_session(id_escenario: int, callback: Callable) -> void:
 	_send_db_request("sesiones", HTTPClient.METHOD_POST, JSON.stringify(data), func(success, resp_json, error):
 		if success and typeof(resp_json) == TYPE_ARRAY and resp_json.size() > 0:
 			var id_sesion = resp_json[0]["id_sesion"]
+			current_session_id = int(id_sesion)
 			callback.call(true, id_sesion, "")
 		else:
 			callback.call(false, null, error)
@@ -226,7 +228,10 @@ func finish_session(id_sesion: int, resultado: String, callback: Callable = Call
 	var data = {
 		"resultado": resultado
 	}
-	_send_db_request("sesiones?id_sesion=eq.%d" % id_sesion, HTTPClient.METHOD_PATCH, JSON.stringify(data), callback)
+	_send_db_request("sesiones?id_sesion=eq.%d" % id_sesion, HTTPClient.METHOD_PATCH, JSON.stringify(data), func(success, resp_data, error):
+		current_session_id = -1
+		if callback.is_valid(): callback.call(success, resp_data, error)
+	)
 
 # --- CLOUD SAVES ---
 func push_cloud_saves(save_data: Dictionary, callback: Callable = Callable()) -> void:

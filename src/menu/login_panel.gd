@@ -66,8 +66,14 @@ func _on_auth_completed(success: bool, message: String) -> void:
 		info_label.text = message
 		
 		if is_login_mode:
-			# Auto redirect on login
-			SceneManager.change_scene("res://src/menu/main_menu.tscn")
+			info_label.text = "Sincronizando partidas en la nube..."
+			info_label.add_theme_color_override("font_color", Color(0.2, 0.5, 0.8)) # Blue
+			
+			SaveManager.sync_from_cloud(func(_s):
+				# Siempre forzamos una subida después para que las partidas de invitado se guarden
+				SaveManager.sync_to_cloud()
+				SceneManager.change_scene("res://src/menu/main_menu.tscn")
+			)
 		else:
 			# Registration success
 			info_label.text = message + "\nRedirigiendo al login en 6 segundos..."

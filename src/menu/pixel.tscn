@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://dswjytovfuu1t"]
+[gd_scene load_steps=10 format=3 uid="uid://dswjytovfuu1t"]
+
+[ext_resource type="Script" path="res://src/menu/pixel.gd" id="1_script"]
 
 [ext_resource type="Texture2D" uid="uid://dcfxrre35wb7u" path="res://src/assets/sprites/robot_body.svg" id="1_body"]
 [ext_resource type="Texture2D" uid="uid://bxwu5sdekb6va" path="res://src/assets/sprites/robot_face_happy.svg" id="2_face_happy"]
@@ -64,6 +66,19 @@ _data = {
 &"idle": SubResource("Animation_idle")
 }
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bubble"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.15)
+shadow_size = 8
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+
 [node name="Pixel" type="Control" unique_id=316933044]
 process_mode = 1
 custom_minimum_size = Vector2(192, 192)
@@ -71,6 +86,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 192.0
 offset_bottom = 192.0
+script = ExtResource("1_script")
 
 [node name="Body" type="TextureRect" parent="." unique_id=1192802139]
 layout_mode = 0
@@ -111,3 +127,20 @@ expand_mode = 1
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=992123045]
 libraries/ = SubResource("AnimationLibrary_pixel")
 autoplay = &"idle"
+
+[node name="SpeechBubble" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = -140.0
+offset_top = -30.0
+offset_right = 30.0
+offset_bottom = 20.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_bubble")
+
+[node name="Label" type="Label" parent="SpeechBubble"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 14
+text = "¡Psst! Inicia sesión para guardar tu progreso ☁️"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3

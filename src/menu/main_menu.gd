@@ -1,9 +1,10 @@
 extends Control
 class_name MainMenu
 
-var _active_panel: Panel = null
+var _active_panel: Control = null
 var _pending_slot: int = -1
 var _pending_mode: String = ""
+var _user_popup: PopupMenu
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -12,6 +13,19 @@ func _ready() -> void:
 	$CreditosPanel.panel_closed.connect(_on_panel_closed)
 	$SlotSelector.panel_closed.connect(_on_panel_closed)
 	$SlotSelector.slot_selected.connect(_on_slot_selected)
+	
+	_user_popup = PopupMenu.new()
+	_user_popup.add_item("Cerrar Sesión", 0)
+	_user_popup.id_pressed.connect(_on_user_popup_id_pressed)
+	add_child(_user_popup)
+	
+	_update_user_button()
+
+func _update_user_button() -> void:
+	if Supabase.is_logged_in():
+		$Usuario.text = "👤"
+	else:
+		$Usuario.text = "USUARIO"
 
 func _on_panel_closed() -> void:
 	_active_panel = null
@@ -92,6 +106,18 @@ func _on_controles_pressed() -> void:
 func _on_creditos_pressed() -> void:
 	_active_panel = $CreditosPanel
 	$CreditosPanel.show_panel()
+
+func _on_usuario_pressed() -> void:
+	if Supabase.is_logged_in():
+		var btn_rect = $Usuario.get_global_rect()
+		_user_popup.popup(Rect2i(btn_rect.position.x, btn_rect.position.y - 40, 150, 40))
+	else:
+		SceneManager.change_scene("res://src/menu/login_panel.tscn")
+
+func _on_user_popup_id_pressed(id: int) -> void:
+	if id == 0: # Cerrar sesión
+		Supabase.logout()
+		_update_user_button()
 
 func _on_exit_game_pressed() -> void:
 	get_tree().quit()

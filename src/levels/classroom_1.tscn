@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://bejib1kp3kfe1" path="res://src/assets/sprites/npc_spritesheet_alt.png" id="6_teacher_tex"]
 [ext_resource type="Script" uid="uid://dtl581vlfbxui" path="res://src/levels/level_limits.gd" id="7_limits"]
 [ext_resource type="PackedScene" path="res://src/entities/npc/professor_npc.tscn" id="8_prof"]
+[ext_resource type="Texture2D" uid="uid://cm3pj731lfemk" path="res://src/assets/sprites/np2.png" id="9_npc_sprite"]
 
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left"]
@@ -239,6 +240,7 @@ position = Vector2(270, 420)
 
 [node name="EstudianteSentadoAtento" parent="." unique_id=2005933650 instance=ExtResource("5_npc")]
 position = Vector2(427, 419)
+sprite_texture = ExtResource("9_npc_sprite")
 sprite_modulate = Color(0.9, 1, 0.9, 1)
 npc_name = "Compañero"
 dialog_lines = Array[String](["Oye, ¿qué haces fuera de tu asiento?", "El profesor Méndez está de un humor terrible hoy, no perdonará a nadie.", "Vuelve antes de que te vea, yo te cubro."])
@@ -249,15 +251,16 @@ routine_type = "Estático"
 position = Vector2(240, 100)
 sprite_texture = ExtResource("6_teacher_tex")
 npc_name = "Profesor Méndez"
-dialog_lines = Array[String](["¿Otra vez interrumpiendo mi clase?", "Ya he tenido suficiente de tus paseos. Si no quieres reprobar mi materia, tendrás que demostrar que has aprendido algo.", "Vas a enfrentarte a Pedro en una trivia de primeros auxilios. Si ganas, te daré puntos extra que te harán más ligera la carga."])
-dialog_lines_repeat = Array[String](["El reto sigue en pie.", "¿Tienes miedo de enfrentarte a Pedro en la trivia?"])
+dialog_lines = Array[String](["¿Otra vez interrumpiendo mi clase?", "Ya he tenido suficiente de tus paseos. Si no quieres reprobar mi materia, tendrás que demostrar que has aprendido algo.", "Vas a enfrentarte a Enrique en una trivia de primeros auxilios. Si ganas, te daré puntos extra que te harán más ligera la carga."])
+dialog_lines_repeat = Array[String](["El reto sigue en pie.", "¿Tienes miedo de enfrentarte a Enrique en la trivia?"])
 routine_type = "Patrulla Horizontal"
 speed = 15.0
 
-[node name="Pedro" parent="." unique_id=987654321 instance=ExtResource("5_npc")]
+[node name="Enrique" parent="." unique_id=987654321 instance=ExtResource("5_npc")]
 position = Vector2(320, 100)
-sprite_modulate = Color(0.4, 0.4, 0.45, 1)
-npc_name = "Pedro"
+sprite_texture = ExtResource("9_npc_sprite")
+sprite_modulate = Color(0.7, 0.7, 0.5, 1)
+npc_name = "Enrique"
 dialog_lines = Array[String](["...", "Prepárate para perder la trivia."])
 dialog_lines_repeat = Array[String](["No me hables, estoy concentrado."])
 routine_type = "Estático"

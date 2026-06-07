@@ -5,7 +5,7 @@ var p1_container: Control
 var p1_question: Label
 var p1_options: VBoxContainer
 var p1_player_strikes: Label
-var p1_pedro_strikes: Label
+var p1_enrique_strikes: Label
 var p1_status: Label
 
 var p2_container: Control
@@ -14,9 +14,17 @@ var p2_status: Label
 var p2_grid: GridContainer
 var wordle_labels: Array = []
 
+# === Audio ===
+var bgm: AudioStreamPlayer
+var correct_sound: AudioStreamPlayer
+var wrong_sound: AudioStreamPlayer
+var step_sound: AudioStreamPlayer
+var success_fanfare: AudioStreamPlayer
+var fail_sound: AudioStreamPlayer
+
 # === State Phase 1 ===
 var player_strikes: int = 0
-var pedro_strikes: int = 0
+var enrique_strikes: int = 0
 var questions_asked: int = 0
 var current_q_index: int = -1
 
@@ -28,7 +36,7 @@ var current_guess: String = ""
 var current_attempt: int = 0
 var p2_round: int = 1
 var player_w_wins: int = 0
-var pedro_w_wins: int = 0
+var enrique_w_wins: int = 0
 
 var _time_elapsed: float = 0.0
 var _step_start_time: float = 0.0
@@ -45,10 +53,37 @@ var questions: Array = [
 func _ready() -> void:
 	super._ready()
 	if background:
-		background.hide() # Kill the ghost screenshot
+		background.hide()
 	_build_ui()
 	questions.shuffle()
 	wordle_words.shuffle()
+
+	bgm = AudioStreamPlayer.new()
+	bgm.stream = preload("res://src/assets/sounds/Quiz_BACKGROUND_MUSIC.mp3")
+	bgm.volume_db = -8.0
+	game_container.add_child(bgm)
+	bgm.play()
+	bgm.finished.connect(func(): bgm.play())
+
+	correct_sound = AudioStreamPlayer.new()
+	correct_sound.stream = preload("res://src/assets/sounds/correct.wav")
+	game_container.add_child(correct_sound)
+
+	wrong_sound = AudioStreamPlayer.new()
+	wrong_sound.stream = preload("res://src/assets/sounds/wrong.wav")
+	game_container.add_child(wrong_sound)
+
+	step_sound = AudioStreamPlayer.new()
+	step_sound.stream = preload("res://src/assets/sounds/step.wav")
+	game_container.add_child(step_sound)
+
+	success_fanfare = AudioStreamPlayer.new()
+	success_fanfare.stream = preload("res://src/assets/sounds/success_fanfare.wav")
+	game_container.add_child(success_fanfare)
+
+	fail_sound = AudioStreamPlayer.new()
+	fail_sound.stream = preload("res://src/assets/sounds/fail_sound.wav")
+	game_container.add_child(fail_sound)
 
 func start() -> void:
 	super.start()
@@ -98,7 +133,7 @@ func _build_ui() -> void:
 	
 	var title = Label.new()
 	p1_container.add_child(title)
-	title.text = "TRIVIA MÉDICA: TÚ VS PEDRO"
+	title.text = "TRIVIA MÉDICA: TÚ VS ENRIQUE"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 24)
 	_set_top_wide(title, 20, 40)
@@ -117,20 +152,20 @@ func _build_ui() -> void:
 	p1_player_strikes.offset_right = 300
 	p1_player_strikes.offset_bottom = 110
 	
-	p1_pedro_strikes = Label.new()
-	p1_container.add_child(p1_pedro_strikes)
-	p1_pedro_strikes.text = "Strikes de Pedro: 0/3"
-	p1_pedro_strikes.add_theme_color_override("font_color", Color.ORANGE)
-	p1_pedro_strikes.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	p1_enrique_strikes = Label.new()
+	p1_container.add_child(p1_enrique_strikes)
+	p1_enrique_strikes.text = "Strikes de Enrique: 0/3"
+	p1_enrique_strikes.add_theme_color_override("font_color", Color.ORANGE)
+	p1_enrique_strikes.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	# Top Right anchor
-	p1_pedro_strikes.anchor_left = 1
-	p1_pedro_strikes.anchor_right = 1
-	p1_pedro_strikes.anchor_top = 0
-	p1_pedro_strikes.anchor_bottom = 0
-	p1_pedro_strikes.offset_left = -300
-	p1_pedro_strikes.offset_top = 70
-	p1_pedro_strikes.offset_right = -50
-	p1_pedro_strikes.offset_bottom = 110
+	p1_enrique_strikes.anchor_left = 1
+	p1_enrique_strikes.anchor_right = 1
+	p1_enrique_strikes.anchor_top = 0
+	p1_enrique_strikes.anchor_bottom = 0
+	p1_enrique_strikes.offset_left = -300
+	p1_enrique_strikes.offset_top = 70
+	p1_enrique_strikes.offset_right = -50
+	p1_enrique_strikes.offset_bottom = 110
 	
 	p1_question = Label.new()
 	p1_container.add_child(p1_question)
@@ -219,7 +254,7 @@ func _next_question() -> void:
 		ScoreManager.record_minigame_result("trivia", false, 0, time_remaining)
 		end(false)
 		return
-	if pedro_strikes >= 3:
+	if enrique_strikes >= 3:
 		var time_remaining = max(0.0, 120.0 - _time_elapsed)
 		ScoreManager.record_minigame_result("trivia", true, 3 - player_strikes, time_remaining)
 		end(true)
@@ -260,18 +295,20 @@ func _on_option_selected(idx: int) -> void:
 		player_strikes += 1
 		p1_player_strikes.text = "Tus Strikes: %d/3" % player_strikes
 		p1_status.text = "¡Incorrecto!"
+		wrong_sound.play()
 		ScoreManager.record_minigame_step(false, "Respuesta incorrecta a la trivia", time_taken)
 	else:
 		p1_status.text = "¡Correcto!"
+		correct_sound.play()
 		ScoreManager.record_minigame_step(true, "Respuesta correcta a la trivia", time_taken)
 		
-	var pedro_correct = randf() < 0.75
-	if not pedro_correct:
-		pedro_strikes += 1
-		p1_pedro_strikes.text = "Strikes de Pedro: %d/3" % pedro_strikes
-		p1_status.text += " | ¡Pedro falló!"
+	var enrique_correct = randf() < 0.75
+	if not enrique_correct:
+		enrique_strikes += 1
+		p1_enrique_strikes.text = "Strikes de Enrique: %d/3" % enrique_strikes
+		p1_status.text += " | ¡Enrique falló!"
 	else:
-		p1_status.text += " | Pedro acertó."
+		p1_status.text += " | Enrique acertó."
 		
 	questions_asked += 1
 	
@@ -287,7 +324,7 @@ func _start_phase_2() -> void:
 	p2_container.visible = true
 	p2_round = 1
 	player_w_wins = 0
-	pedro_w_wins = 0
+	enrique_w_wins = 0
 	_setup_wordle_round()
 
 func _setup_wordle_round() -> void:
@@ -296,7 +333,7 @@ func _setup_wordle_round() -> void:
 		return
 		
 	p2_title.text = "DESEMPATE WORDLE - RONDA %d/3" % p2_round
-	p2_status.text = "Escribe una palabra de 5 letras (Tú: %d | Pedro: %d)" % [player_w_wins, pedro_w_wins]
+	p2_status.text = "Escribe una palabra de 5 letras (Tú: %d | Enrique: %d)" % [player_w_wins, enrique_w_wins]
 	p2_status.add_theme_color_override("font_color", Color.WHITE)
 	target_word = wordle_words[(p2_round - 1) % wordle_words.size()]
 	current_guess = ""
@@ -326,6 +363,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 				regex.compile("^[A-Z]$")
 				if regex.search(chr):
 					current_guess += chr
+					step_sound.play()
 					_update_grid_text()
 
 func _update_grid_text() -> void:
@@ -376,22 +414,24 @@ func _submit_guess() -> void:
 		_round_over(false)
 
 func _round_over(player_won: bool) -> void:
-	# Simulamos el turno de Pedro (35% de ganar)
-	var pedro_won = randf() < 0.35
+	# Simulamos el turno de Enrique (35% de ganar)
+	var enrique_won = randf() < 0.35
 	
 	if player_won:
 		player_w_wins += 1
 		p2_status.text = "¡Adivinaste la palabra! "
 		p2_status.add_theme_color_override("font_color", Color.GREEN)
+		correct_sound.play()
 	else:
 		p2_status.text = "Fallaste. La palabra era %s. " % target_word
 		p2_status.add_theme_color_override("font_color", Color.RED)
+		wrong_sound.play()
 		
-	if pedro_won:
-		pedro_w_wins += 1
-		p2_status.text += "Pedro adivinó la suya."
+	if enrique_won:
+		enrique_w_wins += 1
+		p2_status.text += "Enrique adivinó la suya."
 	else:
-		p2_status.text += "Pedro también falló."
+		p2_status.text += "Enrique también falló."
 		
 	await get_tree().create_timer(3.0).timeout
 	p2_round += 1
@@ -399,18 +439,20 @@ func _round_over(player_won: bool) -> void:
 		_setup_wordle_round()
 
 func _end_phase_2() -> void:
-	if player_w_wins > pedro_w_wins:
+	if player_w_wins > enrique_w_wins:
 		p2_title.text = "¡GANASTE EL DESEMPATE!"
 		p2_title.add_theme_color_override("font_color", Color.GREEN)
-		p2_status.text = "Tú: %d | Pedro: %d" % [player_w_wins, pedro_w_wins]
+		p2_status.text = "Tú: %d | Enrique: %d" % [player_w_wins, enrique_w_wins]
+		success_fanfare.play()
 		await get_tree().create_timer(3.0).timeout
 		var time_remaining = max(0.0, 120.0 - _time_elapsed)
 		ScoreManager.record_minigame_result("trivia", true, 3 - player_strikes, time_remaining)
 		end(true)
-	elif pedro_w_wins > player_w_wins:
-		p2_title.text = "PEDRO GANÓ EL DESEMPATE"
+	elif enrique_w_wins > player_w_wins:
+		p2_title.text = "ENRIQUE GANÓ EL DESEMPATE"
 		p2_title.add_theme_color_override("font_color", Color.RED)
-		p2_status.text = "Tú: %d | Pedro: %d" % [player_w_wins, pedro_w_wins]
+		p2_status.text = "Tú: %d | Enrique: %d" % [player_w_wins, enrique_w_wins]
+		fail_sound.play()
 		await get_tree().create_timer(3.0).timeout
 		var time_remaining = max(0.0, 120.0 - _time_elapsed)
 		ScoreManager.record_minigame_result("trivia", false, 0, time_remaining)

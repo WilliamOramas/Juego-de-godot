@@ -14,6 +14,11 @@ signal minigame_started(game_id: String)
 signal minigame_completed(game_id: String, success: bool)
 
 @warning_ignore("unused_signal")
+signal ai_response_received(npc_name: String, response_text: String)
+@warning_ignore("unused_signal")
+signal ai_error_received(error_message: String)
+
+@warning_ignore("unused_signal")
 signal quest_started(quest_id: String, quest_name: String)
 @warning_ignore("unused_signal")
 signal objective_advanced(quest_id: String, objective_id: String, description: String)

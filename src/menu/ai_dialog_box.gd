@@ -25,6 +25,7 @@ var _is_typing: bool = false
 var _slide_tween: Tween = null
 var _just_opened: bool = false
 var _was_open_before_pause: bool = false
+var _current_ai_prompt: String = ""
 
 func _ready() -> void:
 	visible = false
@@ -34,13 +35,14 @@ func _ready() -> void:
 	# Programación funcional para conectar botones (filtrado y mapeo)
 	var _discard = badge_container.get_children().filter(func(c): return c is Button).map(func(btn): btn.pressed.connect(func(): _on_badge_pressed(btn.text)))
 			
-	AiClient.response_received.connect(_on_ai_response_received)
-	AiClient.error_received.connect(_on_ai_error_received)
+	EventBus.ai_response_received.connect(_on_ai_response_received)
+	EventBus.ai_error_received.connect(_on_ai_error_received)
 
-func show_dialog(npc_name: String, lines: Array[String]) -> void:
+func show_dialog(npc_name: String, lines: Array[String], ai_system_prompt: String = "") -> void:
 	if is_open or lines.is_empty():
 		return
 
+	_current_ai_prompt = ai_system_prompt
 	_lines = lines
 	_current_line = 0
 	npc_name_label.text = npc_name
@@ -147,15 +149,16 @@ func _submit_player_message(text: String) -> void:
 	badge_container.visible = false
 	audio_select.play()
 	_update_dialog_lines(["..."])
-	AiClient.generate_npc_response(npc_name_label.text, text)
+	AiClient.generate_npc_response(npc_name_label.text, text, _current_ai_prompt)
 
 func _update_dialog_lines(new_lines: Array[String]) -> void:
 	_lines = new_lines
 	_current_line = 0
 	_start_typewriter()
 
-func _on_ai_response_received(text: String) -> void:
-	if is_open: _update_dialog_lines([text])
+func _on_ai_response_received(npc_name: String, text: String) -> void:
+	if is_open and npc_name == npc_name_label.text: 
+		_update_dialog_lines([text])
 
 func _on_ai_error_received(error: String) -> void:
 	if is_open: _update_dialog_lines(["[Error de sistema: " + error + "]"])

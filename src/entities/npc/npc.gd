@@ -16,6 +16,9 @@ class_name NPC
 ## Si el NPC es un chatbot de IA
 @export var is_ai: bool = false
 
+## Prompt del sistema para la IA (si is_ai es true)
+@export_multiline var ai_system_prompt: String = ""
+
 ## Diálogo principal (primera vez que hablas con el NPC). Varias líneas = varias páginas.
 @export var dialog_lines: Array[String] = []
 
@@ -219,7 +222,7 @@ func _on_interact_pressed() -> void:
 
 	_interact.set_button_visible(false)
 	if is_ai:
-		AiDialogBox.show_dialog(npc_name, lines)
+		AiDialogBox.show_dialog(npc_name, lines, ai_system_prompt)
 	else:
 		DialogBox.show_dialog(npc_name, lines)
 

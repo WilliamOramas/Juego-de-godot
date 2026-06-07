@@ -1,8 +1,5 @@
 extends Node
 
-signal response_received(response_text: String)
-signal error_received(error_message: String)
-
 const CONFIG_PATH = "res://ai.cfg"
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key="
 
@@ -25,9 +22,9 @@ func _load_config() -> String:
 		return ""
 	return config.get_value("gemini", "api_key", "").strip_edges().trim_prefix("\"").trim_suffix("\"")
 
-func generate_npc_response(npc_name: String, user_message: String) -> void:
+func generate_npc_response(npc_name: String, user_message: String, system_prompt: String) -> void:
 	if _api_key.is_empty() or _api_key == "TU_API_KEY_AQUI":
-		error_received.emit("API Key no configurada. Revisa ai.cfg.")
+		EventBus.ai_error_received.emit("API Key no configurada. Revisa ai.cfg.")
 		return
 
 	_current_npc = npc_name
@@ -42,14 +39,14 @@ func generate_npc_response(npc_name: String, user_message: String) -> void:
 	var req_data := {
 		"systemInstruction": {
 			"role": "model",
-			"parts": [{"text": "Eres Carlos, el enfermero venezolano de la universidad UNEFA. Eres muy inteligente y estricto como profesional médico, pero amigable y caes bien. Ocasionalmente usas modismos venezolanos suaves (como 'chamo', 'pana', 'chévere'). Si te preguntan algo fuera de tu área médica, te niegas de forma muy relajada aclarando que no es tu especialidad. Responde de forma MUY breve (1 o 2 oraciones máximo). El jugador es un estudiante. No suele terminar sus respuestas con preguntas."}]
+			"parts": [{"text": system_prompt}]
 		},
 		"contents": _conversation_history[npc_name]
 	}
 
 	# Short-circuiting de error
 	if _http_request.request(API_URL + _api_key, ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(req_data)) != OK:
-		error_received.emit("Error interno al hacer la petición HTTP.")
+		EventBus.ai_error_received.emit("Error interno al hacer la petición HTTP.")
 
 func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	var response_text := body.get_string_from_utf8()
@@ -64,11 +61,11 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 			var text: String = parts[0].get("text", "") if not parts.is_empty() else ""
 
 			if text.is_empty():
-				error_received.emit("Respuesta vacía o formato desconocido de la API.")
+				EventBus.ai_error_received.emit("Respuesta vacía o formato desconocido de la API.")
 			else:
 				_conversation_history[_current_npc].append({"role": "model", "parts": [{"text": text}]})
-				response_received.emit(text)
+				EventBus.ai_response_received.emit(_current_npc, text)
 		_:
 			var error_msg: String = json_data.get("error", {}).get("message", "Error desconocido")
 			push_error("API Error: " + response_text)
-			error_received.emit("Error de API (%d): %s" % [response_code, error_msg])
+			EventBus.ai_error_received.emit("Error de API (%d): %s" % [response_code, error_msg])

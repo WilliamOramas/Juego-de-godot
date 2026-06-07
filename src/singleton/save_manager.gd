@@ -58,17 +58,10 @@ func _build_settings_data() -> Dictionary:
 	}
 
 func _apply_settings(data: Dictionary) -> void:
-	if data.get("version", 0) != SAVE_VERSION:
-		return
-	if data.has("is_muted"):
-		Global.set_mute(data["is_muted"])
-	if data.has("volume_db"):
-		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), data["volume_db"])
-	if data.has("fullscreen"):
-		if data["fullscreen"]:
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-		else:
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	if data.get("version", 0) != SAVE_VERSION: return
+	if "is_muted" in data: Global.set_mute(data.is_muted)
+	if "volume_db" in data: AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), data.volume_db)
+	if "fullscreen" in data: DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if data.fullscreen else DisplayServer.WINDOW_MODE_WINDOWED)
 
 # ─── Game Progress (slot-based) ──────────────────────────────
 

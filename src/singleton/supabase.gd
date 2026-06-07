@@ -121,22 +121,14 @@ func _on_request_completed(result: int, response_code: int, _headers: PackedStri
 			auth_completed.emit(true, "Te hemos enviado un correo de verificación.")
 	else:
 		var error_msg = "Error desconocido"
-		if typeof(json) == TYPE_DICTIONARY and json.has("error_description"):
-			error_msg = json["error_description"]
-		elif typeof(json) == TYPE_DICTIONARY and json.has("msg"):
-			error_msg = json["msg"]
-		elif typeof(json) == TYPE_DICTIONARY and json.has("message"):
-			error_msg = json["message"]
-		elif response_code == 400:
-			error_msg = "Solicitud inválida. Revisa tus datos."
-		elif response_code == 401:
-			error_msg = "Credenciales incorrectas."
-		elif response_code == 403:
-			error_msg = "Acceso denegado."
-		elif response_code == 404:
-			error_msg = "Servicio no encontrado."
-		elif response_code >= 500:
-			error_msg = "Error interno del servidor. Intenta más tarde."
+		if typeof(json) == TYPE_DICTIONARY:
+			error_msg = json.get("error_description", json.get("msg", json.get("message", error_msg)))
+		if error_msg == "Error desconocido":
+			if response_code == 400: error_msg = "Solicitud inválida. Revisa tus datos."
+			elif response_code == 401: error_msg = "Credenciales incorrectas."
+			elif response_code == 403: error_msg = "Acceso denegado."
+			elif response_code == 404: error_msg = "Servicio no encontrado."
+			elif response_code >= 500: error_msg = "Error interno del servidor. Intenta más tarde."
 		auth_completed.emit(false, error_msg)
 
 # ==========================================
@@ -177,10 +169,7 @@ func _send_db_request(endpoint: String, method: int, body: String = "", callback
 			if text != "":
 				json = JSON.parse_string(text)
 			if not success:
-				if typeof(json) == TYPE_DICTIONARY and json.has("message"):
-					error_msg = json["message"]
-				else:
-					error_msg = "Error HTTP %d" % response_code
+				error_msg = json.get("message", "Error HTTP %d" % response_code) if typeof(json) == TYPE_DICTIONARY else "Error HTTP %d" % response_code
 		else:
 			error_msg = "Error de red"
 			

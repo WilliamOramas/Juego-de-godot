@@ -147,17 +147,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func set_mood(mood: Mood) -> void:
 	_current_mood = mood
-	match mood:
-		Mood.NORMAL:
-			face_anim.play("normal")
-		Mood.HAPPY:
-			face_anim.play("happy")
-		Mood.SAD:
-			face_anim.play("sad")
-		Mood.ANGRY:
-			face_anim.play("angry")
-		Mood.TALK:
-			face_anim.play("talk")
+	face_anim.play(Mood.keys()[mood].to_lower())
 
 
 func push_notification(title: String, body: String, sound: bool = false, scenario_id: String = "") -> void:

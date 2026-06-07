@@ -56,6 +56,14 @@ CREATE TABLE public.telemetria_eventos (
     estado_salud_momento TEXT
 );
 
+-- ==========================================
+-- ÍNDICES (Foreign Keys Performance)
+-- ==========================================
+CREATE INDEX IF NOT EXISTS idx_sesiones_usuario ON public.sesiones(id_usuario);
+CREATE INDEX IF NOT EXISTS idx_sesiones_escenario ON public.sesiones(id_escenario);
+CREATE INDEX IF NOT EXISTS idx_telemetria_sesion ON public.telemetria_eventos(id_sesion);
+CREATE INDEX IF NOT EXISTS idx_protocolo_escenario ON public.protocolo_maestro(id_escenario);
+
 
 ----------------------------------------------------------------------------------
 -- SEGURIDAD (Row Level Security - RLS)

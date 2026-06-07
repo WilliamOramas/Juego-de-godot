@@ -6,7 +6,7 @@ enum StepType { HOLD_3, TIMED_PRESS, DIAL_112, HOLD_ELEVATE, TAP, ECG }
 const KEYCAP_NORMAL = preload("res://src/assets/sprites/keycap_q.svg")
 const KEYCAP_PRESSED = preload("res://src/assets/sprites/keycap_q_pressed.svg")
 
-const STEP_DATA: Array = [
+const STEP_DATA: Array[Dictionary] = [
 	{
 		"instruction": "La persona está en el suelo.\n¿Qué hacés primero?",
 		"help": "Paso 1: Verificar si responde.\nGritale fuerte y tocale el hombro.\n[Q] Mantené 1.5 segundos.",
@@ -308,7 +308,7 @@ func _update_patient_color() -> void:
 			patient_sprite.modulate = Color(0.5, 0.1, 0.1)
 
 func _update_dial_label() -> void:
-	var step = STEP_DATA[_current_step]
+	var step: Dictionary = STEP_DATA[_current_step]
 	if step.type != StepType.DIAL_112:
 		dial_label.visible = false
 		return
@@ -322,7 +322,7 @@ func _update_dial_label() -> void:
 	dial_label.text = display.strip_edges()
 
 func _update_ui() -> void:
-	var step = STEP_DATA[_current_step]
+	var step: Dictionary = STEP_DATA[_current_step]
 	instruction_label.text = step.instruction
 	help_label.text = step.help.replace("[Q] ", "").replace("[Q]", "")
 	step_label.text = "Paso %d/%d" % [_current_step + 1, STEP_DATA.size()]
@@ -436,7 +436,7 @@ func _lose_life(msg: String) -> void:
 	_state_timer = 1.5
 
 func _on_step_ok() -> void:
-	var step = STEP_DATA[_current_step]
+	var step: Dictionary = STEP_DATA[_current_step]
 	feedback_label.modulate = Color.GREEN
 	feedback_label.text = "✓ " + step.feedback_ok
 	var correct: AudioStreamPlayer = get_node_or_null("CorrectSound")
@@ -456,14 +456,14 @@ func _process(delta: float) -> void:
 	if not _is_running:
 		return
 
-	var trauma = 0.0
+	var trauma: float = 0.0
 	if _shake_timer > 0:
 		_shake_timer -= delta
 		trauma = (_shake_timer / 0.5) * 15.0
 	
-	var main_camera = get_viewport().get_camera_2d()
+	var main_camera: Camera2D = get_viewport().get_camera_2d()
 	if main_camera:
-		var time = Time.get_ticks_msec() / 1000.0
+		var time: float = Time.get_ticks_msec() / 1000.0
 		var wobble_x = sin(time * 2.5) * 1.5 + cos(time * 1.7) * 2.0
 		var wobble_y = cos(time * 3.1) * 1.5 + sin(time * 1.3) * 2.0
 		main_camera.offset = Vector2(wobble_x, wobble_y) + Vector2(randf_range(-trauma, trauma), randf_range(-trauma, trauma))
@@ -517,7 +517,7 @@ func _process(delta: float) -> void:
 		_lives = 1
 		_lose_life("¡Se acabó el tiempo!")
 		return
-	var step = STEP_DATA[_current_step]
+	var step: Dictionary = STEP_DATA[_current_step]
 	match step.type:
 		StepType.HOLD_3, StepType.HOLD_ELEVATE:
 			_handle_hold(delta, step)
@@ -557,7 +557,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	if _state != "playing":
 		return
-	var step = STEP_DATA[_current_step]
+	var step: Dictionary = STEP_DATA[_current_step]
 	match step.type:
 		StepType.TAP:
 			if event.is_action_pressed("Phone"):
@@ -571,8 +571,8 @@ func _input(event: InputEvent) -> void:
 						correct.play()
 		StepType.DIAL_112:
 			if event is InputEventKey and event.pressed and not event.is_echo():
-				var key = event.keycode
-				var expected = step.target[_dial_index]
+				var key: int = event.keycode
+				var expected: int = step.target[_dial_index]
 				if key == expected:
 					_dial_index += 1
 					var correct: AudioStreamPlayer = get_node_or_null("CorrectSound")

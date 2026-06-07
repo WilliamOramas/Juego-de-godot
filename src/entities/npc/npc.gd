@@ -79,7 +79,7 @@ func _ready() -> void:
 	_play_idle()
 	
 	# 3. Redimensionar dinámicamente el rango de detección del jugador
-	var detect_shape = detection_area.get_node_or_null("CollisionShape2D")
+	var detect_shape: CollisionShape2D = detection_area.get_node_or_null("CollisionShape2D") as CollisionShape2D
 	if detect_shape and detect_shape.shape is CircleShape2D:
 		detect_shape.shape = detect_shape.shape.duplicate() # Evitar compartir el recurso del shape entre instancias
 		detect_shape.shape.radius = detection_radius
@@ -100,7 +100,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if _player_in_range != null:
 		velocity = Vector2.ZERO
-		var to_player = _player_in_range.global_position - global_position
+		var to_player: Vector2 = _player_in_range.global_position - global_position
 		if abs(to_player.x) > abs(to_player.y):
 			_facing_down = to_player.x <= 0
 		else:
@@ -133,7 +133,7 @@ func _physics_process(delta: float) -> void:
 			_play_idle()
 			return
 
-		var to_target = _target_position - global_position
+		var to_target: Vector2 = _target_position - global_position
 		if to_target.length() < 5.0:
 			_is_waiting = true
 			_state_timer = randf_range(wait_time_min, wait_time_max)
@@ -143,7 +143,7 @@ func _physics_process(delta: float) -> void:
 				_facing_down = false
 			_play_idle()
 		else:
-			var move_dir = to_target.normalized()
+			var move_dir: Vector2 = to_target.normalized()
 			velocity = move_dir * speed
 			move_and_slide()
 			_facing_down = move_dir.x < 0 or move_dir.y > 0
@@ -153,15 +153,15 @@ func _play_idle() -> void:
 	_anim_player.play("idle_down" if _facing_down else "idle_up")
 
 func _play_walk() -> void:
-	var anim = "walk_down" if _facing_down else "walk_up"
-	var speed_scale = speed / 20.0
+	var anim: String = "walk_down" if _facing_down else "walk_up"
+	var speed_scale: float = speed / 20.0
 	_anim_player.play(anim, -1, speed_scale)
 
 func _select_new_target() -> void:
 	if routine_type == "Libre (Radio)":
 		# Seleccionar un punto aleatorio dentro del radio respecto a su posición de inicio
-		var angle = randf_range(0.0, TAU)
-		var distance = randf_range(10.0, wander_radius)
+		var angle: float = randf_range(0.0, TAU)
+		var distance: float = randf_range(10.0, wander_radius)
 		_target_position = _start_position + Vector2(cos(angle), sin(angle)) * distance
 	elif routine_type == "Patrulla Horizontal":
 		# Alternar entre caminar hacia la derecha e izquierda
@@ -189,8 +189,8 @@ func _on_interact_pressed() -> void:
 	if DialogBox.is_open:
 		return
 
-	var key = "npc_" + name
-	var is_first = not Global.dialogs_seen.has(key)
+	var key: String = "npc_" + name
+	var is_first: bool = not Global.dialogs_seen.has(key)
 	var lines: Array[String]
 	var is_blocked := false
 
@@ -219,7 +219,7 @@ func _on_interact_pressed() -> void:
 		var qd := quest_to_start as QuestData
 		var started := QuestManager.start_quest(qd)
 		if started and qd.objectives.size() > 0:
-			var first_obj = qd.objectives[0]
+			var first_obj: QuestObjective = qd.objectives[0] as QuestObjective
 			if first_obj.type == QuestObjective.ObjectiveType.TALK_TO_NPC and first_obj.target_id == npc_name:
 				QuestManager.advance_objective(qd.quest_id, first_obj.objective_id)
 

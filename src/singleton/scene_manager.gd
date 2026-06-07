@@ -18,7 +18,7 @@ var _blur_overlay: ColorRect = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	var transition_scene = load("res://src/singleton/scene_transition.tscn")
+	var transition_scene: PackedScene = load("res://src/singleton/scene_transition.tscn")
 	if not transition_scene:
 		push_error("SceneManager: No se pudo cargar scene_transition.tscn")
 		return
@@ -31,9 +31,9 @@ func _ready() -> void:
 	_anim.play("fade_in")
 
 	# Instanciar el shader de barrido temporal de forma dinámica
-	var blur_shader = load("res://src/singleton/time_blur.gdshader")
+	var blur_shader: Shader = load("res://src/singleton/time_blur.gdshader")
 	if blur_shader:
-		var mat = ShaderMaterial.new()
+		var mat: ShaderMaterial = ShaderMaterial.new()
 		mat.shader = blur_shader
 		mat.set_shader_parameter("wipe_progress", 0.0)
 		
@@ -47,7 +47,7 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F11:
-		var mode = DisplayServer.window_get_mode()
+		var mode: int = DisplayServer.window_get_mode()
 		if mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 		else:
@@ -138,11 +138,11 @@ func play_time_passage(duration: float = 1.5, mid_callback: Callable = Callable(
 	_blur_overlay.visible = true
 	transition_started.emit()
 	
-	var mat = _blur_overlay.material as ShaderMaterial
+	var mat := _blur_overlay.material as ShaderMaterial
 	mat.set_shader_parameter("wipe_progress", 0.0)
 	
 	# Tween para cubrir la pantalla con negro con un barrido horizontal de izquierda a derecha (0.0 -> 1.0)
-	var tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	var tween: Tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	tween.tween_property(mat, "shader_parameter/wipe_progress", 1.0, duration * 0.4)
 	
 	await tween.finished
@@ -155,7 +155,7 @@ func play_time_passage(duration: float = 1.5, mid_callback: Callable = Callable(
 	await get_tree().create_timer(0.6).timeout
 	
 	# Tween para descorrer el barrido hacia la derecha revelando la escena (1.0 -> 2.0)
-	var tween_back = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	var tween_back: Tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	tween_back.tween_property(mat, "shader_parameter/wipe_progress", 2.0, duration * 0.4)
 	
 	await tween_back.finished
@@ -172,7 +172,7 @@ func play_wipe(wipe_in_time: float = 0.6, pause: float = 0.3, wipe_out_time: flo
 	canvas.layer = 100
 	add_child(canvas)
 
-	var blur_shader := load("res://src/singleton/time_blur.gdshader")
+	var blur_shader: Shader = load("res://src/singleton/time_blur.gdshader")
 	var mat := ShaderMaterial.new()
 	mat.shader = blur_shader
 	mat.set_shader_parameter("wipe_progress", 0.0)

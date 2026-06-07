@@ -48,7 +48,7 @@ func _physics_process(_delta: float) -> void:
 
 func get_input() -> void:
 	input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var current_speed = run_speed if Input.is_key_pressed(KEY_SHIFT) and input_vector != Vector2.ZERO else speed
+	var current_speed: float = run_speed if Input.is_key_pressed(KEY_SHIFT) and input_vector != Vector2.ZERO else speed
 	velocity = input_vector * current_speed
 
 func animate_player(delta: float = 0.0) -> void:

@@ -11,10 +11,10 @@ func _ready() -> void:
 	call_deferred("_restore_trivia_state")
 
 func _restore_trivia_state() -> void:
-	var results = ScoreManager.get_minigame_results()
+	var results: Dictionary = ScoreManager.get_minigame_results()
 	if results.has("trivia"):
 		_trivia_done = true
-		var pedro = get_parent().get_node_or_null("Pedro") as NPC
+		var pedro: NPC = get_parent().get_node_or_null("Pedro") as NPC
 		_update_dialogs(results["trivia"]["passed"], pedro)
 
 func _on_interact_pressed() -> void:
@@ -27,7 +27,7 @@ func _on_dialog_finished() -> void:
 		_waiting_for_trivia = false
 		
 		# Hacemos aparecer a Pedro en la escena mágicamente
-		var pedro = get_parent().get_node_or_null("Pedro")
+		var pedro: NPC = get_parent().get_node_or_null("Pedro") as NPC
 		if pedro:
 			pedro.visible = true
 			
@@ -38,7 +38,7 @@ func _on_dialog_finished() -> void:
 func _on_minigame_completed(game_id: String, success: bool) -> void:
 	if game_id == "trivia":
 		_trivia_done = true
-		var pedro = get_parent().get_node_or_null("Pedro") as NPC
+		var pedro: NPC = get_parent().get_node_or_null("Pedro") as NPC
 		_update_dialogs(success, pedro)
 		
 		# Resetear el estado para que digan las nuevas líneas principales la primera vez que les hables tras jugar

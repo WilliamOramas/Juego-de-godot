@@ -18,7 +18,7 @@ func setup(parent: Node, offset: Vector2, on_interact: Callable) -> void:
 
 func show_prompt() -> void:
 	remove_prompt()
-	var prompt_scene = load(Global.INTERACT_PROMPT_PATH)
+	var prompt_scene: PackedScene = load(Global.INTERACT_PROMPT_PATH)
 	if prompt_scene:
 		prompt_instance = prompt_scene.instantiate()
 		parent_node.add_child(prompt_instance)

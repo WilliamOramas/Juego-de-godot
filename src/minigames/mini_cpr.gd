@@ -224,7 +224,7 @@ func _process(delta: float) -> void:
 	if rhythm_ring and rhythm_ring.visible:
 		rhythm_ring.queue_redraw()
 
-	var main_camera = get_viewport().get_camera_2d()
+	var main_camera: Camera2D = get_viewport().get_camera_2d()
 	if main_camera and main_camera.offset.length() > 0.01:
 		main_camera.offset = main_camera.offset.lerp(Vector2.ZERO, delta * 5.0)
 
@@ -326,8 +326,8 @@ func _input(event: InputEvent) -> void:
 
 func _register_compression() -> void:
 	var step: Dictionary = STEP_DATA[_current_step]
-	var zone = _get_ring_zone(_ring_progress)
-	var depth_ratio = _depth_hold / DEPTH_TARGET
+	var zone: String = _get_ring_zone(_ring_progress)
+	var depth_ratio: float = _depth_hold / DEPTH_TARGET
 
 	var quality: CompressionQuality
 	if zone == "green" and depth_ratio >= DEPTH_MIN_OK:
@@ -591,25 +591,25 @@ func _on_rhythm_ring_draw() -> void:
 	var radius = min(rhythm_ring.size.x, rhythm_ring.size.y) * 0.4
 	var phase = _ring_progress
 
-	var green_start = 0.2 * TAU
-	var green_end = 0.5 * TAU
-	var yellow_start = 0.5 * TAU
-	var yellow_end = 0.7 * TAU
-	var red_start = 0.7 * TAU
-	var red_end = 1.0 * TAU
-	var blue_start = 0.0 * TAU
-	var blue_end = 0.2 * TAU
+	var green_start: float = 0.2 * TAU
+	var green_end: float = 0.5 * TAU
+	var yellow_start: float = 0.5 * TAU
+	var yellow_end: float = 0.7 * TAU
+	var red_start: float = 0.7 * TAU
+	var red_end: float = 1.0 * TAU
+	var blue_start: float = 0.0 * TAU
+	var blue_end: float = 0.2 * TAU
 
 	rhythm_ring.draw_arc(center, radius, blue_start, blue_end, 32, Color(0.2, 0.4, 0.8, 0.8), 4.0, true)
 	rhythm_ring.draw_arc(center, radius, green_start, green_end, 32, Color(0.0, 0.8, 0.2, 0.9), 5.0, true)
 	rhythm_ring.draw_arc(center, radius, yellow_start, yellow_end, 32, Color(1.0, 0.8, 0.0, 0.8), 4.0, true)
 	rhythm_ring.draw_arc(center, radius, red_start, red_end, 32, Color(1.0, 0.2, 0.2, 0.6), 3.0, true)
 
-	var angle = phase * TAU - PI / 2.0
-	var tip = center + Vector2(cos(angle), sin(angle)) * radius
+	var angle: float = phase * TAU - PI / 2.0
+	var tip: Vector2 = center + Vector2(cos(angle), sin(angle)) * radius
 	rhythm_ring.draw_circle(tip, 6.0, Color.WHITE)
 
-	var inner_radius = radius * 0.65
+	var inner_radius: float = radius * 0.65
 	rhythm_ring.draw_arc(center, inner_radius, 0, TAU, 32, Color(1, 1, 1, 0.15), 1.0, true)
 
 

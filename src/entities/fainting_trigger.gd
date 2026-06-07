@@ -13,7 +13,7 @@ func _on_body_entered(body: Node) -> void:
 	if body is Player and not _triggered:
 		_triggered = true
 		body.z_index = 1
-		Global.fainting_approach_pos = Vector2(690, 615)
+		Global.fainting_approach_pos = Vector2(720, 615)
 		PhoneHud.push_notification("PIXEL v1.0", "¡EMERGENCIA!\nEstudiante desmayado en escaleras.\n\n[Q] Primeros auxilios.", true, "fainting_first_aid")
 
 

@@ -48,7 +48,7 @@ func generate_npc_response(npc_name: String, user_message: String, system_prompt
 	if _http_request.request(API_URL + _api_key, ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(req_data)) != OK:
 		EventBus.ai_error_received.emit("Error interno al hacer la petición HTTP.")
 
-func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
+func _on_request_completed(_result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
 	var response_text := body.get_string_from_utf8()
 	var parsed_data = JSON.parse_string(response_text)
 	var json_data: Dictionary = parsed_data if typeof(parsed_data) == TYPE_DICTIONARY else {}

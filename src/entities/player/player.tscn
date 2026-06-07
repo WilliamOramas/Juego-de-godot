@@ -5,7 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://cn6u1iywkuf6l" path="res://src/assets/sounds/step.wav" id="4_step"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_phys"]
-size = Vector2(23, 58)
+size = Vector2(23, 56)
 
 [sub_resource type="Animation" id="Animation_f50pn"]
 length = 0.001
@@ -285,7 +285,7 @@ vframes = 4
 frame = 15
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=310722239]
-position = Vector2(0, 16)
+position = Vector2(0, 17)
 shape = SubResource("RectangleShape2D_phys")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1941436272]
@@ -307,7 +307,6 @@ limit_top = 0
 limit_right = 0
 limit_bottom = 0
 position_smoothing_enabled = true
-
 
 [node name="StepSound" type="AudioStreamPlayer" parent="." unique_id=1915714679]
 stream = ExtResource("4_step")

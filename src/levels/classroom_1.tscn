@@ -10,7 +10,6 @@
 [ext_resource type="PackedScene" path="res://src/entities/npc/professor_npc.tscn" id="8_prof"]
 [ext_resource type="Texture2D" uid="uid://cm3pj731lfemk" path="res://src/assets/sprites/np2.png" id="9_npc_sprite"]
 
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left"]
 size = Vector2(13, 500)
 
@@ -27,7 +26,7 @@ size = Vector2(237.92375, 23)
 size = Vector2(500, 10)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_student_desk"]
-size = Vector2(33, 22)
+size = Vector2(33, 19)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_teacher_desk"]
 size = Vector2(118.5, 16.5)
@@ -113,7 +112,7 @@ shape = SubResource("RectangleShape2D_student_desk")
 position = Vector2(314, 180)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR1C4" unique_id=1851440283]
-position = Vector2(1, -16)
+position = Vector2(1, -16.5)
 shape = SubResource("RectangleShape2D_student_desk")
 
 [node name="DeskR1C5" type="StaticBody2D" parent="Furniture" unique_id=1174035467]
@@ -257,7 +256,7 @@ routine_type = "Patrulla Horizontal"
 speed = 15.0
 
 [node name="Enrique" parent="." unique_id=987654321 instance=ExtResource("5_npc")]
-position = Vector2(320, 100)
+position = Vector2(362, 101)
 sprite_texture = ExtResource("9_npc_sprite")
 sprite_modulate = Color(0.7, 0.7, 0.5, 1)
 npc_name = "Enrique"

@@ -104,6 +104,9 @@ func set_quest_progress(data: Dictionary) -> void:
 		completed_quests = data["completed_quests"].duplicate(true)
 
 func advance_talk_objectives(npc_name: String) -> void:
+	_try_advance_objectives(QuestObjective.ObjectiveType.TALK_TO_NPC, npc_name)
+
+func _try_advance_objectives(type: QuestObjective.ObjectiveType, target: String) -> void:
 	for quest_id in active_quests:
 		var quest: Dictionary = active_quests[quest_id]
 		var qdata: Variant = quest.get("quest_data")
@@ -112,7 +115,7 @@ func advance_talk_objectives(npc_name: String) -> void:
 		for obj in qdata.objectives:
 			if quest.objectives.get(obj.objective_id, false):
 				continue
-			if obj.type == QuestObjective.ObjectiveType.TALK_TO_NPC and obj.target_id == npc_name:
+			if obj.type == type and obj.target_id == target:
 				advance_objective(quest_id, obj.objective_id)
 
 func _are_all_objectives_done(quest: Dictionary) -> bool:
@@ -122,30 +125,11 @@ func _are_all_objectives_done(quest: Dictionary) -> bool:
 	return true
 
 func _on_scene_changed(scene_path: String) -> void:
-	for quest_id in active_quests:
-		var quest: Dictionary = active_quests[quest_id]
-		var qdata: Variant = quest.get("quest_data")
-		if not qdata:
-			continue
-		for obj in qdata.objectives:
-			if quest.objectives.get(obj.objective_id, false):
-				continue
-			if obj.type == QuestObjective.ObjectiveType.REACH_SCENE and obj.target_id == scene_path:
-				advance_objective(quest_id, obj.objective_id)
+	_try_advance_objectives(QuestObjective.ObjectiveType.REACH_SCENE, scene_path)
 
 func _on_minigame_completed(game_id: String, success: bool) -> void:
-	if not success:
-		return
-	for quest_id in active_quests:
-		var quest: Dictionary = active_quests[quest_id]
-		var qdata: Variant = quest.get("quest_data")
-		if not qdata:
-			continue
-		for obj in qdata.objectives:
-			if quest.objectives.get(obj.objective_id, false):
-				continue
-			if obj.type == QuestObjective.ObjectiveType.COMPLETE_MINIGAME and obj.target_id == game_id:
-				advance_objective(quest_id, obj.objective_id)
+	if success:
+		_try_advance_objectives(QuestObjective.ObjectiveType.COMPLETE_MINIGAME, game_id)
 
 func _load_quest_data(quest_id: String) -> Variant:
 	var path := "res://src/quests/%s.tres" % quest_id

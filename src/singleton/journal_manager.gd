@@ -54,11 +54,7 @@ func get_entries() -> Array[JournalEntry]:
 
 
 func get_filtered(category: JournalEntry.Category) -> Array[JournalEntry]:
-	var result: Array[JournalEntry] = []
-	for e in _entries:
-		if e.category == category:
-			result.append(e)
-	return result
+	return _entries.filter(func(e): return e.category == category)
 
 
 func get_entry_count() -> int:
@@ -71,16 +67,13 @@ func clear() -> void:
 
 
 func serialize() -> Array:
-	var data: Array = []
-	for e in _entries:
-		data.append({
-			"timestamp": e.timestamp,
-			"category": e.category,
-			"title": e.title,
-			"description": e.description,
-			"icon_path": e.icon_path,
-		})
-	return data
+	return _entries.map(func(e): return {
+		"timestamp": e.timestamp,
+		"category": e.category,
+		"title": e.title,
+		"description": e.description,
+		"icon_path": e.icon_path,
+	})
 
 
 func deserialize(data: Array) -> void:

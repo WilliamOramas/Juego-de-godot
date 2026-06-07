@@ -233,6 +233,7 @@ func _dismiss_message() -> void:
 	_scenario_timer = 0.0
 	if _message_queue.is_empty():
 		_mode = PhoneMode.HOME
+		set_mood(Mood.TALK)
 		close_phone()
 	else:
 		_show_next_message()

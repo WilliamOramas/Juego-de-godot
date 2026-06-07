@@ -864,6 +864,7 @@ func _on_ecg_draw() -> void:
 func _exit_tree() -> void:
 	# Restaurar sprite del player real
 	if _real_player and is_instance_valid(_real_player):
+		_real_player.z_index = 0
 		var real_sprite = _real_player.get_node("Sprite2D")
 		if real_sprite:
 			real_sprite.visible = true

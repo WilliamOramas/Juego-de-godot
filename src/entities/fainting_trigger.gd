@@ -12,11 +12,13 @@ func _ready() -> void:
 func _on_body_entered(body: Node) -> void:
 	if body is Player and not _triggered:
 		_triggered = true
-		Global.fainting_approach_pos = Vector2(680, 605)
+		body.z_index = 1
+		Global.fainting_approach_pos = Vector2(720, 615)
 		PhoneHud.push_notification("PIXEL v1.0", "¡EMERGENCIA!\nEstudiante desmayado en escaleras.\n\n[Q] Primeros auxilios.", true, "fainting_first_aid")
 
 
 func _on_body_exited(body: Node) -> void:
 	if body is Player and _triggered and PhoneHud.has_pending_scenario():
+		body.z_index = 0
 		PhoneHud.cancel_scenario()
 		_triggered = false

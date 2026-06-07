@@ -1,0 +1,147 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/menu/ai_dialog_box.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://bd6b7pih731t6" path="res://src/fonts/porky_s/PORKYS_.TTF" id="2_porkys"]
+[ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="3_coolvetica"]
+[ext_resource type="AudioStream" uid="uid://owxxir7was1f" path="res://src/assets/sounds/magiaz-teclado-371741.mp3" id="4_typewriter"]
+[ext_resource type="AudioStream" uid="uid://b4ehv3hxbqbnk" path="res://src/assets/sounds/emilianodleon-select-button-ui-395763.mp3" id="5_select"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.117647, 0.117647, 0.137255, 0.941176)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.294118, 0.294118, 0.352941, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_badge"]
+bg_color = Color(0.2, 0.2, 0.25, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 12
+content_margin_right = 12
+content_margin_top = 4
+content_margin_bottom = 4
+
+[node name="AiDialogBox" type="CanvasLayer"]
+process_mode = 1
+script = ExtResource("1_script")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -240.0
+offset_right = 320.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="NPCName" type="Label" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 14.0
+offset_top = 8.0
+offset_right = 320.0
+offset_bottom = 30.0
+theme_override_colors/font_color = Color(0.92549, 0.92549, 0.92549, 1)
+theme_override_fonts/font = ExtResource("2_porkys")
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="DialogText" type="Label" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 14.0
+offset_top = 34.0
+offset_right = 626.0
+offset_bottom = 120.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_coolvetica")
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
+
+[node name="BadgeContainer" type="HBoxContainer" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 14.0
+offset_top = 130.0
+offset_right = 626.0
+offset_bottom = 160.0
+theme_override_constants/separation = 10
+
+[node name="Badge1" type="Button" parent="Panel/BadgeContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_coolvetica")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge")
+text = "Me duele la cabeza"
+
+[node name="Badge2" type="Button" parent="Panel/BadgeContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_coolvetica")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge")
+text = "Necesito medicina"
+
+[node name="Badge3" type="Button" parent="Panel/BadgeContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_coolvetica")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge")
+text = "Solo miraba, gracias"
+
+[node name="InputArea" type="Control" parent="Panel"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 180.0
+offset_right = 626.0
+offset_bottom = 220.0
+
+[node name="InputLine" type="LineEdit" parent="Panel/InputArea"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("3_coolvetica")
+theme_override_font_sizes/font_size = 16
+placeholder_text = "Escribe tu respuesta aquí..."
+
+[node name="SendButton" type="Button" parent="Panel/InputArea"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -90.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("3_coolvetica")
+theme_override_font_sizes/font_size = 16
+text = "Enviar"
+
+[node name="TypeTimer" type="Timer" parent="."]
+wait_time = 0.03
+
+[node name="AudioTypewriter" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_typewriter")
+volume_db = -15.0
+
+[node name="AudioSelect" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_select")
+
+[connection signal="timeout" from="TypeTimer" to="." method="_on_type_timer_timeout"]

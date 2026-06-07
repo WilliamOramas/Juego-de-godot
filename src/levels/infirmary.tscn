@@ -138,9 +138,10 @@ position = Vector2(59, 110)
 [node name="EnfermeroGuardia" parent="." unique_id=1267357982 instance=ExtResource("5_npc")]
 position = Vector2(240, 120)
 sprite_texture = ExtResource("6_nurse_tex")
-npc_name = "Enfermero"
-dialog_lines = Array[String](["Hola, joven. ¿Te sientes mal?", "Siéntate en la camilla y te tomo la temperatura.", "No te preocupes, solo es un chequeo rápido."])
-dialog_lines_repeat = Array[String](["¿Otra vez con malestar? Deberías ir al médico general.", "Toma, aquí tienes un poco de agua y una pastilla."])
+npc_name = "Carlos (Enfermero)"
+is_ai = true
+dialog_lines = Array[String](["Hola. Toma asiento, por favor.", "Dime, ¿qué síntomas tienes hoy? Vamos a evaluarte rápido y bien."])
+dialog_lines_repeat = Array[String](["¿Todo bien, muchacho? ¿Sigues con molestias?", "Recuerda descansar un poco. Si te sientes mal de nuevo, regresa."])
 dialog_lines_blocked = Array[String](["Todavía no es momento, joven. Primero conoce bien las instalaciones y luego hablammos de lo que hay que hacer."])
 routine_type = "Estático"
 quest_to_start = ExtResource("8_quest_emergency")

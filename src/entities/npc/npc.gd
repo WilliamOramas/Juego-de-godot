@@ -13,6 +13,9 @@ class_name NPC
 ## Nombre visible del NPC
 @export var npc_name: String = ""
 
+## Si el NPC es un chatbot de IA
+@export var is_ai: bool = false
+
 ## Diálogo principal (primera vez que hablas con el NPC). Varias líneas = varias páginas.
 @export var dialog_lines: Array[String] = []
 
@@ -182,11 +185,13 @@ func _on_body_exited(body: Node2D) -> void:
 		if _player_in_range == body:
 			_player_in_range = null
 		_interact.remove_prompt()
-		if DialogBox:
+		if DialogBox and DialogBox.is_open:
 			DialogBox.hide_dialog()
+		if AiDialogBox and AiDialogBox.is_open:
+			AiDialogBox.hide_dialog()
 
 func _on_interact_pressed() -> void:
-	if DialogBox.is_open:
+	if DialogBox.is_open or AiDialogBox.is_open:
 		return
 
 	var key: String = "npc_" + name
@@ -213,7 +218,10 @@ func _on_interact_pressed() -> void:
 		Global.mark_dialog_seen(key)
 
 	_interact.set_button_visible(false)
-	DialogBox.show_dialog(npc_name, lines)
+	if is_ai:
+		AiDialogBox.show_dialog(npc_name, lines)
+	else:
+		DialogBox.show_dialog(npc_name, lines)
 
 	if not is_blocked and is_first and quest_to_start != null and quest_to_start is QuestData:
 		var qd := quest_to_start as QuestData

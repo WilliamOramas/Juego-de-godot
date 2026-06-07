@@ -9,6 +9,7 @@ var _font: Font
 
 func _init() -> void:
 	layer = 50
+	process_mode = PROCESS_MODE_ALWAYS
 
 func _ready() -> void:
 	_font = load("res://src/fonts/coolvetica/Coolvetica Rg.otf") as Font

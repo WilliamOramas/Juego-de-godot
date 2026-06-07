@@ -10,6 +10,7 @@ var _completed_container: VBoxContainer
 
 func _ready() -> void:
 	layer = 50
+	process_mode = PROCESS_MODE_ALWAYS
 	build_ui()
 
 func _unhandled_input(event: InputEvent) -> void:

@@ -215,13 +215,13 @@ func _build_ui() -> void:
 
 func _next_question() -> void:
 	if player_strikes >= 3:
-		var tr = max(0.0, 120.0 - _time_elapsed)
-		ScoreManager.record_minigame_result("trivia", false, 0, tr)
+		var time_remaining = max(0.0, 120.0 - _time_elapsed)
+		ScoreManager.record_minigame_result("trivia", false, 0, time_remaining)
 		end(false)
 		return
 	if pedro_strikes >= 3:
-		var tr = max(0.0, 120.0 - _time_elapsed)
-		ScoreManager.record_minigame_result("trivia", true, 3 - player_strikes, tr)
+		var time_remaining = max(0.0, 120.0 - _time_elapsed)
+		ScoreManager.record_minigame_result("trivia", true, 3 - player_strikes, time_remaining)
 		end(true)
 		return
 		
@@ -404,16 +404,16 @@ func _end_phase_2() -> void:
 		p2_title.add_theme_color_override("font_color", Color.GREEN)
 		p2_status.text = "Tú: %d | Pedro: %d" % [player_w_wins, pedro_w_wins]
 		await get_tree().create_timer(3.0).timeout
-		var tr = max(0.0, 120.0 - _time_elapsed)
-		ScoreManager.record_minigame_result("trivia", true, 3 - player_strikes, tr)
+		var time_remaining = max(0.0, 120.0 - _time_elapsed)
+		ScoreManager.record_minigame_result("trivia", true, 3 - player_strikes, time_remaining)
 		end(true)
 	elif pedro_w_wins > player_w_wins:
 		p2_title.text = "PEDRO GANÓ EL DESEMPATE"
 		p2_title.add_theme_color_override("font_color", Color.RED)
 		p2_status.text = "Tú: %d | Pedro: %d" % [player_w_wins, pedro_w_wins]
 		await get_tree().create_timer(3.0).timeout
-		var tr = max(0.0, 120.0 - _time_elapsed)
-		ScoreManager.record_minigame_result("trivia", false, 0, tr)
+		var time_remaining = max(0.0, 120.0 - _time_elapsed)
+		ScoreManager.record_minigame_result("trivia", false, 0, time_remaining)
 		end(false)
 	else:
 		# Empate, repetimos la ronda 3

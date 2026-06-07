@@ -107,7 +107,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if get_tree().current_scene is MainMenu:
 		return
-	if get_tree().paused and not MiniGameManager.is_minigame_active():
+	if get_tree().paused:
 		return
 
 	if event.is_action_pressed("open_journal"):
@@ -291,6 +291,7 @@ func _launch_scenario() -> void:
 		await _play_fainting_cinematic()
 		
 	_mode = PhoneMode.HOME
+	reset()
 	MiniGameManager.launch_minigame(scenario.path, scenario.id)
 
 func _play_fainting_cinematic() -> void:

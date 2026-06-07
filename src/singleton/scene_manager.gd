@@ -12,6 +12,9 @@ signal game_paused(paused: bool)
 var _transition: CanvasLayer = null
 var _anim: AnimationPlayer = null
 
+## Referencia a la pantalla de carga con barra de progreso
+var _loading_screen: CanvasLayer = null
+
 ## Flag para evitar cambios de escena dobles
 var _changing_scene: bool = false
 var _blur_overlay: ColorRect = null
@@ -29,6 +32,13 @@ func _ready() -> void:
 		push_error("SceneManager: No se encontró AnimationPlayer en scene_transition")
 		return
 	_anim.play("fade_in")
+
+	# Instanciar la pantalla de carga
+	var LoadingScript = load("res://src/singleton/loading_screen.gd")
+	if LoadingScript:
+		_loading_screen = LoadingScript.new()
+		add_child(_loading_screen)
+		_loading_screen.hide()
 
 	# Instanciar el shader de barrido temporal de forma dinámica
 	var blur_shader: Shader = load("res://src/singleton/time_blur.gdshader")
@@ -100,16 +110,41 @@ func change_scene(target_path: String, target_spawn: String = "", return_spawn: 
 	if return_spawn != "":
 		Global.return_spawn_name = return_spawn
 	
-	# Cambiamos la escena actual
-	var error: Error = get_tree().change_scene_to_file(target_path)
-	if error != OK:
-		push_error("Error al cambiar de escena a: %s (Código de error: %d)" % [target_path, error])
-		_changing_scene = false
-		if _anim:
-			_anim.play("fade_in")
-			await _anim.animation_finished
-		transition_finished.emit()
-		return
+	# Carga asíncrona con pantalla de carga y barra de progreso
+	if _loading_screen:
+		var scene: PackedScene = await _loading_screen.load_scene_async(target_path)
+		if scene:
+			var error: Error = get_tree().change_scene_to_packed(scene)
+			if error != OK:
+				push_error("Error al cambiar de escena a: %s (Código de error: %d)" % [target_path, error])
+				_changing_scene = false
+				if _anim:
+					_anim.play("fade_in")
+					await _anim.animation_finished
+				transition_finished.emit()
+				EventBus.scene_changed.emit(target_path)
+				return
+		else:
+			push_error("Error: No se pudo cargar la escena: %s" % target_path)
+			_changing_scene = false
+			if _anim:
+				_anim.play("fade_in")
+				await _anim.animation_finished
+			transition_finished.emit()
+			EventBus.scene_changed.emit(target_path)
+			return
+	else:
+		# Fallback a carga síncrona si no hay loading screen
+		var error: Error = get_tree().change_scene_to_file(target_path)
+		if error != OK:
+			push_error("Error al cambiar de escena a: %s (Código de error: %d)" % [target_path, error])
+			_changing_scene = false
+			if _anim:
+				_anim.play("fade_in")
+				await _anim.animation_finished
+			transition_finished.emit()
+			EventBus.scene_changed.emit(target_path)
+			return
 	
 	# Esperamos un frame para que la nueva escena esté lista
 	await get_tree().process_frame
@@ -193,4 +228,3 @@ func play_wipe(wipe_in_time: float = 0.6, pause: float = 0.3, wipe_out_time: flo
 	await tw2.finished
 
 	canvas.queue_free()
-

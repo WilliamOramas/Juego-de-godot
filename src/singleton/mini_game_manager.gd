@@ -11,6 +11,11 @@ const SCENARIOS: Dictionary = {
 		"id": "cpr",
 		"cinematic": false,
 	},
+	"trivia": {
+		"path": "res://src/minigames/mini_trivia.tscn",
+		"id": "trivia",
+		"cinematic": true,
+	},
 }
 
 var _active_minigame: MiniGameBase = null
@@ -41,7 +46,12 @@ func launch_minigame(scene_path: String, game_id: String) -> void:
 	instance.start()
 	
 	# Iniciar sesión de telemetría en la base de datos
-	var db_escenario_id = 1 if game_id == "fainting_first_aid" else 2
+	var db_escenario_id = 1
+	if game_id == "cpr":
+		db_escenario_id = 2
+	elif game_id == "trivia":
+		db_escenario_id = 3
+		
 	if Supabase.is_logged_in():
 		Supabase.start_session(db_escenario_id, func(_s, _id, _e): pass)
 

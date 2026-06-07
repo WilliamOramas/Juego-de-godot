@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
 [ext_resource type="Texture2D" uid="uid://bejib1kp3kfe1" path="res://src/assets/sprites/npc_spritesheet_alt.png" id="6_teacher_tex"]
 [ext_resource type="Script" uid="uid://dtl581vlfbxui" path="res://src/levels/level_limits.gd" id="7_limits"]
+[ext_resource type="PackedScene" path="res://src/entities/npc/professor_npc.tscn" id="8_prof"]
+
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left"]
 size = Vector2(13, 500)
@@ -243,14 +245,22 @@ dialog_lines = Array[String](["Oye, ¿qué haces fuera de tu asiento?", "El prof
 dialog_lines_repeat = Array[String](["¿Otra vez fuera? Eres valiente...", "No sé si podré cubrirte esta vez, pero dale."])
 routine_type = "Estático"
 
-[node name="ProfesorClase" parent="." unique_id=1591853063 instance=ExtResource("5_npc")]
+[node name="ProfesorClase" parent="." unique_id=1591853063 instance=ExtResource("8_prof")]
 position = Vector2(240, 100)
 sprite_texture = ExtResource("6_teacher_tex")
 npc_name = "Profesor Méndez"
-dialog_lines = Array[String](["¡Silencio en clase! ¿Qué haces fuera de tu asiento?", "Abran sus libros en la página 45 y resuelvan los ejercicios del 1 al 10.", "Y tú, ocupa tu lugar ahora mismo o te mando a dirección."])
-dialog_lines_repeat = Array[String](["¿De nuevo interrumpiendo mi clase?", "No te advertiré otra vez. Toma tu lugar."])
+dialog_lines = Array[String](["¿Otra vez interrumpiendo mi clase?", "Ya he tenido suficiente de tus paseos. Si no quieres reprobar mi materia, tendrás que demostrar que has aprendido algo.", "Vas a enfrentarte a Pedro en una trivia de primeros auxilios. Si ganas, te daré puntos extra que te harán más ligera la carga."])
+dialog_lines_repeat = Array[String](["El reto sigue en pie.", "¿Tienes miedo de enfrentarte a Pedro en la trivia?"])
 routine_type = "Patrulla Horizontal"
 speed = 15.0
+
+[node name="Pedro" parent="." unique_id=987654321 instance=ExtResource("5_npc")]
+position = Vector2(320, 100)
+sprite_modulate = Color(0.4, 0.4, 0.45, 1)
+npc_name = "Pedro"
+dialog_lines = Array[String](["...", "Prepárate para perder la trivia."])
+dialog_lines_repeat = Array[String](["No me hables, estoy concentrado."])
+routine_type = "Estático"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=552553235]
 

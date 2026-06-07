@@ -15,6 +15,7 @@
 [ext_resource type="Resource" uid="uid://cbitbletpymxf" path="res://src/quests/quest_exploration.tres" id="13_qexplore"]
 [ext_resource type="Texture2D" uid="uid://bw5fnbununtf6" path="res://src/assets/sprites/np3.png" id="14_np3"]
 [ext_resource type="Texture2D" uid="uid://cm3pj731lfemk" path="res://src/assets/sprites/np2.png" id="15_npc_sprite"]
+[ext_resource type="Texture2D" uid="uid://wdokcqoj31fe" path="res://src/assets/sprites/patient_lying.png" id="16_patient"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_top"]
 size = Vector2(334, 86)
@@ -211,6 +212,13 @@ wander_radius = 40.0
 position = Vector2(780, 551)
 sprite_texture = ExtResource("7_objeto")
 dialog_lines = Array[String](["No puedes pasar aun..."])
+
+[node name="PatientInWorld" type="Sprite2D" parent="." unique_id=1056738494]
+visible = false
+position = Vector2(700, 611)
+scale = Vector2(1.1320759, 0.8951601)
+texture = ExtResource("16_patient")
+centered = false
 
 [node name="FaintingTrigger" type="Area2D" parent="." unique_id=330823648]
 position = Vector2(719, 629)

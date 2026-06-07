@@ -6,6 +6,7 @@ enum StepType { HOLD_3, TIMED_PRESS, DIAL_112, HOLD_ELEVATE, TAP, ECG }
 const KEYCAP_NORMAL = preload("res://src/assets/sprites/keycap_q.svg")
 const KEYCAP_PRESSED = preload("res://src/assets/sprites/keycap_q_pressed.svg")
 
+const PATIENT = preload("res://src/assets/sprites/patient_lying.png")
 const CURACION = preload("res://src/assets/sprites/curacion.png")
 const CURACION_HFRAMES = 4
 const CURACION_VFRAMES = 2
@@ -88,8 +89,9 @@ const STEP_DATA: Array[Dictionary] = [
 @onready var hearts_label: Label = $GameContainer/HeartsLabel
 @onready var step_label: Label = $GameContainer/StepLabel
 @onready var progress_bar: TextureProgressBar = $GameContainer/ProgressBar
-@onready var patient_sprite: Sprite2D = $GameContainer/PatientSprite
 @onready var dial_label: Label = $GameContainer/DialLabel
+
+var patient_sprite: Sprite2D
 
 var _current_step: int = 0
 var _lives: int = 3
@@ -123,6 +125,7 @@ var _ecg_line: Control
 var _shake_timer: float = 0.0
 var _action_sprite: Sprite2D
 var _real_player: Player
+var _minigame_success: bool = false
 
 func _ready() -> void:
 	super()
@@ -179,17 +182,19 @@ func _ready() -> void:
 	progress_bar.offset_top = 50
 	progress_bar.offset_bottom = 82
 
-	# Reparent the patient to the world to enable Y-sorting against the player
+	# Hide the world patient and create a temp copy for the minigame
 	var world = get_tree().current_scene
-	if world:
-		patient_sprite.get_parent().remove_child(patient_sprite)
+	var world_patient = world.find_child("PatientInWorld", true, false) as Sprite2D if world else null
+	if world_patient:
+		world_patient.visible = false
+		patient_sprite = Sprite2D.new()
+		patient_sprite.texture = PATIENT
+		patient_sprite.centered = false
+		patient_sprite.global_position = world_patient.global_position
+		patient_sprite.scale = world_patient.scale
 		world.add_child(patient_sprite)
-		patient_sprite.global_position = Vector2(700, 600)
-		var main_camera = get_viewport().get_camera_2d()
-		if main_camera:
-			patient_sprite.scale = patient_sprite.scale / main_camera.zoom
 	else:
-		patient_sprite.position = Vector2(647, 401)
+		patient_sprite = null
 
 	# Hide the real player and create action sprite in the world
 	_real_player = get_tree().current_scene.find_child("Player", true, false) as Player
@@ -202,11 +207,13 @@ func _ready() -> void:
 		_action_sprite.texture = CURACION
 		_action_sprite.hframes = CURACION_HFRAMES
 		_action_sprite.vframes = CURACION_VFRAMES
-		_action_sprite.frame = STEP_ACTION_FRAMES[0].idle
+		_action_sprite.frame = 7
 		_action_sprite.centered = true
-		_action_sprite.scale = patient_sprite.scale
+		_action_sprite.scale = Vector2(1.25, 1.25)
 		world.add_child(_action_sprite)
 		_action_sprite.global_position = PLAYER_ACTION_POS
+		var kneel_tween = create_tween().set_trans(Tween.TRANS_QUINT)
+		kneel_tween.tween_property(_action_sprite, "frame", float(STEP_ACTION_FRAMES[0].idle), 0.4)
 
 	# Hearts Box
 	hearts_label.visible = false
@@ -416,6 +423,7 @@ func end(success: bool) -> void:
 	if not _is_running:
 		return
 	_is_running = false
+	_minigame_success = success
 	process_mode = PROCESS_MODE_INHERIT
 	ScoreManager.record_minigame_result("fainting_first_aid", success, _lives, _time_remaining)
 	if success:
@@ -439,7 +447,17 @@ func show_end_screen(success: bool) -> void:
 
 func _on_end_screen_continue(success: bool) -> void:
 	get_tree().paused = false
-	hide()
+	if success:
+		var wp = get_tree().current_scene.find_child("PatientInWorld", true, false) as Sprite2D
+		if wp:
+			var fade = create_tween().set_trans(Tween.TRANS_QUINT)
+			fade.tween_property(wp, "modulate:a", 0.0, 0.6)
+			hide()
+			await fade.finished
+			wp.visible = false
+			wp.modulate.a = 1.0
+	else:
+		hide()
 	game_completed.emit(game_id, success)
 
 func _advance_step() -> void:
@@ -852,7 +870,18 @@ func _exit_tree() -> void:
 	# Limpiar sprite de acción
 	if _action_sprite and is_instance_valid(_action_sprite):
 		_action_sprite.queue_free()
-	# Limpiar el sprite del paciente que fue reparenteado al mundo
+	# Restaurar paciente del mundo
+	var world = get_tree().current_scene
+	if world:
+		var wp = world.find_child("PatientInWorld", true, false) as Sprite2D
+		if wp:
+			wp.modulate = Color.WHITE
+			if _minigame_success:
+				wp.visible = false
+			else:
+				wp.visible = true
+				wp.modulate = Color(0.5, 0.1, 0.1)
+	# Eliminar paciente temporal del minijuego
 	if patient_sprite and is_instance_valid(patient_sprite):
 		patient_sprite.queue_free()
 	var main_camera = get_viewport().get_camera_2d()

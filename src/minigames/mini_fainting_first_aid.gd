@@ -6,6 +6,22 @@ enum StepType { HOLD_3, TIMED_PRESS, DIAL_112, HOLD_ELEVATE, TAP, ECG }
 const KEYCAP_NORMAL = preload("res://src/assets/sprites/keycap_q.svg")
 const KEYCAP_PRESSED = preload("res://src/assets/sprites/keycap_q_pressed.svg")
 
+const PATIENT = preload("res://src/assets/sprites/patient_lying.png")
+const CURACION = preload("res://src/assets/sprites/curacion.png")
+const CURACION_HFRAMES = 4
+const CURACION_VFRAMES = 2
+const PLAYER_ACTION_POS = Vector2(732.0, 620.0)
+
+const STEP_ACTION_FRAMES: Array[Dictionary] = [
+	{ "idle": 4, "action": 5 },  # 1: Verificar respuesta
+	{ "idle": 4, "action": 6 },  # 2: Verificar respiración
+	{ "idle": 4, "action": 5 },  # 3: Pulso carotídeo
+	{ "idle": 7, "action": 7 },  # 4: Llamar 112
+	{ "idle": 4, "action": 5 },  # 5: Elevar piernas
+	{ "idle": 4, "action": 6 },  # 6: Aflojar ropa
+	{ "idle": 4, "action": 5 },  # 7: Monitorear ECG
+]
+
 const STEP_DATA: Array[Dictionary] = [
 	{
 		"instruction": "La persona está en el suelo.\n¿Qué hacés primero?",
@@ -73,8 +89,9 @@ const STEP_DATA: Array[Dictionary] = [
 @onready var hearts_label: Label = $GameContainer/HeartsLabel
 @onready var step_label: Label = $GameContainer/StepLabel
 @onready var progress_bar: TextureProgressBar = $GameContainer/ProgressBar
-@onready var patient_sprite: Sprite2D = $GameContainer/PatientSprite
 @onready var dial_label: Label = $GameContainer/DialLabel
+
+var patient_sprite: Sprite2D
 
 var _current_step: int = 0
 var _lives: int = 3
@@ -106,6 +123,9 @@ var _hearts_box: HBoxContainer
 var _ecg_line: Control
 
 var _shake_timer: float = 0.0
+var _action_sprite: Sprite2D
+var _real_player: Player
+var _minigame_success: bool = false
 
 func _ready() -> void:
 	super()
@@ -162,17 +182,38 @@ func _ready() -> void:
 	progress_bar.offset_top = 50
 	progress_bar.offset_bottom = 82
 
-	# Reparent the patient to the world to enable Y-sorting against the player
+	# Hide the world patient and create a temp copy for the minigame
 	var world = get_tree().current_scene
-	if world:
-		patient_sprite.get_parent().remove_child(patient_sprite)
+	var world_patient = world.find_child("PatientInWorld", true, false) as Sprite2D if world else null
+	if world_patient:
+		world_patient.visible = false
+		patient_sprite = Sprite2D.new()
+		patient_sprite.texture = PATIENT
+		patient_sprite.centered = false
+		patient_sprite.global_position = world_patient.global_position
+		patient_sprite.scale = world_patient.scale
 		world.add_child(patient_sprite)
-		patient_sprite.global_position = Vector2(700, 600)
-		var main_camera = get_viewport().get_camera_2d()
-		if main_camera:
-			patient_sprite.scale = patient_sprite.scale / main_camera.zoom
 	else:
-		patient_sprite.position = Vector2(647, 401)
+		patient_sprite = null
+
+	# Hide the real player and create action sprite in the world
+	_real_player = get_tree().current_scene.find_child("Player", true, false) as Player
+	if _real_player:
+		var real_sprite = _real_player.get_node("Sprite2D")
+		if real_sprite:
+			real_sprite.visible = false
+	if world:
+		_action_sprite = Sprite2D.new()
+		_action_sprite.texture = CURACION
+		_action_sprite.hframes = CURACION_HFRAMES
+		_action_sprite.vframes = CURACION_VFRAMES
+		_action_sprite.frame = 7
+		_action_sprite.centered = true
+		_action_sprite.scale = Vector2(1.25, 1.25)
+		world.add_child(_action_sprite)
+		_action_sprite.global_position = PLAYER_ACTION_POS
+		var kneel_tween = create_tween().set_trans(Tween.TRANS_QUINT)
+		kneel_tween.tween_property(_action_sprite, "frame", float(STEP_ACTION_FRAMES[0].idle), 0.4)
 
 	# Hearts Box
 	hearts_label.visible = false
@@ -257,6 +298,26 @@ func _ready() -> void:
 		heart_icon_node.pivot_offset = Vector2(16, 16) # Centered for scale animations
 
 	_reset_step()
+
+func _set_step_action_frame(frame_type: String = "idle") -> void:
+	if not _action_sprite or not is_instance_valid(_action_sprite):
+		return
+	var frames: Dictionary = STEP_ACTION_FRAMES[_current_step]
+	match frame_type:
+		"idle":
+			_action_sprite.frame = frames.idle
+		"action":
+			_action_sprite.frame = frames.action
+
+func _shake_action_sprite() -> void:
+	if not _action_sprite or not is_instance_valid(_action_sprite):
+		return
+	var orig_pos = _action_sprite.position
+	var shake = create_tween().set_trans(Tween.TRANS_QUINT)
+	shake.tween_property(_action_sprite, "position", orig_pos + Vector2(4, 0), 0.05)
+	shake.tween_property(_action_sprite, "position", orig_pos + Vector2(-4, 0), 0.05)
+	shake.tween_property(_action_sprite, "position", orig_pos + Vector2(2, 0), 0.05)
+	shake.tween_property(_action_sprite, "position", orig_pos, 0.05)
 
 func _reset_step() -> void:
 	if _pulse_tween:
@@ -356,10 +417,13 @@ func _update_ui() -> void:
 		heart.modulate.a = 0.15
 		heart.scale = Vector2(1.0, 1.0)
 
+	_set_step_action_frame("idle")
+
 func end(success: bool) -> void:
 	if not _is_running:
 		return
 	_is_running = false
+	_minigame_success = success
 	process_mode = PROCESS_MODE_INHERIT
 	ScoreManager.record_minigame_result("fainting_first_aid", success, _lives, _time_remaining)
 	if success:
@@ -383,7 +447,17 @@ func show_end_screen(success: bool) -> void:
 
 func _on_end_screen_continue(success: bool) -> void:
 	get_tree().paused = false
-	hide()
+	if success:
+		var wp = get_tree().current_scene.find_child("PatientInWorld", true, false) as Sprite2D
+		if wp:
+			var fade = create_tween().set_trans(Tween.TRANS_QUINT)
+			fade.tween_property(wp, "modulate:a", 0.0, 0.6)
+			hide()
+			await fade.finished
+			wp.visible = false
+			wp.modulate.a = 1.0
+	else:
+		hide()
 	game_completed.emit(game_id, success)
 
 func _advance_step() -> void:
@@ -423,10 +497,13 @@ func _lose_life(msg: String) -> void:
 		"Error en paso %d" % (_current_step + 1),
 		msg
 	)
+	_shake_action_sprite()
 	if _lives <= 0:
 		var fail: AudioStreamPlayer = get_node_or_null("FailSound")
 		if fail: fail.play()
 		feedback_label.text = "✗ EL ESTUDIANTE HA FALLECIDO"
+		if _action_sprite and is_instance_valid(_action_sprite):
+			_action_sprite.frame = 7
 		Global.student_died = true
 		_state = "death_delay"
 		_state_timer = 2.5
@@ -447,6 +524,7 @@ func _on_step_ok() -> void:
 		"Paso %d superado" % (_current_step + 1),
 		step.feedback_ok
 	)
+	_set_step_action_frame("idle")
 	_state = "step_ok_delay"
 	_state_timer = 0.8
 
@@ -563,6 +641,7 @@ func _input(event: InputEvent) -> void:
 			if event.is_action_pressed("Phone"):
 				_tap_timeout = 0.0
 				_sub_progress += 1
+				_set_step_action_frame("action")
 				if _sub_progress >= step.target:
 					_on_step_ok()
 				else:
@@ -611,6 +690,10 @@ func _handle_hold(delta: float, step: Dictionary) -> void:
 	if Input.is_action_pressed("Phone"):
 		_hold_timer += delta
 		progress_bar.value = clamp(_hold_timer / step.target * 100.0, 0.0, 100.0)
+		# Animar frame según progreso
+		if _action_sprite and is_instance_valid(_action_sprite):
+			var frames: Dictionary = STEP_ACTION_FRAMES[_current_step]
+			_action_sprite.frame = frames.action if progress_bar.value > 50.0 else frames.idle
 		if _hold_timer >= step.target:
 			_on_step_ok()
 	else:
@@ -620,6 +703,7 @@ func _handle_hold(delta: float, step: Dictionary) -> void:
 		_hold_timer = max(0, _hold_timer - delta * 0.5)
 		progress_bar.value = clamp(_hold_timer / step.target * 100.0, 0.0, 100.0)
 		if _hold_timer > 0:
+			_set_step_action_frame("idle")
 			feedback_label.modulate = Color.RED
 			feedback_label.text = "¡Soltaste! Seguí manteniendo Q."
 		else:
@@ -635,6 +719,7 @@ func _handle_timed_press(delta: float, _step: Dictionary) -> void:
 		_pulse_window = 0.0
 		if _pulse_prompt:
 			_pulse_prompt.text = "¡PRESIONÁ Q AHORA!"
+		_set_step_action_frame("action")
 		var pulse = get_node_or_null("GameContainer/PulsePoint")
 		if pulse:
 			if _pulse_tween:
@@ -717,6 +802,7 @@ func _do_ecg_beat(step: Dictionary) -> void:
 	_ecg_beat += 1
 	_ecg_waiting = true
 	_ecg_timeout = 0.0
+	_set_step_action_frame("action")
 	var heart = get_node_or_null("GameContainer/HeartIcon")
 	if heart:
 		if _ecg_tween:
@@ -776,7 +862,26 @@ func _on_ecg_draw() -> void:
 			_ecg_line.draw_line(points[i], points[i+1], color, 2.0, true)
 
 func _exit_tree() -> void:
-	# Limpiar el sprite del paciente que fue reparenteado al mundo
+	# Restaurar sprite del player real
+	if _real_player and is_instance_valid(_real_player):
+		var real_sprite = _real_player.get_node("Sprite2D")
+		if real_sprite:
+			real_sprite.visible = true
+	# Limpiar sprite de acción
+	if _action_sprite and is_instance_valid(_action_sprite):
+		_action_sprite.queue_free()
+	# Restaurar paciente del mundo
+	var world = get_tree().current_scene
+	if world:
+		var wp = world.find_child("PatientInWorld", true, false) as Sprite2D
+		if wp:
+			wp.modulate = Color.WHITE
+			if _minigame_success:
+				wp.visible = false
+			else:
+				wp.visible = true
+				wp.modulate = Color(0.5, 0.1, 0.1)
+	# Eliminar paciente temporal del minijuego
 	if patient_sprite and is_instance_valid(patient_sprite):
 		patient_sprite.queue_free()
 	var main_camera = get_viewport().get_camera_2d()

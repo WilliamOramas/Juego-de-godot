@@ -4,7 +4,7 @@ const SCENARIOS: Dictionary = {
 	"fainting_first_aid": {
 		"path": "res://src/minigames/mini_fainting_first_aid.tscn",
 		"id": "fainting_first_aid",
-		"cinematic": true,
+		"cinematic": false,
 	},
 	"cpr": {
 		"path": "res://src/minigames/mini_cpr.tscn",

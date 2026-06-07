@@ -12,6 +12,7 @@ var input_vector: Vector2 = Vector2.ZERO
 @onready var step_sound: AudioStreamPlayer = $StepSound
 
 var _is_approaching: bool = false
+var _walk_target: Vector2
 
 var step_timer: float = 0.0
 
@@ -40,7 +41,10 @@ func _physics_process(_delta: float) -> void:
 		get_input()
 		animate_player(_delta)
 	elif _is_approaching:
-		velocity = Vector2.ZERO
+		var dir = (_walk_target - global_position).normalized()
+		velocity = dir * speed
+		input_vector = dir
+		animate_player(_delta)
 	else:
 		velocity = Vector2.ZERO
 		animation_tree.set("parameters/conditions/idle", true)
@@ -83,19 +87,16 @@ func _on_transition_started() -> void:
 func _on_transition_finished() -> void:
 	control_enabled = true
 
-func approach_position(target: Vector2) -> void:
+func walk_to(target: Vector2) -> void:
 	control_enabled = false
 	_is_approaching = true
-	var dir := (target - global_position).normalized()
-	animation_tree.set("parameters/walk/blend_position", dir)
-	animation_tree.set("parameters/conditions/idle", false)
-	animation_tree.set("parameters/conditions/walk", true)
-	var tween := create_tween().set_trans(Tween.TRANS_QUINT)
-	tween.tween_property(self, "global_position", target, AnimHelper.PLAYER_APPROACH)
-	await tween.finished
+	_walk_target = target
+	while _is_approaching and global_position.distance_squared_to(target) > 16.0:
+		await get_tree().physics_frame
+	_is_approaching = false
+	velocity = Vector2.ZERO
 	animation_tree.set("parameters/conditions/idle", true)
 	animation_tree.set("parameters/conditions/walk", false)
-	_is_approaching = false
 	control_enabled = true
 
 func set_camera_limits(left: int, top: int, right: int, bottom: int) -> void:

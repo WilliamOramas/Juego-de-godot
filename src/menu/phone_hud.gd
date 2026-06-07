@@ -285,7 +285,11 @@ func _launch_scenario() -> void:
 	if Global.fainting_approach_pos != Vector2.ZERO:
 		var player := get_tree().current_scene.find_child("Player", true, false) as Player
 		if player:
-			await player.approach_position(Global.fainting_approach_pos)
+			var wp = get_tree().current_scene.find_child("PatientInWorld", true, false) as Sprite2D
+			if wp:
+				wp.modulate = Color.WHITE
+				wp.visible = true
+			await player.walk_to(Global.fainting_approach_pos)
 		Global.fainting_approach_pos = Vector2.ZERO
 	if scenario.get("cinematic", false):
 		await _play_fainting_cinematic()

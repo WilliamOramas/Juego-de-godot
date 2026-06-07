@@ -47,8 +47,7 @@ func _physics_process(_delta: float) -> void:
 		animate_player(_delta)
 	else:
 		velocity = Vector2.ZERO
-		animation_tree.set("parameters/conditions/idle", true)
-		animation_tree.set("parameters/conditions/walk", false)
+		animate_player(_delta)
 		
 	move_and_slide()
 
@@ -58,14 +57,13 @@ func get_input() -> void:
 	velocity = input_vector * current_speed
 
 func animate_player(delta: float = 0.0) -> void:
-	if velocity == Vector2.ZERO:
-		animation_tree.set("parameters/conditions/idle", true)
-		animation_tree.set("parameters/conditions/walk", false)
+	var is_idle = velocity == Vector2.ZERO
+	animation_tree.set("parameters/conditions/idle", is_idle)
+	animation_tree.set("parameters/conditions/walk", not is_idle)
+	
+	if is_idle:
 		step_timer = 0.3
 	else:
-		animation_tree.set("parameters/conditions/idle", false)
-		animation_tree.set("parameters/conditions/walk", true)
-
 		var is_running := Input.is_key_pressed(KEY_SHIFT)
 		var step_interval := 0.18 if is_running else 0.3
 
@@ -95,8 +93,7 @@ func walk_to(target: Vector2) -> void:
 		await get_tree().physics_frame
 	_is_approaching = false
 	velocity = Vector2.ZERO
-	animation_tree.set("parameters/conditions/idle", true)
-	animation_tree.set("parameters/conditions/walk", false)
+	animate_player(0.0)
 	control_enabled = true
 
 func set_camera_limits(left: int, top: int, right: int, bottom: int) -> void:

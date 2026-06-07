@@ -193,6 +193,12 @@ func _on_body_exited(body: Node2D) -> void:
 		if AiDialogBox and AiDialogBox.is_open:
 			AiDialogBox.hide_dialog()
 
+func _get_fallback_dialog(is_first: bool) -> Array[String]:
+	if is_first and not dialog_lines.is_empty(): return dialog_lines.duplicate()
+	if not is_first and not dialog_lines_repeat.is_empty(): return dialog_lines_repeat.duplicate()
+	if not dialog_lines.is_empty(): return dialog_lines.duplicate()
+	return [dialog_text]
+
 func _on_interact_pressed() -> void:
 	if DialogBox.is_open or AiDialogBox.is_open:
 		return
@@ -214,10 +220,7 @@ func _on_interact_pressed() -> void:
 		lines = dialog_lines_blocked.duplicate() if not dialog_lines_blocked.is_empty() else [dialog_text]
 		# No marcar como visto: la próxima vez seguirá intentando iniciar la quest
 	else:
-		if is_first:
-			lines = dialog_lines.duplicate() if not dialog_lines.is_empty() else [dialog_text]
-		else:
-			lines = dialog_lines_repeat.duplicate() if not dialog_lines_repeat.is_empty() else (dialog_lines.duplicate() if not dialog_lines.is_empty() else [dialog_text])
+		lines = _get_fallback_dialog(is_first)
 		Global.mark_dialog_seen(key)
 
 	_interact.set_button_visible(false)

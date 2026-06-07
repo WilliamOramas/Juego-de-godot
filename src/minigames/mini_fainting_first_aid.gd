@@ -358,15 +358,8 @@ func _update_timer_label() -> void:
 		timer_label.modulate = Color.WHITE
 
 func _update_patient_color() -> void:
-	match _lives:
-		3:
-			patient_sprite.modulate = Color.WHITE
-		2:
-			patient_sprite.modulate = Color(1, 0.7, 0.7)
-		1:
-			patient_sprite.modulate = Color(1, 0.3, 0.3)
-		_:
-			patient_sprite.modulate = Color(0.5, 0.1, 0.1)
+	var colors = {3: Color.WHITE, 2: Color(1, 0.7, 0.7), 1: Color(1, 0.3, 0.3)}
+	patient_sprite.modulate = colors.get(_lives, Color(0.5, 0.1, 0.1))
 
 func _update_dial_label() -> void:
 	var step: Dictionary = STEP_DATA[_current_step]

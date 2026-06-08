@@ -71,6 +71,8 @@ func _resume_bgm() -> void:
 	_bgm_player = null
 
 func _on_minigame_completed(game_id: String, success: bool) -> void:
+	Global.completed_scenarios[game_id] = true
+	SaveManager.mark_dirty()
 	EventBus.minigame_completed.emit(game_id, success)
 	_resume_bgm()
 	if _active_minigame:

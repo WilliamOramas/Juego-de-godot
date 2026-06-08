@@ -69,6 +69,7 @@ func reset_game(slot: int, is_cloud: bool) -> void:
 	active_slot = slot
 	active_is_cloud = is_cloud
 	Global.dialogs_seen.clear()
+	Global.completed_scenarios.clear()
 	Global.pending_position_restore = false
 	Global.saved_player_position = Vector2.ZERO
 	ScoreManager.reset()
@@ -180,6 +181,7 @@ func load_game(slot: int, is_cloud: bool) -> String:
 	_loading = true
 
 	Global.dialogs_seen.clear()
+	Global.completed_scenarios.clear()
 	Global.pending_position_restore = false
 	Global.saved_player_position = Vector2.ZERO
 	Global.return_spawn_name = ""
@@ -220,6 +222,7 @@ func _build_game_data(override_last_scene: String = "") -> Dictionary:
 		"return_spawn_name": Global.return_spawn_name,
 		"score_stats": ScoreManager.get_stats(),
 		"journal_entries": JournalManager.serialize(),
+		"completed_scenarios": Global.completed_scenarios.duplicate(),
 	}
 	var player := _get_player()
 	if player:
@@ -257,4 +260,6 @@ func _apply_game_data(data: Dictionary) -> String:
 		ScoreManager.minigame_attempts = s.get("minigame_attempts", 0)
 	if data.has("journal_entries"):
 		JournalManager.deserialize(data["journal_entries"] as Array)
+	if data.has("completed_scenarios"):
+		Global.completed_scenarios = data["completed_scenarios"].duplicate()
 	return data.get("last_scene", "")

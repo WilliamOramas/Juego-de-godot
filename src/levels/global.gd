@@ -26,6 +26,9 @@ var student_died: bool = false
 ## Posición a la que el jugador debe acercarse antes del minijuego de primeros auxilios
 var fainting_approach_pos: Vector2 = Vector2.ZERO
 
+## Registro de minijuegos/escenarios ya completados (key = scenario_id)
+var completed_scenarios: Dictionary = {}
+
 ## Activa o desactiva el silenciado global del juego (Master bus)
 func set_mute(muted: bool) -> void:
 	is_muted = muted

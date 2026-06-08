@@ -10,6 +10,8 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	EventBus.minigame_completed.connect(_on_minigame_completed)
+	if Global.completed_scenarios.has(SCENARIO_ID):
+		_triggered = true
 
 
 func _on_minigame_completed(game_id: String, _success: bool) -> void:

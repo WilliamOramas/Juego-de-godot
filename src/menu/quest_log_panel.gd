@@ -9,7 +9,7 @@ var _active_container: VBoxContainer
 var _completed_container: VBoxContainer
 
 func _ready() -> void:
-	layer = 50
+	layer = 51
 	process_mode = PROCESS_MODE_ALWAYS
 	build_ui()
 

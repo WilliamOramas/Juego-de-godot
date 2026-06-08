@@ -14,13 +14,13 @@ target_id = "res://src/levels/classroom_1.tscn"
 script = ExtResource("2_qw8t3")
 objective_id = "talk_companero"
 description = "Hablar con el Compañero"
-target_id = "Companero"
+target_id = "Compañero"
 
 [sub_resource type="Resource" id="Resource_3333"]
 script = ExtResource("2_qw8t3")
 objective_id = "talk_profesor"
 description = "Hablar con el Profesor Méndez"
-target_id = "Profesor Mendez"
+target_id = "Profesor Méndez"
 
 [sub_resource type="Resource" id="Resource_4444"]
 script = ExtResource("2_qw8t3")

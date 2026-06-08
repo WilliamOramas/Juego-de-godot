@@ -29,10 +29,10 @@ class_name NPC
 @export var dialog_lines_blocked: Array[String] = []
 
 ## (Legacy) Texto de diálogo de una línea — se usa si dialog_lines está vacío
-@export var dialog_text: String = "¡Hola!"
+@export var dialog_text: String = ""
 
 ## Misión que inicia este NPC al hablarle por primera vez
-@export var quest_to_start: Resource = null
+@export var quest_to_start: QuestData = null
 
 ## Tipo de comportamiento o rutina lógica para el NPC
 @export_enum("Libre (Radio)", "Patrulla Horizontal", "Patrulla Vertical", "Estático") var routine_type: String = "Libre (Radio)"
@@ -197,7 +197,7 @@ func _get_fallback_dialog(is_first: bool) -> Array[String]:
 	if is_first and not dialog_lines.is_empty(): return dialog_lines.duplicate()
 	if not is_first and not dialog_lines_repeat.is_empty(): return dialog_lines_repeat.duplicate()
 	if not dialog_lines.is_empty(): return dialog_lines.duplicate()
-	return [dialog_text]
+	return [dialog_text if not dialog_text.is_empty() else "..."]
 
 func _on_interact_pressed() -> void:
 	if DialogBox.is_open or AiDialogBox.is_open:

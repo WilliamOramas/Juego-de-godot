@@ -135,7 +135,7 @@ func _ready() -> void:
 
 	# Apply CRT Shader
 	var mat = ShaderMaterial.new()
-	mat.shader = load("res://src/minigames/retro_crt.gdshader")
+	mat.shader = preload("res://src/minigames/retro_crt.gdshader")
 	mat.set_shader_parameter("vignette_intensity", 0.4)
 	mat.set_shader_parameter("vignette_opacity", 0.8)
 	mat.set_shader_parameter("vignette_color", Color.BLACK)
@@ -198,7 +198,7 @@ func _ready() -> void:
 
 	# Hide the real player and create action sprite in the world
 	_real_player = get_tree().current_scene.find_child("Player", true, false) as Player
-	if _real_player:
+	if _real_player and is_instance_valid(_real_player):
 		var real_sprite = _real_player.get_node("Sprite2D")
 		if real_sprite:
 			real_sprite.visible = false

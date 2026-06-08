@@ -21,6 +21,8 @@ var _quest_log_panel: QuestLogPanel = null
 var _journal_panel: JournalPanel = null
 var _stats_panel: StatsPanel = null
 var _hint_labels: Array[Label] = []
+var _close_anim_done: bool = false
+var _closing: bool = false
 
 
 func _ready() -> void:
@@ -328,12 +330,21 @@ func open_phone() -> void:
 
 
 func close_phone() -> void:
-	if not visible:
+	if not visible or _closing:
 		return
+	_closing = true
 	anim.play("slide_out")
 	slide_sound.play()
-	await anim.animation_finished
+	_close_anim_done = false
+	anim.animation_finished.connect(_on_close_anim_finished, CONNECT_ONE_SHOT)
+	await get_tree().create_timer(1.0).timeout
+	if not _close_anim_done:
+		push_warning("close_phone: slide_out animation timed out")
 	visible = false
+	_closing = false
+
+func _on_close_anim_finished(_anim_name: String) -> void:
+	_close_anim_done = true
 
 func _open_quest_log() -> void:
 	if _quest_log_panel == null or not is_instance_valid(_quest_log_panel):

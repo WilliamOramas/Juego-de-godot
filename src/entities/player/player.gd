@@ -33,8 +33,8 @@ func _ready() -> void:
 	# Conexión automática con el gestor de escenas para deshabilitar controles durante fundidos
 	SceneManager.transition_started.connect(_on_transition_started)
 	SceneManager.transition_finished.connect(_on_transition_finished)
-	EventBus.dialog_started.connect(func(): control_enabled = false)
-	EventBus.dialog_finished.connect(func(): control_enabled = true)
+	EventBus.dialog_started.connect(_on_dialog_started)
+	EventBus.dialog_finished.connect(_on_dialog_finished)
 
 func _physics_process(_delta: float) -> void:
 	if control_enabled:
@@ -84,6 +84,16 @@ func _on_transition_started() -> void:
 
 func _on_transition_finished() -> void:
 	control_enabled = true
+
+func _on_dialog_started() -> void:
+	control_enabled = false
+
+func _on_dialog_finished() -> void:
+	control_enabled = true
+
+func _exit_tree() -> void:
+	EventBus.dialog_started.disconnect(_on_dialog_started)
+	EventBus.dialog_finished.disconnect(_on_dialog_finished)
 
 func walk_to(target: Vector2) -> void:
 	control_enabled = false

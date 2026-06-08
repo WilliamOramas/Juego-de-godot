@@ -49,7 +49,9 @@ func _show_game_buttons(show_submenu: bool) -> void:
 	$MarginContainer/VBoxContainer.visible = not show_submenu
 	$MarginContainer/SubmenuButtons.visible = show_submenu
 	if show_submenu:
-		$MarginContainer/SubmenuButtons/Cargar_Partida.disabled = not _has_any_save()
+		var has_save = _has_any_save()
+		$MarginContainer/SubmenuButtons/Cargar_Partida.disabled = not has_save
+		$MarginContainer/SubmenuButtons/Borrar_Partida.disabled = not has_save
 
 func _on_jugar_pressed() -> void:
 	_show_game_buttons(true)

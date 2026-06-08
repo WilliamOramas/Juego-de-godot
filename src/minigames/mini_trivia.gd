@@ -58,121 +58,75 @@ func _ready() -> void:
 	questions.shuffle()
 	wordle_words.shuffle()
 
-	bgm = AudioStreamPlayer.new()
-	bgm.stream = preload("res://src/assets/sounds/Quiz_BACKGROUND_MUSIC.mp3")
-	bgm.volume_db = -8.0
-	game_container.add_child(bgm)
+	bgm = _create_audio(preload("res://src/assets/sounds/Quiz_BACKGROUND_MUSIC.mp3"), -8.0)
 	bgm.play()
-	bgm.finished.connect(func(): bgm.play())
+	bgm.finished.connect(bgm.play)
 
-	correct_sound = AudioStreamPlayer.new()
-	correct_sound.stream = preload("res://src/assets/sounds/correct.wav")
-	game_container.add_child(correct_sound)
-
-	wrong_sound = AudioStreamPlayer.new()
-	wrong_sound.stream = preload("res://src/assets/sounds/wrong.wav")
-	game_container.add_child(wrong_sound)
-
-	step_sound = AudioStreamPlayer.new()
-	step_sound.stream = preload("res://src/assets/sounds/step.wav")
-	game_container.add_child(step_sound)
-
-	success_fanfare = AudioStreamPlayer.new()
-	success_fanfare.stream = preload("res://src/assets/sounds/success_fanfare.wav")
-	game_container.add_child(success_fanfare)
-
-	fail_sound = AudioStreamPlayer.new()
-	fail_sound.stream = preload("res://src/assets/sounds/fail_sound.wav")
-	game_container.add_child(fail_sound)
+	correct_sound = _create_audio(preload("res://src/assets/sounds/correct.wav"))
+	wrong_sound = _create_audio(preload("res://src/assets/sounds/wrong.wav"))
+	step_sound = _create_audio(preload("res://src/assets/sounds/step.wav"))
+	success_fanfare = _create_audio(preload("res://src/assets/sounds/success_fanfare.wav"))
+	fail_sound = _create_audio(preload("res://src/assets/sounds/fail_sound.wav"))
 
 func start() -> void:
 	super.start()
 	_next_question()
 
-# Helper Functions for guaranteed absolute anchor/offset scaling
-func _set_full_rect(node: Control) -> void:
-	node.anchor_left = 0
-	node.anchor_right = 1
-	node.anchor_top = 0
-	node.anchor_bottom = 1
-	node.offset_left = 0
-	node.offset_right = 0
-	node.offset_top = 0
-	node.offset_bottom = 0
+# === Helpers para Refactorización ===
+func _create_audio(stream: AudioStream, volume: float = 0.0) -> AudioStreamPlayer:
+	var player = AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume
+	game_container.add_child(player)
+	return player
+
+func _create_label(parent: Node, text: String, font_size: int = -1, color: Color = Color.WHITE, align: int = HORIZONTAL_ALIGNMENT_CENTER) -> Label:
+	var lbl = Label.new()
+	lbl.text = text
+	lbl.horizontal_alignment = align
+	if font_size > 0:
+		lbl.add_theme_font_size_override("font_size", font_size)
+	if color != Color.WHITE:
+		lbl.add_theme_color_override("font_color", color)
+	parent.add_child(lbl)
+	return lbl
 
 func _set_top_wide(node: Control, top_y: float, height: float) -> void:
-	node.anchor_left = 0
-	node.anchor_right = 1
-	node.anchor_top = 0
-	node.anchor_bottom = 0
-	node.offset_left = 0
-	node.offset_right = 0
+	node.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	node.offset_top = top_y
 	node.offset_bottom = top_y + height
 
 func _set_center(node: Control, width: float, height: float, y_offset: float = 0) -> void:
-	node.anchor_left = 0.5
-	node.anchor_right = 0.5
-	node.anchor_top = 0.5
-	node.anchor_bottom = 0.5
-	node.offset_left = -width / 2.0
-	node.offset_right = width / 2.0
-	node.offset_top = (-height / 2.0) + y_offset
-	node.offset_bottom = (height / 2.0) + y_offset
+	node.set_anchors_preset(Control.PRESET_CENTER)
+	node.position = Vector2(-width / 2.0, -height / 2.0 + y_offset)
+	node.size = Vector2(width, height)
 
 func _build_ui() -> void:
 	# ================= PHASE 1 UI =================
 	p1_container = Control.new()
 	game_container.add_child(p1_container)
-	_set_full_rect(p1_container)
+	p1_container.set_anchors_preset(Control.PRESET_FULL_RECT)
 	
 	var panel_bg = ColorRect.new()
 	p1_container.add_child(panel_bg)
 	panel_bg.color = Color(0, 0, 0, 0.8)
-	_set_full_rect(panel_bg)
+	panel_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	
-	var title = Label.new()
-	p1_container.add_child(title)
-	title.text = "TRIVIA MÉDICA: TÚ VS ENRIQUE"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 24)
+	var title = _create_label(p1_container, "TRIVIA MÉDICA: TÚ VS ENRIQUE", 24)
 	_set_top_wide(title, 20, 40)
 	
-	p1_player_strikes = Label.new()
-	p1_container.add_child(p1_player_strikes)
-	p1_player_strikes.text = "Tus Strikes: 0/3"
-	p1_player_strikes.add_theme_color_override("font_color", Color.AQUA)
-	# Top Left anchor
-	p1_player_strikes.anchor_left = 0
-	p1_player_strikes.anchor_right = 0
-	p1_player_strikes.anchor_top = 0
-	p1_player_strikes.anchor_bottom = 0
-	p1_player_strikes.offset_left = 50
-	p1_player_strikes.offset_top = 70
-	p1_player_strikes.offset_right = 300
-	p1_player_strikes.offset_bottom = 110
+	p1_player_strikes = _create_label(p1_container, "Tus Strikes: 0/3", -1, Color.AQUA, HORIZONTAL_ALIGNMENT_LEFT)
+	p1_player_strikes.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	p1_player_strikes.position = Vector2(50, 70)
+	p1_player_strikes.size = Vector2(250, 40)
 	
-	p1_enrique_strikes = Label.new()
-	p1_container.add_child(p1_enrique_strikes)
-	p1_enrique_strikes.text = "Strikes de Enrique: 0/3"
-	p1_enrique_strikes.add_theme_color_override("font_color", Color.ORANGE)
-	p1_enrique_strikes.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	# Top Right anchor
-	p1_enrique_strikes.anchor_left = 1
-	p1_enrique_strikes.anchor_right = 1
-	p1_enrique_strikes.anchor_top = 0
-	p1_enrique_strikes.anchor_bottom = 0
-	p1_enrique_strikes.offset_left = -300
-	p1_enrique_strikes.offset_top = 70
-	p1_enrique_strikes.offset_right = -50
-	p1_enrique_strikes.offset_bottom = 110
+	p1_enrique_strikes = _create_label(p1_container, "Strikes de Enrique: 0/3", -1, Color.ORANGE, HORIZONTAL_ALIGNMENT_RIGHT)
+	p1_enrique_strikes.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	p1_enrique_strikes.position = Vector2(-300, 70)
+	p1_enrique_strikes.size = Vector2(250, 40)
 	
-	p1_question = Label.new()
-	p1_container.add_child(p1_question)
-	p1_question.text = "Pregunta..."
-	p1_question.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	p1_question = _create_label(p1_container, "Pregunta...", 20)
 	p1_question.autowrap_mode = TextServer.AUTOWRAP_WORD
-	p1_question.add_theme_font_size_override("font_size", 20)
 	_set_top_wide(p1_question, 110, 80)
 	
 	p1_options = VBoxContainer.new()
@@ -180,17 +134,8 @@ func _build_ui() -> void:
 	p1_options.add_theme_constant_override("separation", 15)
 	_set_center(p1_options, 500, 300, 60)
 	
-	p1_status = Label.new()
-	p1_container.add_child(p1_status)
-	p1_status.text = ""
-	p1_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	# Bottom Wide anchor
-	p1_status.anchor_left = 0
-	p1_status.anchor_right = 1
-	p1_status.anchor_top = 1
-	p1_status.anchor_bottom = 1
-	p1_status.offset_left = 0
-	p1_status.offset_right = 0
+	p1_status = _create_label(p1_container, "", -1)
+	p1_status.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	p1_status.offset_top = -100
 	p1_status.offset_bottom = -50
 	
@@ -198,26 +143,17 @@ func _build_ui() -> void:
 	p2_container = Control.new()
 	game_container.add_child(p2_container)
 	p2_container.visible = false
-	_set_full_rect(p2_container)
+	p2_container.set_anchors_preset(Control.PRESET_FULL_RECT)
 	
 	var p2_bg = ColorRect.new()
 	p2_container.add_child(p2_bg)
 	p2_bg.color = Color(0.1, 0.1, 0.2, 0.95)
-	_set_full_rect(p2_bg)
+	p2_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	
-	p2_title = Label.new()
-	p2_container.add_child(p2_title)
-	p2_title.text = "DESEMPATE WORDLE - RONDA 1/3"
-	p2_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	p2_title.add_theme_font_size_override("font_size", 28)
-	p2_title.add_theme_color_override("font_color", Color.YELLOW)
+	p2_title = _create_label(p2_container, "DESEMPATE WORDLE - RONDA 1/3", 28, Color.YELLOW)
 	_set_top_wide(p2_title, 30, 40)
 	
-	p2_status = Label.new()
-	p2_container.add_child(p2_status)
-	p2_status.text = "Escribe una palabra de 5 letras (Teclado Real)"
-	p2_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	p2_status.add_theme_font_size_override("font_size", 18)
+	p2_status = _create_label(p2_container, "Escribe una palabra de 5 letras (Teclado Real)", 18)
 	_set_top_wide(p2_status, 80, 30)
 	
 	p2_grid = GridContainer.new()
@@ -239,11 +175,8 @@ func _build_ui() -> void:
 		style.border_color = Color(0.5, 0.5, 0.5)
 		panel.add_theme_stylebox_override("panel", style)
 		
-		var lbl = Label.new()
-		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var lbl = _create_label(panel, "", 32)
 		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		lbl.add_theme_font_size_override("font_size", 32)
-		panel.add_child(lbl)
 		
 		p2_grid.add_child(panel)
 		wordle_labels.append({"panel": panel, "label": lbl, "style": style})
@@ -346,72 +279,56 @@ func _setup_wordle_round() -> void:
 	_step_start_time = _time_elapsed
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if not is_phase_2 or not _is_running:
+	if not is_phase_2 or not _is_running or not event is InputEventKey or not event.pressed:
 		return
-	if event is InputEventKey and event.pressed:
-		if event.keycode == KEY_BACKSPACE:
-			if current_guess.length() > 0:
-				current_guess = current_guess.substr(0, current_guess.length() - 1)
-				_update_grid_text()
-		elif event.keycode == KEY_ENTER:
-			if current_guess.length() == 5:
-				_submit_guess()
-		else:
-			var chr = OS.get_keycode_string(event.keycode)
-			if chr.length() == 1 and current_guess.length() < 5:
-				var regex = RegEx.new()
-				regex.compile("^[A-Z]$")
-				if regex.search(chr):
-					current_guess += chr
-					step_sound.play()
-					_update_grid_text()
+		
+	if event.keycode == KEY_BACKSPACE and current_guess.length() > 0:
+		current_guess = current_guess.substr(0, current_guess.length() - 1)
+		_update_grid_text()
+	elif event.keycode == KEY_ENTER and current_guess.length() == 5:
+		_submit_guess()
+	elif current_guess.length() < 5:
+		var chr = OS.get_keycode_string(event.keycode)
+		if chr.length() == 1 and chr >= "A" and chr <= "Z":
+			current_guess += chr
+			step_sound.play()
+			_update_grid_text()
 
 func _update_grid_text() -> void:
 	var start_idx = current_attempt * 5
 	for i in range(5):
-		var lbl = wordle_labels[start_idx + i]["label"]
-		if i < current_guess.length():
-			lbl.text = current_guess[i]
-		else:
-			lbl.text = ""
+		wordle_labels[start_idx + i]["label"].text = current_guess[i] if i < current_guess.length() else ""
 
 func _submit_guess() -> void:
 	var start_idx = current_attempt * 5
-	
-	var exact_matches = 0
+	var is_correct = current_guess == target_word
 	var used_indices = []
 	
-	# First pass: Green
 	for i in range(5):
-		var style = wordle_labels[start_idx + i]["style"]
-		if current_guess[i] == target_word[i]:
-			style.bg_color = Color(0.2, 0.6, 0.2) # Green
-			exact_matches += 1
-			used_indices.append(i)
-		else:
-			style.bg_color = Color(0.3, 0.3, 0.3) # Gray
+		var is_exact = current_guess[i] == target_word[i]
+		wordle_labels[start_idx + i]["style"].bg_color = Color(0.2, 0.6, 0.2) if is_exact else Color(0.3, 0.3, 0.3)
+		if is_exact: used_indices.append(i)
 	
-	# Second pass: Yellow
 	for i in range(5):
 		if current_guess[i] != target_word[i]:
 			for j in range(5):
-				if current_guess[i] == target_word[j] and j not in used_indices:
-					wordle_labels[start_idx + i]["style"].bg_color = Color(0.7, 0.6, 0.1) # Yellow
+				if current_guess[i] == target_word[j] and not j in used_indices:
+					wordle_labels[start_idx + i]["style"].bg_color = Color(0.7, 0.6, 0.1)
 					used_indices.append(j)
 					break
 	
 	current_attempt += 1
-	current_guess = ""
-	
 	var time_taken = _time_elapsed - _step_start_time
 	_step_start_time = _time_elapsed
 	
-	if exact_matches == 5:
+	if is_correct:
 		ScoreManager.record_minigame_step(true, "Acierto Wordle", time_taken)
 		_round_over(true)
 	elif current_attempt >= 6:
 		ScoreManager.record_minigame_step(false, "Fallo Wordle", time_taken)
 		_round_over(false)
+		
+	current_guess = ""
 
 func _round_over(player_won: bool) -> void:
 	# Simulamos el turno de Enrique (35% de ganar)

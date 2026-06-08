@@ -30,7 +30,7 @@ var current_q_index: int = -1
 
 # === State Phase 2 (Wordle) ===
 var is_phase_2: bool = false
-var wordle_words: Array = ["VENDA", "SALUD", "DOLOR", "GOLPE", "CURAR", "PULSO", "CORTE", "SANAR", "VIRUS", "HUESO"]
+var wordle_words: Array = ["VENDA", "SALUD", "DOLOR", "GOLPE", "CURAR", "PULSO", "CORTE", "SANAR", "VIRUS", "HUESO", "TOSER", "DOSIS", "SUDOR", "GRIPE", "VITAL", "CIEGO", "SORDO", "AGUJA", "VENAS", "RENAL", "GOTAS", "SUERO", "PARTO", "MUELA", "CALOR", "CREMA", "VISTA", "TACTO"]
 var target_word: String = ""
 var current_guess: String = ""
 var current_attempt: int = 0

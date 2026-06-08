@@ -386,13 +386,14 @@ func _process(delta: float) -> void:
 		_time_elapsed += delta
 		
 	var vp_size = get_viewport().get_visible_rect().size
+	
 	if is_instance_valid(game_container):
 		game_container.size = vp_size
-	if is_instance_valid(p1_container) and p1_container.visible:
-		p1_container.size = vp_size
-		if p1_container.get_child_count() > 0 and p1_container.get_child(0) is ColorRect:
-			p1_container.get_child(0).size = vp_size
-	if is_instance_valid(p2_container) and p2_container.visible:
-		p2_container.size = vp_size
-		if p2_container.get_child_count() > 0 and p2_container.get_child(0) is ColorRect:
-			p2_container.get_child(0).size = vp_size
+		
+	var is_active = func(c): return is_instance_valid(c) and c.visible
+	var resize_container = func(c):
+		c.size = vp_size
+		if c.get_child_count() > 0 and c.get_child(0) is ColorRect:
+			c.get_child(0).size = vp_size
+
+	[p1_container, p2_container].filter(is_active).map(resize_container)

@@ -17,14 +17,6 @@ var _elapsed: float = 0.0
 func _ready() -> void:
 	get_tree().paused = false
 
-	var font := load("res://src/fonts/porky_s/PORKYS_.TTF") as Font
-	if font:
-		title_label.add_theme_font_override("font", font)
-	title_label.add_theme_font_size_override("font_size", 52)
-	title_label.add_theme_color_override("font_color", Color(0.47, 0.63, 0.99, 1))
-	title_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0.35, 0.6))
-	title_label.add_theme_constant_override("shadow_offset_x", 4)
-	title_label.add_theme_constant_override("shadow_offset_y", 2)
 
 	dots_label.add_theme_font_size_override("font_size", 14)
 	dots_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6, 1))

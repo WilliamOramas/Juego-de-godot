@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dyfubodr1lpfw" path="res://src/menu/splash_screen.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://dswjytovfuu1t" path="res://src/menu/pixel.tscn" id="2_pixel"]
+[ext_resource type="FontFile" uid="uid://cr0ivbn1xn0bt" path="res://src/fonts/m5x7.ttf" id="3_t5p0y"]
 
 [node name="SplashScreen" type="Control" unique_id=883765292]
 layout_mode = 3
@@ -36,10 +37,11 @@ theme_override_constants/separation = 12
 [node name="Pixel" parent="Center/VBox" unique_id=5269915 instance=ExtResource("2_pixel")]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="Center/VBox" unique_id=1057431653]
+[node name="Title" type="Label" parent="Center/VBox" unique_id=1976635216]
 layout_mode = 2
-text = "Vital Pixel"
-horizontal_alignment = 1
+theme_override_fonts/font = ExtResource("3_t5p0y")
+theme_override_font_sizes/font_size = 31
+text = "MEDI-BOT LOADING"
 
 [node name="Dots" type="Label" parent="Center/VBox" unique_id=1181202369]
 layout_mode = 2

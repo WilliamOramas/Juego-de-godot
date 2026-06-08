@@ -9,7 +9,8 @@
 [ext_resource type="Script" uid="uid://dtl581vlfbxui" path="res://src/levels/level_limits.gd" id="7_limits"]
 [ext_resource type="PackedScene" path="res://src/entities/npc/professor_npc.tscn" id="8_prof"]
 [ext_resource type="Texture2D" uid="uid://cm3pj731lfemk" path="res://src/assets/sprites/np2.png" id="9_npc_sprite"]
-
+[ext_resource type="Texture2D" uid="uid://bfc6brifr5ko7" path="res://src/assets/sprites/np5.png" id="10_npc_sprite_f"]
+ 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left"]
 size = Vector2(13, 500)
 
@@ -262,6 +263,14 @@ sprite_modulate = Color(0.7, 0.7, 0.5, 1)
 npc_name = "Enrique"
 dialog_lines = Array[String](["...", "Prepárate para perder la trivia."])
 dialog_lines_repeat = Array[String](["No me hables, estoy concentrado."])
+routine_type = "Estático"
+
+[node name="Elisabeth" parent="." unique_id=883746521 instance=ExtResource("5_npc")]
+position = Vector2(234, 260)
+sprite_texture = ExtResource("10_npc_sprite_f")
+npc_name = "Elisabeth"
+dialog_lines = Array[String](["Hola, ¿tú también estás en esta clase?", "El profesor Méndez está especialmente severo hoy, mejor no llamar la atención.", "Suerte con la trivia si te animas a participar."])
+dialog_lines_repeat = Array[String](["¿Sigues por aquí? El profesor ya está mirando feo...", "Cuidado con Enrique, se lo toma muy personal."])
 routine_type = "Estático"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=552553235]

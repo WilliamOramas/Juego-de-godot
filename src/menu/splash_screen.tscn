@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://splashscreen"]
+
+[ext_resource type="Script" uid="uid://dyfubodr1lpfw" path="res://src/menu/splash_screen.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://dswjytovfuu1t" path="res://src/menu/pixel.tscn" id="2_pixel"]
+
+[node name="SplashScreen" type="Control" unique_id=883765292]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1538871879]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.117647, 0.117647, 0.137255, 1)
+
+[node name="Center" type="CenterContainer" parent="." unique_id=1221438981]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Center" unique_id=832771735]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Pixel" parent="Center/VBox" unique_id=5269915 instance=ExtResource("2_pixel")]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Center/VBox" unique_id=1057431653]
+layout_mode = 2
+text = "Vital Pixel"
+horizontal_alignment = 1
+
+[node name="Dots" type="Label" parent="Center/VBox" unique_id=1181202369]
+layout_mode = 2
+text = "Cargando"
+horizontal_alignment = 1
+
+[node name="SkipHint" type="Label" parent="Center/VBox" unique_id=1870670756]
+visible = false
+layout_mode = 2
+text = ":v"
+horizontal_alignment = 1

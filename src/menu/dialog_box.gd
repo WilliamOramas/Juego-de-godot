@@ -2,6 +2,9 @@ extends CanvasLayer
 
 signal dialog_finished
 
+func _init() -> void:
+	layer = 80
+
 @export var type_speed: float = 0.015
 
 @onready var panel: Panel = $Panel
@@ -126,6 +129,8 @@ func hide_dialog() -> void:
 	continue_prompt.visible = false
 
 	if _slide_tween:
+		if _slide_tween.finished.is_connected(_start_typewriter):
+			_slide_tween.finished.disconnect(_start_typewriter)
 		_slide_tween.kill()
 		_slide_tween = null
 

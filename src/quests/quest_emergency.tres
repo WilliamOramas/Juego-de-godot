@@ -14,7 +14,7 @@ target_id = "res://src/levels/infirmary.tscn"
 script = ExtResource("2_qw8t3")
 objective_id = "talk_enfermero"
 description = "Hablar con el Enfermero"
-target_id = "Enfermero"
+target_id = "Carlos (Enfermero)"
 
 [sub_resource type="Resource" id="Resource_3333"]
 script = ExtResource("2_qw8t3")

@@ -271,8 +271,8 @@ sprite_texture = ExtResource("10_npc_sprite_f")
 npc_name = "Elisabeth"
 dialog_lines = Array[String](["Hola, ¿tú también estás en esta clase?", "El profesor Méndez está especialmente severo hoy, mejor no llamar la atención.", "Suerte con la trivia si te animas a participar."])
 dialog_lines_repeat = Array[String](["¿Sigues por aquí? El profesor ya está mirando feo...", "Cuidado con Enrique, se lo toma muy personal."])
-routine_type = "Libre (Radio)"
-wander_radius = 40.0
+routine_type = "Estático"
+sprite/scale = Vector2(-1, 1)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=552553235]
 

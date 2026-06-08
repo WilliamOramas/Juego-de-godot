@@ -17,6 +17,7 @@ var _scenario_timer: float = 0.0
 var _dialog_active: bool = false
 var _was_visible_before_dialog: bool = false
 var _current_mood: Mood = Mood.TALK
+var _pending_mood: int = -1
 var _quest_log_panel: QuestLogPanel = null
 var _journal_panel: JournalPanel = null
 var _stats_panel: StatsPanel = null
@@ -45,10 +46,9 @@ func _ready() -> void:
 
 
 func _on_scene_loaded(_scene_path: String) -> void:
-	if ScoreManager.student_saved:
-		set_mood(Mood.HAPPY)
-	elif ScoreManager.minigame_attempts > 0 and not ScoreManager.student_saved:
-		set_mood(Mood.SAD)
+	if _pending_mood >= 0:
+		set_mood(_pending_mood as Mood)
+		_pending_mood = -1
 	else:
 		set_mood(Mood.TALK)
 
@@ -245,6 +245,7 @@ func _on_minigame_completed(game_id: String, success: bool) -> void:
 	var text: String = texts.get(game_id, "Minijuego completado." if success else "Minijuego fallido.")
 	push_notification("PIXEL v1.0", text, false, "")
 	set_mood(Mood.HAPPY if success else Mood.SAD)
+	_pending_mood = Mood.HAPPY if success else Mood.SAD
 
 
 func _on_dialog_started() -> void:

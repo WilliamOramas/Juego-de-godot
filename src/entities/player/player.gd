@@ -99,7 +99,8 @@ func walk_to(target: Vector2) -> void:
 	control_enabled = false
 	_is_approaching = true
 	_walk_target = target
-	while _is_approaching and global_position.distance_squared_to(target) > 16.0:
+	while _is_approaching and is_instance_valid(self) and is_inside_tree() \
+			and global_position.distance_squared_to(target) > 16.0:
 		await get_tree().physics_frame
 	_is_approaching = false
 	velocity = Vector2.ZERO

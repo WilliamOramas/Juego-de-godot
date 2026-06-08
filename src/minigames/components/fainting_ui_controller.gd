@@ -87,7 +87,7 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 		heart_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		hearts_box.add_child(heart_rect)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if not root._is_running:
 		return
 	if Input.is_action_pressed("Phone"):

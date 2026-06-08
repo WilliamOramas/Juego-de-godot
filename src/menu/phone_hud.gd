@@ -153,6 +153,10 @@ func set_mood(mood: Mood) -> void:
 
 
 func push_notification(title: String, body: String, sound: bool = false, scenario_id: String = "") -> void:
+	if scenario_id != "":
+		for msg in _message_queue:
+			if msg.get("scenario_id") == scenario_id:
+				return
 	var msg: Dictionary = {
 		"title": title,
 		"body": body,
@@ -283,7 +287,9 @@ func _launch_scenario() -> void:
 			if wp:
 				wp.modulate = Color.WHITE
 				wp.visible = true
-			await player.walk_to(Global.fainting_approach_pos)
+				await player.walk_to(Global.fainting_approach_pos)
+			else:
+				pass
 		Global.fainting_approach_pos = Vector2.ZERO
 	if scenario.get("cinematic", false):
 		await _play_fainting_cinematic()

@@ -143,7 +143,7 @@ is_ai = true
 ai_system_prompt = "Eres Carlos, el enfermero venezolano de la universidad UNEFA. Eres muy inteligente y estricto como profesional médico, pero amigable y caes bien. Ocasionalmente usas modismos venezolanos suaves (como 'chamo', 'pana', 'chévere'). Si te preguntan algo fuera de tu área médica, te niegas de forma muy relajada aclarando que no es tu especialidad. Responde de forma MUY breve (1 o 2 oraciones máximo). El jugador es un estudiante. No suele terminar sus respuestas con preguntas."
 dialog_lines = Array[String](["Hola. Toma asiento, por favor.", "Dime, ¿qué síntomas tienes hoy? Vamos a evaluarte rápido y bien."])
 dialog_lines_repeat = Array[String](["¿Todo bien, muchacho? ¿Sigues con molestias?", "Recuerda descansar un poco. Si te sientes mal de nuevo, regresa."])
-dialog_lines_blocked = Array[String](["Todavía no es momento, joven. Primero conoce bien las instalaciones y luego hablammos de lo que hay que hacer."])
+dialog_lines_blocked = Array[String](["Todavía no es momento, joven. Primero conoce bien las instalaciones y luego hablamos de lo que hay que hacer."])
 routine_type = "Estático"
 quest_to_start = ExtResource("8_quest_emergency")
 

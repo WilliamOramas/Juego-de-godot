@@ -9,6 +9,12 @@ var _triggered: bool = false
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
+	EventBus.minigame_completed.connect(_on_minigame_completed)
+
+
+func _on_minigame_completed(game_id: String, _success: bool) -> void:
+	if game_id == SCENARIO_ID:
+		_triggered = true
 
 
 func _on_body_entered(body: Node) -> void:

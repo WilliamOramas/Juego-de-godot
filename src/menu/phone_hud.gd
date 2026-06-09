@@ -287,6 +287,7 @@ func _launch_scenario() -> void:
 	_scenario_timer = 0.0
 	_mode = PhoneMode.LAUNCHING
 	visible = false
+	var bg_img: Image = null
 	if Global.fainting_approach_pos != Vector2.ZERO:
 		var player := get_tree().current_scene.find_child("Player", true, false) as Player
 		if player:
@@ -295,6 +296,7 @@ func _launch_scenario() -> void:
 				wp.modulate = Color.WHITE
 				wp.visible = true
 				await player.walk_to(Global.fainting_approach_pos)
+			bg_img = get_viewport().get_texture().get_image()
 			var cam := player.get_node("Camera2D") as Camera2D
 			if cam:
 				_saved_camera_zoom = cam.zoom
@@ -307,7 +309,7 @@ func _launch_scenario() -> void:
 		
 	_mode = PhoneMode.HOME
 	reset()
-	MiniGameManager.launch_minigame(scenario.path, scenario.id)
+	MiniGameManager.launch_minigame(scenario.path, scenario.id, bg_img)
 
 func _play_fainting_cinematic() -> void:
 	await SceneManager.play_wipe()

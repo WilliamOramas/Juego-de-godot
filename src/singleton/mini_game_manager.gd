@@ -30,7 +30,7 @@ func get_scenario(scenario_id: String) -> Dictionary:
 func has_scenario(scenario_id: String) -> bool:
 	return SCENARIOS.has(scenario_id)
 
-func launch_minigame(scene_path: String, game_id: String) -> void:
+func launch_minigame(scene_path: String, game_id: String, background_override: Image = null) -> void:
 	if _active_minigame:
 		return
 	var scene: PackedScene = load(scene_path)
@@ -43,7 +43,7 @@ func launch_minigame(scene_path: String, game_id: String) -> void:
 	add_child(instance)
 	_active_minigame = instance
 	_stop_bgm()
-	var viewport_img: Image = get_viewport().get_texture().get_image()
+	var viewport_img: Image = background_override if background_override else get_viewport().get_texture().get_image()
 	instance.set_background_image(viewport_img)
 	EventBus.minigame_started.emit(game_id)
 	instance.start()

@@ -270,5 +270,12 @@ func _on_end_screen_continue(success: bool) -> void:
 			wp.visible = false
 			wp.modulate.a = 1.0
 	else:
+		var wp = get_tree().current_scene.find_child("PatientInWorld", true, false) as Sprite2D
+		if wp:
+			var fade = create_tween()
+			fade.tween_property(wp, "modulate:a", 0.0, 3.0)
+			await fade.finished
+			wp.visible = false
+			wp.modulate.a = 1.0
 		hide()
 	game_completed.emit(game_id, success)

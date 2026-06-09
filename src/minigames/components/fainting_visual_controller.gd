@@ -190,6 +190,7 @@ func cleanup(success: bool) -> void:
 		action_sprite.queue_free()
 		
 	if world_patient and is_instance_valid(world_patient):
+		world_patient.z_index = -1
 		world_patient.modulate = Color.WHITE
 		if success:
 			world_patient.visible = false

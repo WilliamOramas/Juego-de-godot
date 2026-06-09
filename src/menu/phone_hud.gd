@@ -24,6 +24,7 @@ var _stats_panel: StatsPanel = null
 var _hint_labels: Array[Label] = []
 var _close_anim_done: bool = false
 var _closing: bool = false
+var _saved_camera_zoom: Vector2 = Vector2.ONE
 
 
 func _ready() -> void:
@@ -242,6 +243,12 @@ func _on_scene_changing(_scene_path: String) -> void:
 func _on_minigame_completed(game_id: String, success: bool) -> void:
 	if not MiniGameManager.has_scenario(game_id):
 		return
+	var player := get_tree().current_scene.find_child("Player", true, false) as Player
+	if player:
+		var cam := player.get_node("Camera2D") as Camera2D
+		if cam:
+			var zoom_tween := create_tween().set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+			zoom_tween.tween_property(cam, "zoom", _saved_camera_zoom, 0.6)
 	var texts: Dictionary = {
 		"fainting_first_aid": "Emergencia resuelta.\nEstudiante estabilizado." if success else "Falleció el estudiante.",
 		"cpr": "RCP completada.\nPaciente reanimado." if success else "RCP fallida.\nPaciente fallecido.",
@@ -288,8 +295,12 @@ func _launch_scenario() -> void:
 				wp.modulate = Color.WHITE
 				wp.visible = true
 				await player.walk_to(Global.fainting_approach_pos)
-			else:
-				pass
+			var cam := player.get_node("Camera2D") as Camera2D
+			if cam:
+				_saved_camera_zoom = cam.zoom
+				var zoom_tween := create_tween().set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+				zoom_tween.tween_property(cam, "zoom", _saved_camera_zoom * 2.0, 0.6)
+				await zoom_tween.finished
 		Global.fainting_approach_pos = Vector2.ZERO
 	if scenario.get("cinematic", false):
 		await _play_fainting_cinematic()

@@ -34,9 +34,9 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	instruction_label.anchor_right = 0.0
 	instruction_label.anchor_bottom = 0.0
 	instruction_label.offset_left = 80
-	instruction_label.offset_top = 180
+	instruction_label.offset_top = 130
 	instruction_label.offset_right = 580
-	instruction_label.offset_bottom = 240
+	instruction_label.offset_bottom = 190
 	instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	
 	help_label.anchor_left = 0.0
@@ -44,9 +44,9 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	help_label.anchor_right = 0.0
 	help_label.anchor_bottom = 0.0
 	help_label.offset_left = 80
-	help_label.offset_top = 250
+	help_label.offset_top = 200
 	help_label.offset_right = 580
-	help_label.offset_bottom = 330
+	help_label.offset_bottom = 280
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	
 	step_label.set_anchors_preset(Control.PRESET_TOP_LEFT)

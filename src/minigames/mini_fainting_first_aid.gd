@@ -10,7 +10,7 @@ const STEP_ACTION_FRAMES: Array[Dictionary] = [
 	{ "idle": 4, "action": 5 },  # 1: Verificar respuesta
 	{ "idle": 4, "action": 6 },  # 2: Verificar respiración
 	{ "idle": 4, "action": 5 },  # 3: Pulso carotídeo
-	{ "idle": 7, "action": 7 },  # 4: Llamar 112
+	{ "idle": 7, "action": 7 },  # 4: Llamar a emergencias
 	{ "idle": 4, "action": 5 },  # 5: Elevar piernas
 	{ "idle": 4, "action": 6 },  # 6: Aflojar ropa
 	{ "idle": 4, "action": 5 },  # 7: Monitorear ECG

@@ -140,14 +140,6 @@ func _ready() -> void:
 
 	_update_ui()
 
-	# Apply CRT Shader
-	var mat = ShaderMaterial.new()
-	mat.shader = load("res://src/minigames/retro_crt.gdshader")
-	mat.set_shader_parameter("vignette_intensity", 0.4)
-	mat.set_shader_parameter("vignette_opacity", 0.8)
-	mat.set_shader_parameter("vignette_color", Color.BLACK)
-	background.material = mat
-
 
 func _update_timer_label() -> void:
 	var secs: int = clampi(int(ceil(_time_remaining)), 0, 999)

@@ -29,14 +29,6 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	ecg_line.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.get_node("GameContainer").add_child(ecg_line)
 
-	# Apply CRT Shader
-	var mat = ShaderMaterial.new()
-	mat.shader = preload("res://src/minigames/retro_crt.gdshader")
-	mat.set_shader_parameter("vignette_intensity", 0.4)
-	mat.set_shader_parameter("vignette_opacity", 0.8)
-	mat.set_shader_parameter("vignette_color", Color.BLACK)
-	root.background.material = mat
-
 	# Hide world patient and create local one
 	var world = root.get_tree().current_scene
 	if world:

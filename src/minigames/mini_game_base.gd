@@ -52,3 +52,14 @@ func get_result() -> bool:
 func _ready() -> void:
 	hide()
 	background.modulate.a = 0.0
+	_apply_crt_to_background()
+
+func _apply_crt_to_background() -> void:
+	var mat := ShaderMaterial.new()
+	mat.shader = load("res://src/minigames/crt_overlay.gdshader")
+	mat.set_shader_parameter("vignette_intensity", 0.4)
+	mat.set_shader_parameter("vignette_opacity", 0.8)
+	mat.set_shader_parameter("vignette_color", Color.BLACK)
+	mat.set_shader_parameter("scanline_intensity", 0.15)
+	mat.set_shader_parameter("scanline_frequency", 400.0)
+	background.material = mat

@@ -3,7 +3,7 @@ class_name MiniCPR
 
 enum StepType { SAFETY, COMPRESS, BREATH, CYCLE, DIAL_112 }
 enum CompressionQuality { PERFECT, OK, FAIL }
-enum CyclePhase { COMPRESSIONS, BREATHS }
+enum CyclePhase { COMPRESSIONS, BREATHS, PULSE_CHECK }
 
 const BPM: float = 110.0
 const BPM_INTERVAL: float = 60.0 / BPM
@@ -11,9 +11,6 @@ const TIME_LIMIT: float = 90.0
 const COMPRESSIONS_PER_CYCLE: int = 30
 const BREATHS_PER_CYCLE: int = 2
 const TOTAL_CYCLES: int = 3
-const DEPTH_TARGET: float = 0.75
-const DEPTH_MIN_OK: float = 0.5
-
 const STEP_DATA: Array[Dictionary] = [
 	{
 		"instruction": "Verificá que la escena sea segura",
@@ -25,7 +22,7 @@ const STEP_DATA: Array[Dictionary] = [
 	},
 	{
 		"instruction": "30 compresiones torácicas",
-		"help": "Presioná [Q] al ritmo del anillo.\nMantené para medir profundidad.\nSoltá para completar.",
+		"help": "Presioná [Q] al ritmo del anillo.\nClick en cada tick del metrónomo.\n¡No apretes muy rápido!",
 		"type": StepType.COMPRESS,
 		"target": COMPRESSIONS_PER_CYCLE,
 		"cycle_label": "Ciclo 1/3",
@@ -65,7 +62,6 @@ const STEP_DATA: Array[Dictionary] = [
 @onready var feedback_label: Label = $GameContainer/FeedbackLabel
 @onready var step_label: Label = $GameContainer/StepLabel
 @onready var progress_bar: ProgressBar = $GameContainer/ProgressBar
-@onready var depth_bar: ProgressBar = $GameContainer/DepthBar
 @onready var rhythm_ring: Control = $GameContainer/RhythmRing
 @onready var ecg_line: Control = $GameContainer/ECGLine
 @onready var breath_prompt: Label = $GameContainer/BreathPrompt
@@ -79,6 +75,7 @@ const STEP_DATA: Array[Dictionary] = [
 @onready var fail_sound: AudioStreamPlayer = $FailSound
 @onready var bgm_player: AudioStreamPlayer = $BgmPlayer
 @onready var heartbeat_player: AudioStreamPlayer = $HeartbeatPlayer
+@onready var metronome_player: AudioStreamPlayer = $MetronomePlayer
 
 var _current_step: int = 0
 var _lives: int = 5
@@ -88,8 +85,6 @@ var _breath_substep: int = 0
 var _cycle_count: int = 0
 var _cycle_phase: CyclePhase = CyclePhase.COMPRESSIONS
 var _ring_progress: float = 0.0
-var _depth_hold: float = 0.0
-var _depth_active: bool = false
 var _time_remaining: float
 var _dial_index: int = 0
 var _breath_hold_timer: float = 0.0
@@ -98,11 +93,18 @@ var _ecg_time: float = 0.0
 var _ecg_freq: float = 1.0
 var _combo: int = 0
 var _compression_timeout: float = 0.0
+var _last_compression_time: float = -1.0
+var _compression_cooldown: float = 0.3
+var _metronome_timer: float = 0.0
 
 var _state: String = "playing"
 var _state_timer: float = 0.0
 var _hearts_box: HBoxContainer = null
 var _camera_shake: float = 0.0
+var _pulse_check_timer: float = 0.0
+var _pulse_check_active: bool = false
+var _pulse_peak_progress: float = 0.0
+var _pulse_peak_speed: float = 0.0
 
 
 func _ready() -> void:
@@ -157,7 +159,6 @@ func _ready() -> void:
 	MiniGameTheme.apply_body(breath_prompt, 20)
 
 	MiniGameTheme.style_progress_bar(progress_bar)
-	MiniGameTheme.style_progress_bar(depth_bar)
 
 	_hearts_box = HBoxContainer.new()
 	_hearts_box.set_anchors_preset(Control.PRESET_TOP_RIGHT)
@@ -218,7 +219,6 @@ func _update_ui() -> void:
 	_update_timer_label()
 
 	progress_bar.visible = (step.type == StepType.COMPRESS or step.type == StepType.CYCLE)
-	depth_bar.visible = false
 	rhythm_ring.visible = (step.type == StepType.COMPRESS or step.type == StepType.CYCLE)
 	breath_prompt.visible = (step.type == StepType.BREATH)
 	dial_label.visible = (step.type == StepType.DIAL_112)
@@ -240,15 +240,6 @@ func _update_ui() -> void:
 			else:
 				child.modulate.a = 0.2
 
-
-func _tween_depth_bar_visible(target_visible: bool) -> void:
-	var target_alpha := 1.0 if target_visible else 0.0
-	var tw = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	tw.tween_property(depth_bar, "modulate:a", target_alpha, 0.12)
-	if target_visible:
-		depth_bar.visible = true
-	else:
-		tw.finished.connect(func(): depth_bar.visible = false)
 
 func _flash_patient(color: Color, duration: float = 0.2) -> void:
 	var base_color := _get_patient_color()
@@ -305,6 +296,14 @@ func _process(delta: float) -> void:
 			_update_ui()
 		return
 
+	if _state == "pulse_delay":
+		_state_timer -= delta
+		if _state_timer <= 0:
+			_state = "playing"
+			feedback_label.text = ""
+			_continue_after_pulse()
+		return
+
 	if _state == "death_delay":
 		_state_timer -= delta
 		if _state_timer <= 0:
@@ -355,7 +354,6 @@ func _input(event: InputEvent) -> void:
 		return
 
 	var is_press := event.is_action_pressed("Phone") or _is_click_press(event)
-	var is_release := event.is_action_released("Phone") or _is_click_release(event)
 
 	var step: Dictionary = STEP_DATA[_current_step]
 	match step.type:
@@ -364,16 +362,16 @@ func _input(event: InputEvent) -> void:
 				_on_step_ok()
 
 		StepType.COMPRESS, StepType.CYCLE:
-			if is_press:
-				_depth_active = true
-				_depth_hold = 0.0
-				_tween_depth_bar_visible(true)
-				depth_bar.value = 0.0
-
-			if is_release and _depth_active:
-				_depth_active = false
-				_tween_depth_bar_visible(false)
-				_register_compression()
+			match _cycle_phase:
+				CyclePhase.COMPRESSIONS:
+					if is_press:
+						_register_compression()
+				CyclePhase.BREATHS:
+					if is_press:
+						_handle_breath_input()
+				CyclePhase.PULSE_CHECK:
+					if is_press:
+						_handle_pulse_input()
 
 		StepType.BREATH:
 			if is_press:
@@ -397,14 +395,25 @@ func _input(event: InputEvent) -> void:
 
 func _register_compression() -> void:
 	var step: Dictionary = STEP_DATA[_current_step]
-	var zone: String = _get_ring_zone(_ring_progress)
-	var depth_ratio: float = _depth_hold / DEPTH_TARGET
+	var now := Time.get_ticks_msec() / 1000.0
 
+	# Anti-spam: no permitir clicks más rápido que el cooldown
+	if _last_compression_time > 0 and (now - _last_compression_time) < _compression_cooldown:
+		feedback_label.modulate = MiniGameTheme.FEEDBACK_WARN
+		feedback_label.text = "TOO FAST"
+		_combo = 0
+		_camera_shake = 1.0
+		return
+
+	_last_compression_time = now
+	_compression_timeout = 0.0
+
+	var zone: String = _get_ring_zone(_ring_progress)
 	var quality: CompressionQuality
-	if zone == "green" and depth_ratio >= DEPTH_MIN_OK:
+	if zone == "green":
 		quality = CompressionQuality.PERFECT
 		_combo += 1
-	elif zone == "yellow" or (zone == "green" and depth_ratio < DEPTH_MIN_OK):
+	elif zone == "yellow":
 		quality = CompressionQuality.OK
 		_combo = 0
 	else:
@@ -417,6 +426,8 @@ func _register_compression() -> void:
 
 	_compression_count += 1
 	ScoreManager.record_minigame_step(true)
+	step_sound.pitch_scale = 0.8
+	step_sound.play()
 
 	if quality == CompressionQuality.PERFECT:
 		correct_sound.play()
@@ -427,7 +438,6 @@ func _register_compression() -> void:
 		_camera_shake = 3.0
 		_flash_patient(Color(1.2, 1.2, 1.2))
 	else:
-		step_sound.play()
 		feedback_label.modulate = MiniGameTheme.FEEDBACK_WARN
 		feedback_label.text = "OK"
 		_camera_shake = 1.5
@@ -439,7 +449,7 @@ func _register_compression() -> void:
 	var tw = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tw.tween_property(patient_sprite, "scale:y", 2.5, 0.15)
 
-	if _compression_count >= step.target:
+	if _compression_count >= COMPRESSIONS_PER_CYCLE:
 		if step.type == StepType.CYCLE:
 			_cycle_phase = CyclePhase.BREATHS
 			_breath_count = 0
@@ -468,11 +478,14 @@ func _handle_compressions(delta: float, _step: Dictionary) -> void:
 		_compression_timeout = 0.0
 		_lose_life("¡Presioná Q al ritmo!")
 
-	if _depth_active:
-		_depth_hold += delta
-		if _depth_hold >= DEPTH_TARGET:
-			_depth_hold = DEPTH_TARGET
-		depth_bar.value = clamp(_depth_hold / DEPTH_TARGET * 100.0, 0.0, 100.0)
+	_metronome_timer += delta
+	if _metronome_timer >= BPM_INTERVAL:
+		_metronome_timer -= BPM_INTERVAL
+		metronome_player.pitch_scale = 1.2
+		metronome_player.play()
+
+	if heartbeat_player.playing:
+		heartbeat_player.stop()
 
 
 func _handle_cycle(delta: float, step: Dictionary) -> void:
@@ -481,6 +494,8 @@ func _handle_cycle(delta: float, step: Dictionary) -> void:
 			_handle_compressions(delta, step)
 		CyclePhase.BREATHS:
 			_handle_breaths(delta, step)
+		CyclePhase.PULSE_CHECK:
+			_handle_pulse_check(delta)
 
 
 func _update_cycle_ui() -> void:
@@ -489,7 +504,6 @@ func _update_cycle_ui() -> void:
 	progress_bar.visible = false
 	rhythm_ring.visible = false
 	breath_prompt.visible = true
-	depth_bar.visible = false
 	instruction_label.text = "Respiraciones - Ciclo %d/%d" % [_cycle_count + 1, TOTAL_CYCLES]
 	_breath_substep = 0
 	_breath_substep_active = false
@@ -522,6 +536,9 @@ func _handle_breath_input() -> void:
 
 
 func _handle_breaths(delta: float, _step: Dictionary) -> void:
+	if not heartbeat_player.playing:
+		heartbeat_player.play()
+
 	if _breath_substep_active:
 		_breath_hold_timer += delta
 		if _breath_hold_timer >= 1.0:
@@ -541,25 +558,83 @@ func _handle_breaths(delta: float, _step: Dictionary) -> void:
 						ScoreManager.record_minigame_step(true)
 						_on_step_ok()
 					else:
-						_cycle_phase = CyclePhase.COMPRESSIONS
-						_compression_count = 0
-						_breath_count = 0
-						_breath_substep = 0
-						_ring_progress = 0.0
-						progress_bar.visible = true
-						progress_bar.max_value = COMPRESSIONS_PER_CYCLE
-						progress_bar.value = 0
-						rhythm_ring.visible = true
-						breath_prompt.visible = false
-						instruction_label.text = "30 compresiones - Ciclo %d/%d" % [_cycle_count + 1, TOTAL_CYCLES]
-						help_label.text = "Presioná [Q] al ritmo del anillo."
-						feedback_label.text = ""
+						_start_pulse_check()
 				else:
 					_on_step_ok()
 			else:
 				_breath_substep = 0
 				_update_breath_prompt()
 
+
+func _start_pulse_check() -> void:
+	_cycle_phase = CyclePhase.PULSE_CHECK
+	_pulse_check_active = true
+	_pulse_check_timer = 0.0
+	_pulse_peak_progress = 0.0
+	_pulse_peak_speed = 1.0 / 2.5  # 2.5 segundos para cruzar
+	breath_prompt.visible = false
+	progress_bar.visible = false
+	rhythm_ring.visible = false
+	feedback_label.text = ""
+	instruction_label.text = "Revisando pulso..."
+	help_label.text = "Pulsá [Q] cuando el pico pase el centro."
+	if heartbeat_player.playing:
+		heartbeat_player.stop()
+
+func _handle_pulse_check(delta: float) -> void:
+	if not _pulse_check_active:
+		return
+
+	_pulse_check_timer += delta
+	_pulse_peak_progress += delta * _pulse_peak_speed
+
+	if _pulse_peak_progress >= 1.0:
+		# Se acabó el tiempo sin pulso
+		_pulse_check_active = false
+		feedback_label.modulate = MiniGameTheme.FEEDBACK_WARN
+		feedback_label.text = "¡Sin pulso! Continuar RCP."
+		_state = "pulse_delay"
+		_state_timer = 1.5
+		return
+
+	# Redibujar el ECG con un pico especial
+	if ecg_line:
+		ecg_line.queue_redraw()
+
+func _handle_pulse_input() -> void:
+	if not _pulse_check_active:
+		return
+
+	# El pico es perfecto cuando está entre 0.4 y 0.6 del progreso
+	if _pulse_peak_progress >= 0.4 and _pulse_peak_progress <= 0.6:
+		_pulse_check_active = false
+		correct_sound.play()
+		feedback_label.modulate = MiniGameTheme.FEEDBACK_GOOD
+		feedback_label.text = "Pulso detectado"
+		_camera_shake = 2.0
+		_flash_patient(Color(1.2, 1.2, 1.2))
+		_state = "pulse_delay"
+		_state_timer = 1.0
+	else:
+		# Fallo: sigue el timer hasta el final
+		feedback_label.modulate = MiniGameTheme.FEEDBACK_WARN
+		feedback_label.text = "Esperando..."
+
+func _continue_after_pulse() -> void:
+	_cycle_phase = CyclePhase.COMPRESSIONS
+	_compression_count = 0
+	_breath_count = 0
+	_breath_substep = 0
+	_ring_progress = 0.0
+	progress_bar.visible = true
+	progress_bar.max_value = COMPRESSIONS_PER_CYCLE
+	progress_bar.value = 0
+	rhythm_ring.visible = true
+	breath_prompt.visible = false
+	instruction_label.text = "30 compresiones - Ciclo %d/%d" % [_cycle_count + 1, TOTAL_CYCLES]
+	help_label.text = "Presioná [Q] al ritmo del anillo."
+	feedback_label.text = ""
+	_metronome_timer = 0.0
 
 func _update_dial_label() -> void:
 	var step: Dictionary = STEP_DATA[_current_step]
@@ -706,28 +781,41 @@ func _on_ecg_draw() -> void:
 	var points = PackedVector2Array()
 	var step_px = max(2, int(w / 120))
 
-	for x in range(0, int(w), step_px):
-		var nx = float(x) / float(w)
-		var y = base_y
+	if _pulse_check_active:
+		# Modo pulse check: línea plana con un pico móvil
+		color = Color(1.0, 0.8, 0.2)
+		for x in range(0, int(w), step_px):
+			var y = base_y
+			var peak_x = _pulse_peak_progress * w
+			var dist = abs(x - peak_x)
+			if dist < 40:
+				var spike = 1.0 - (dist / 40.0)
+				spike = spike * spike
+				y -= spike * amplitude * 2.0
+			points.append(Vector2(x, y))
+	else:
+		for x in range(0, int(w), step_px):
+			var nx = float(x) / float(w)
+			var y = base_y
 
-		if _ecg_freq > 0.0:
-			var t = nx * 8.0 - _ecg_time * _ecg_freq
-			var phase = fmod(t, 1.0)
+			if _ecg_freq > 0.0:
+				var t = nx * 8.0 - _ecg_time * _ecg_freq
+				var phase = fmod(t, 1.0)
 
-			if phase > 0.38 and phase < 0.42:
-				var spike = sin((phase - 0.38) / 0.04 * PI)
-				y += spike * amplitude * 1.5
-			elif phase > 0.42 and phase < 0.48:
-				var spike = sin((phase - 0.42) / 0.06 * PI)
-				y -= spike * amplitude * 0.8
-			elif phase > 0.7 and phase < 0.75:
-				var spike = sin((phase - 0.7) / 0.05 * PI)
-				y += spike * amplitude * 0.3
-			else:
-				var noise_val = sin(t * 2.0) * 0.5
-				y += noise_val
+				if phase > 0.38 and phase < 0.42:
+					var spike = sin((phase - 0.38) / 0.04 * PI)
+					y += spike * amplitude * 1.5
+				elif phase > 0.42 and phase < 0.48:
+					var spike = sin((phase - 0.42) / 0.06 * PI)
+					y -= spike * amplitude * 0.8
+				elif phase > 0.7 and phase < 0.75:
+					var spike = sin((phase - 0.7) / 0.05 * PI)
+					y += spike * amplitude * 0.3
+				else:
+					var noise_val = sin(t * 2.0) * 0.5
+					y += noise_val
 
-		points.append(Vector2(x, y))
+			points.append(Vector2(x, y))
 
 	if points.size() > 1:
 		for i in range(points.size() - 1):

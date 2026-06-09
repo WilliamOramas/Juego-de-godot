@@ -11,13 +11,6 @@
 [ext_resource type="AudioStream" path="res://src/assets/sounds/freesound_community-warning-75933.mp3" id="9_bgm"]
 [ext_resource type="AudioStream" path="res://src/assets/sounds/freesound_community-corazon-66362.mp3" id="10_heart"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
-bg_color = Color(0.0, 0.6, 0.0, 0.8)
-border_width_left = 0
-border_width_top = 0
-border_width_right = 0
-border_width_bottom = 0
-
 [node name="MiniCPR" unique_id=100000001 instance=ExtResource("2_base")]
 script = ExtResource("1_script")
 
@@ -148,25 +141,7 @@ grow_vertical = 2
 value = 0.0
 show_percentage = false
 
-[node name="DepthBar" type="ProgressBar" parent="GameContainer" index="7" unique_id=200000008]
-visible = false
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 460.0
-offset_top = 240.0
-offset_right = 480.0
-offset_bottom = 360.0
-grow_horizontal = 2
-grow_vertical = 2
-value = 0.0
-theme_override_styles/fill = SubResource("StyleBoxFlat_1")
-theme_override_colors/background = Color(0.15, 0.15, 0.15, 0.8)
-
-[node name="RhythmRing" type="Control" parent="GameContainer" index="8" unique_id=200000009]
+[node name="RhythmRing" type="Control" parent="GameContainer" index="7" unique_id=200000009]
 layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
@@ -178,7 +153,7 @@ offset_right = 75.0
 offset_bottom = 75.0
 mouse_filter = 2
 
-[node name="ECGLine" type="Control" parent="GameContainer" index="9" unique_id=200000010]
+[node name="ECGLine" type="Control" parent="GameContainer" index="8" unique_id=200000010]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.0
@@ -189,7 +164,7 @@ offset_top = 400.0
 offset_bottom = 560.0
 mouse_filter = 2
 
-[node name="BreathPrompt" type="Label" parent="GameContainer" index="10" unique_id=200000011]
+[node name="BreathPrompt" type="Label" parent="GameContainer" index="9" unique_id=200000011]
 visible = false
 layout_mode = 0
 anchor_left = 0.5
@@ -210,7 +185,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 1
 
-[node name="PatientSprite" type="Sprite2D" parent="GameContainer" index="11" unique_id=200000012]
+[node name="PatientSprite" type="Sprite2D" parent="GameContainer" index="10" unique_id=200000012]
 position = Vector2(400, 510)
 scale = Vector2(2.5, 2.5)
 texture = ExtResource("8_patient")
@@ -239,4 +214,9 @@ autoplay = false
 [node name="HeartbeatPlayer" type="AudioStreamPlayer" parent="." index="8" unique_id=200000019]
 stream = ExtResource("10_heart")
 volume_db = -2.0
+autoplay = false
+
+[node name="MetronomePlayer" type="AudioStreamPlayer" parent="." index="9" unique_id=200000020]
+stream = ExtResource("5_step")
+volume_db = 0.0
 autoplay = false

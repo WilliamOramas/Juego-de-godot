@@ -50,7 +50,7 @@ static func style_text_panel(label: Label) -> void:
 	bg.corner_radius_bottom_right = 6
 	label.add_theme_stylebox_override("normal", bg)
 
-static func style_progress_bar(bar: TextureProgressBar) -> void:
+static func style_progress_bar(bar: Range) -> void:
 	var fill := StyleBoxFlat.new()
 	fill.bg_color = BAR_FILL
 	bar.add_theme_stylebox_override("fill", fill)

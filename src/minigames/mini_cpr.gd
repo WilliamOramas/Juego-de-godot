@@ -11,8 +11,8 @@ const TIME_LIMIT: float = 90.0
 const COMPRESSIONS_PER_CYCLE: int = 30
 const BREATHS_PER_CYCLE: int = 2
 const TOTAL_CYCLES: int = 3
-const DEPTH_TARGET: float = 0.8
-const DEPTH_MIN_OK: float = 0.4
+const DEPTH_TARGET: float = 0.75
+const DEPTH_MIN_OK: float = 0.5
 
 const STEP_DATA: Array[Dictionary] = [
 	{
@@ -64,8 +64,8 @@ const STEP_DATA: Array[Dictionary] = [
 @onready var timer_label: Label = $GameContainer/TimerLabel
 @onready var feedback_label: Label = $GameContainer/FeedbackLabel
 @onready var step_label: Label = $GameContainer/StepLabel
-@onready var progress_bar: TextureProgressBar = $GameContainer/ProgressBar
-@onready var depth_bar: TextureProgressBar = $GameContainer/DepthBar
+@onready var progress_bar: ProgressBar = $GameContainer/ProgressBar
+@onready var depth_bar: ProgressBar = $GameContainer/DepthBar
 @onready var rhythm_ring: Control = $GameContainer/RhythmRing
 @onready var ecg_line: Control = $GameContainer/ECGLine
 @onready var breath_prompt: Label = $GameContainer/BreathPrompt
@@ -102,6 +102,7 @@ var _compression_timeout: float = 0.0
 var _state: String = "playing"
 var _state_timer: float = 0.0
 var _hearts_box: HBoxContainer = null
+var _camera_shake: float = 0.0
 
 
 func _ready() -> void:
@@ -143,7 +144,7 @@ func _ready() -> void:
 
 	bgm_player.play()
 	heartbeat_player.play()
-	heartbeat_player.finished.connect(func(): heartbeat_player.play())
+	heartbeat_player.finished.connect(_on_heartbeat_finished)
 
 	MiniGameTheme.apply_body(instruction_label, 18)
 	MiniGameTheme.apply_muted(help_label, 14)
@@ -209,7 +210,8 @@ func _update_ui() -> void:
 		help = step.cycle_label + "\n" + help
 	elif step.type == StepType.CYCLE:
 		var remaining = max(0, step.target - _cycle_count)
-		help = "Ciclo %d/%d - Restan %d\n" % [_cycle_count + 1, TOTAL_CYCLES, remaining] + help
+		var cycle_display = _cycle_count + 2
+		help = "Ciclo %d/%d - Restan %d\n" % [cycle_display, TOTAL_CYCLES, remaining] + help
 	help_label.text = help
 	step_label.text = "Paso %d/%d" % [_current_step + 1, STEP_DATA.size()]
 	feedback_label.text = ""
@@ -225,6 +227,9 @@ func _update_ui() -> void:
 		progress_bar.max_value = COMPRESSIONS_PER_CYCLE
 		progress_bar.value = _compression_count
 
+	if step.type == StepType.DIAL_112:
+		_update_dial_label()
+
 	patient_sprite.modulate = _get_patient_color()
 
 	if _hearts_box:
@@ -235,6 +240,21 @@ func _update_ui() -> void:
 			else:
 				child.modulate.a = 0.2
 
+
+func _tween_depth_bar_visible(target_visible: bool) -> void:
+	var target_alpha := 1.0 if target_visible else 0.0
+	var tw = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(depth_bar, "modulate:a", target_alpha, 0.12)
+	if target_visible:
+		depth_bar.visible = true
+	else:
+		tw.finished.connect(func(): depth_bar.visible = false)
+
+func _flash_patient(color: Color, duration: float = 0.2) -> void:
+	var base_color := _get_patient_color()
+	var tw = create_tween().set_trans(Tween.TRANS_SINE)
+	tw.tween_property(patient_sprite, "modulate", color, duration * 0.3)
+	tw.tween_property(patient_sprite, "modulate", base_color, duration * 0.7)
 
 func _get_patient_color() -> Color:
 	match _lives:
@@ -261,8 +281,12 @@ func _process(delta: float) -> void:
 		rhythm_ring.queue_redraw()
 
 	var main_camera: Camera2D = get_viewport().get_camera_2d()
-	if main_camera and main_camera.offset.length() > 0.01:
-		main_camera.offset = main_camera.offset.lerp(Vector2.ZERO, delta * 5.0)
+	if main_camera:
+		if _camera_shake > 0.01:
+			main_camera.offset = Vector2(randf_range(-_camera_shake, _camera_shake), randf_range(-_camera_shake, _camera_shake))
+			_camera_shake = lerp(_camera_shake, 0.0, delta * 10.0)
+		elif main_camera.offset.length() > 0.01:
+			main_camera.offset = main_camera.offset.lerp(Vector2.ZERO, delta * 5.0)
 
 	if _state == "step_ok_delay":
 		_state_timer -= delta
@@ -314,34 +338,45 @@ func _process(delta: float) -> void:
 			pass
 
 
+func _is_click_press(event: InputEvent) -> bool:
+	return (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT) \
+		or (event is InputEventScreenTouch and event.pressed)
+
+func _is_click_release(event: InputEvent) -> bool:
+	return (event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT) \
+		or (event is InputEventScreenTouch and not event.pressed)
+
 func _input(event: InputEvent) -> void:
 	if not _is_running:
 		return
-	if event.is_action_pressed("Phone"):
+	if event.is_action_pressed("Phone") or _is_click_press(event):
 		get_viewport().set_input_as_handled()
 	if _state != "playing":
 		return
 
+	var is_press := event.is_action_pressed("Phone") or _is_click_press(event)
+	var is_release := event.is_action_released("Phone") or _is_click_release(event)
+
 	var step: Dictionary = STEP_DATA[_current_step]
 	match step.type:
 		StepType.SAFETY:
-			if event.is_action_pressed("Phone"):
+			if is_press:
 				_on_step_ok()
 
 		StepType.COMPRESS, StepType.CYCLE:
-			if event.is_action_pressed("Phone"):
+			if is_press:
 				_depth_active = true
 				_depth_hold = 0.0
-				depth_bar.visible = true
+				_tween_depth_bar_visible(true)
 				depth_bar.value = 0.0
 
-			if event.is_action_released("Phone") and _depth_active:
+			if is_release and _depth_active:
 				_depth_active = false
-				depth_bar.visible = false
+				_tween_depth_bar_visible(false)
 				_register_compression()
 
 		StepType.BREATH:
-			if event.is_action_pressed("Phone"):
+			if is_press:
 				_handle_breath_input()
 
 		StepType.DIAL_112:
@@ -387,15 +422,21 @@ func _register_compression() -> void:
 		correct_sound.play()
 		feedback_label.modulate = MiniGameTheme.FEEDBACK_GOOD
 		feedback_label.text = "PERFECT"
+		if _combo >= 3:
+			feedback_label.text += " x%d" % _combo
+		_camera_shake = 3.0
+		_flash_patient(Color(1.2, 1.2, 1.2))
 	else:
 		step_sound.play()
 		feedback_label.modulate = MiniGameTheme.FEEDBACK_WARN
 		feedback_label.text = "OK"
+		_camera_shake = 1.5
+		_flash_patient(Color(1.2, 1.0, 0.6))
 
 	progress_bar.value = _compression_count
 	patient_sprite.scale.y = 2.5 * 0.85
 
-	var tw = create_tween()
+	var tw = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tw.tween_property(patient_sprite, "scale:y", 2.5, 0.15)
 
 	if _compression_count >= step.target:
@@ -409,9 +450,9 @@ func _register_compression() -> void:
 
 
 func _get_ring_zone(progress: float) -> String:
-	if progress >= 0.2 and progress < 0.5:
+	if progress >= 0.25 and progress < 0.45:
 		return "green"
-	elif progress >= 0.5 and progress < 0.7:
+	elif progress >= 0.45 and progress < 0.65:
 		return "yellow"
 	else:
 		return "red"
@@ -423,7 +464,7 @@ func _handle_compressions(delta: float, _step: Dictionary) -> void:
 		_ring_progress -= 1.0
 
 	_compression_timeout += delta
-	if _compression_timeout >= 4.0:
+	if _compression_timeout >= 2.5:
 		_compression_timeout = 0.0
 		_lose_life("¡Presioná Q al ritmo!")
 
@@ -540,6 +581,7 @@ func _advance_step() -> void:
 	if _current_step >= STEP_DATA.size():
 		feedback_label.modulate = MiniGameTheme.FEEDBACK_GOOD
 		feedback_label.text = "✓ RCP exitosa. Ritmo restaurado."
+		success_fanfare.play()
 		_state = "complete_delay"
 		_state_timer = 2.0
 		return
@@ -568,6 +610,8 @@ func _lose_life(msg: String) -> void:
 	feedback_label.modulate = MiniGameTheme.FEEDBACK_BAD
 	feedback_label.text = "✗ " + msg
 	wrong_sound.play()
+	_camera_shake = 5.0
+	_flash_patient(Color(1.3, 0.2, 0.2))
 
 	_update_ecg_freq()
 	patient_sprite.modulate = _get_patient_color()
@@ -595,12 +639,22 @@ func _on_step_ok() -> void:
 	_state_timer = 0.8
 
 
+func _on_heartbeat_finished() -> void:
+	if is_instance_valid(heartbeat_player):
+		heartbeat_player.play()
+
 func _on_before_end(success: bool) -> void:
 	ScoreManager.record_minigame_result("cpr", success, _lives, _time_remaining)
 	if success:
 		JournalManager.add_system_entry("RCP completada", "Se completaron 3 ciclos de RCP correctamente.")
 	else:
 		JournalManager.add_system_entry("RCP fallida", "No se pudo reanimar al paciente.")
+
+func _on_after_end(_success: bool) -> void:
+	bgm_player.stop()
+	heartbeat_player.stop()
+	if heartbeat_player.finished.is_connected(_on_heartbeat_finished):
+		heartbeat_player.finished.disconnect(_on_heartbeat_finished)
 
 
 func _on_rhythm_ring_draw() -> void:
@@ -610,14 +664,14 @@ func _on_rhythm_ring_draw() -> void:
 	var radius = min(rhythm_ring.size.x, rhythm_ring.size.y) * 0.4
 	var phase = _ring_progress
 
-	var green_start: float = 0.2 * TAU
-	var green_end: float = 0.5 * TAU
-	var yellow_start: float = 0.5 * TAU
-	var yellow_end: float = 0.7 * TAU
-	var red_start: float = 0.7 * TAU
+	var green_start: float = 0.25 * TAU
+	var green_end: float = 0.45 * TAU
+	var yellow_start: float = 0.45 * TAU
+	var yellow_end: float = 0.65 * TAU
+	var red_start: float = 0.65 * TAU
 	var red_end: float = 1.0 * TAU
 	var blue_start: float = 0.0 * TAU
-	var blue_end: float = 0.2 * TAU
+	var blue_end: float = 0.25 * TAU
 
 	rhythm_ring.draw_arc(center, radius, blue_start, blue_end, 32, Color(0.2, 0.4, 0.8, 0.8), 4.0, true)
 	rhythm_ring.draw_arc(center, radius, green_start, green_end, 32, Color(0.0, 0.8, 0.2, 0.9), 5.0, true)

@@ -132,7 +132,7 @@ theme_override_font_sizes/font_size = 28
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ProgressBar" type="TextureProgressBar" parent="GameContainer" index="6" unique_id=200000007]
+[node name="ProgressBar" type="ProgressBar" parent="GameContainer" index="6" unique_id=200000007]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.0
@@ -148,7 +148,7 @@ grow_vertical = 2
 value = 0.0
 show_percentage = false
 
-[node name="DepthBar" type="TextureProgressBar" parent="GameContainer" index="7" unique_id=200000008]
+[node name="DepthBar" type="ProgressBar" parent="GameContainer" index="7" unique_id=200000008]
 visible = false
 layout_mode = 1
 anchors_preset = -1
@@ -163,7 +163,6 @@ offset_bottom = 360.0
 grow_horizontal = 2
 grow_vertical = 2
 value = 0.0
-fill_mode = 3
 theme_override_styles/fill = SubResource("StyleBoxFlat_1")
 theme_override_colors/background = Color(0.15, 0.15, 0.15, 0.8)
 

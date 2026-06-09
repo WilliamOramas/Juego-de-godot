@@ -34,9 +34,9 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	instruction_label.anchor_right = 0.0
 	instruction_label.anchor_bottom = 0.0
 	instruction_label.offset_left = 80
-	instruction_label.offset_top = 130
+	instruction_label.offset_top = 95
 	instruction_label.offset_right = 580
-	instruction_label.offset_bottom = 190
+	instruction_label.offset_bottom = 155
 	instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	
 	help_label.anchor_left = 0.0
@@ -44,9 +44,9 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	help_label.anchor_right = 0.0
 	help_label.anchor_bottom = 0.0
 	help_label.offset_left = 80
-	help_label.offset_top = 200
+	help_label.offset_top = 160
 	help_label.offset_right = 580
-	help_label.offset_bottom = 280
+	help_label.offset_bottom = 230
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	
 	step_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
@@ -66,9 +66,9 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	keycap_rect.anchor_right = 0.0
 	keycap_rect.anchor_bottom = 0.0
 	keycap_rect.offset_left = 80
-	keycap_rect.offset_top = 350
+	keycap_rect.offset_top = 260
 	keycap_rect.offset_right = 112
-	keycap_rect.offset_bottom = 382
+	keycap_rect.offset_bottom = 292
 	keycap_rect.visible = false
 	root.get_node("GameContainer").add_child(keycap_rect)
 	
@@ -89,9 +89,9 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	progress_bar.anchor_right = 0.0
 	progress_bar.anchor_bottom = 0.0
 	progress_bar.offset_left = 130
-	progress_bar.offset_top = 350
+	progress_bar.offset_top = 260
 	progress_bar.offset_right = 330
-	progress_bar.offset_bottom = 382
+	progress_bar.offset_bottom = 292
 
 	# Hearts Box
 	if hearts_label: hearts_label.visible = false

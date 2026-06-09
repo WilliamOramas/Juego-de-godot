@@ -101,6 +101,7 @@ var _compression_timeout: float = 0.0
 
 var _state: String = "playing"
 var _state_timer: float = 0.0
+var _hearts_box: HBoxContainer = null
 
 
 func _ready() -> void:
@@ -115,18 +116,18 @@ func _ready() -> void:
 	instruction_label.anchor_right = 0.0
 	instruction_label.anchor_bottom = 0.0
 	instruction_label.offset_left = 80
-	instruction_label.offset_top = 80
+	instruction_label.offset_top = 95
 	instruction_label.offset_right = 580
-	instruction_label.offset_bottom = 130
+	instruction_label.offset_bottom = 155
 
 	help_label.anchor_left = 0.0
 	help_label.anchor_top = 0.0
 	help_label.anchor_right = 0.0
 	help_label.anchor_bottom = 0.0
 	help_label.offset_left = 80
-	help_label.offset_top = 140
+	help_label.offset_top = 160
 	help_label.offset_right = 580
-	help_label.offset_bottom = 200
+	help_label.offset_bottom = 230
 
 	step_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	step_label.offset_left = 20
@@ -156,6 +157,22 @@ func _ready() -> void:
 
 	MiniGameTheme.style_progress_bar(progress_bar)
 	MiniGameTheme.style_progress_bar(depth_bar)
+
+	_hearts_box = HBoxContainer.new()
+	_hearts_box.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	_hearts_box.offset_left = -200
+	_hearts_box.offset_top = 15
+	_hearts_box.offset_right = -30
+	_hearts_box.offset_bottom = 47
+	_hearts_box.alignment = BoxContainer.ALIGNMENT_END
+	game_container.add_child(_hearts_box)
+	for i in range(5):
+		var heart_rect = TextureRect.new()
+		heart_rect.texture = load("res://src/assets/sprites/heart_pixel.svg")
+		heart_rect.custom_minimum_size = Vector2(32, 32)
+		heart_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		heart_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_hearts_box.add_child(heart_rect)
 
 	_update_ui()
 
@@ -209,6 +226,14 @@ func _update_ui() -> void:
 		progress_bar.value = _compression_count
 
 	patient_sprite.modulate = _get_patient_color()
+
+	if _hearts_box:
+		for i in range(_hearts_box.get_child_count()):
+			var child = _hearts_box.get_child(i)
+			if i < _lives:
+				child.modulate.a = 1.0
+			else:
+				child.modulate.a = 0.2
 
 
 func _get_patient_color() -> Color:

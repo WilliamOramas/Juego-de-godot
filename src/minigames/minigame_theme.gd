@@ -26,19 +26,19 @@ static func _apply_font(label: Label, size: int) -> void:
 
 static func apply_primary(label: Label, size: int) -> void:
 	_apply_font(label, size)
-	label.add_theme_constant_override("outline_size", 3)
+	label.add_theme_constant_override("outline_size", 4)
 
 static func apply_body(label: Label, size: int) -> void:
 	_apply_font(label, size)
-	label.add_theme_constant_override("outline_size", 2)
+	label.add_theme_constant_override("outline_size", 3)
 
 static func apply_muted(label: Label, size: int) -> void:
 	_apply_font(label, size)
-	label.add_theme_constant_override("outline_size", 1)
+	label.add_theme_constant_override("outline_size", 2)
 
 static func style_text_panel(label: Label) -> void:
 	var bg := StyleBoxFlat.new()
-	bg.bg_color = Color(0.0, 0.0, 0.0, 0.55)
+	bg.bg_color = Color(0.0, 0.0, 0.0, 0.65)
 	bg.border_width_left = 2
 	bg.border_width_top = 2
 	bg.border_width_right = 2

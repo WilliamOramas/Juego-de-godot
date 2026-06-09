@@ -8,7 +8,7 @@ var help_label: Label
 var timer_label: Label
 var feedback_label: Label
 var step_label: Label
-var progress_bar: TextureProgressBar
+var progress_bar: ProgressBar
 var dial_label: Label
 var hearts_box: HBoxContainer
 var keycap_rect: TextureRect
@@ -73,12 +73,15 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	root.get_node("GameContainer").add_child(keycap_rect)
 	
 	MiniGameTheme.apply_body(instruction_label, 18)
-	MiniGameTheme.apply_muted(help_label, 14)
+	MiniGameTheme.apply_muted(help_label, 16)
 	MiniGameTheme.style_text_panel(instruction_label)
 	MiniGameTheme.style_text_panel(help_label)
 	MiniGameTheme.apply_body(timer_label, 22)
+	MiniGameTheme.style_text_panel(timer_label)
 	MiniGameTheme.apply_body(feedback_label, 22)
+	MiniGameTheme.style_text_panel(feedback_label)
 	MiniGameTheme.apply_muted(step_label, 14)
+	MiniGameTheme.style_text_panel(step_label)
 	MiniGameTheme.apply_primary(dial_label, 28)
 	
 	MiniGameTheme.style_progress_bar(progress_bar)

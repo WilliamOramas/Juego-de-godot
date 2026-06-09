@@ -149,14 +149,18 @@ func _ready() -> void:
 	heartbeat_player.finished.connect(_on_heartbeat_finished)
 
 	MiniGameTheme.apply_body(instruction_label, 18)
-	MiniGameTheme.apply_muted(help_label, 14)
+	MiniGameTheme.apply_muted(help_label, 16)
 	MiniGameTheme.style_text_panel(instruction_label)
 	MiniGameTheme.style_text_panel(help_label)
 	MiniGameTheme.apply_body(timer_label, 22)
+	MiniGameTheme.style_text_panel(timer_label)
 	MiniGameTheme.apply_body(feedback_label, 22)
+	MiniGameTheme.style_text_panel(feedback_label)
 	MiniGameTheme.apply_muted(step_label, 14)
+	MiniGameTheme.style_text_panel(step_label)
 	MiniGameTheme.apply_primary(dial_label, 28)
 	MiniGameTheme.apply_body(breath_prompt, 20)
+	MiniGameTheme.style_text_panel(breath_prompt)
 
 	MiniGameTheme.style_progress_bar(progress_bar)
 

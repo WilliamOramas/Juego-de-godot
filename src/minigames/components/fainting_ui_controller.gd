@@ -63,12 +63,12 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	keycap_rect.visible = false
 	root.get_node("GameContainer").add_child(keycap_rect)
 	
-	MiniGameTheme.apply_font(instruction_label, 18)
-	MiniGameTheme.apply_font(help_label, 14)
-	MiniGameTheme.apply_font(timer_label, 22)
-	MiniGameTheme.apply_font(feedback_label, 22)
-	MiniGameTheme.apply_font(step_label, 14)
-	MiniGameTheme.apply_font(dial_label, 28)
+	MiniGameTheme.apply_body(instruction_label, 18)
+	MiniGameTheme.apply_muted(help_label, 14)
+	MiniGameTheme.apply_body(timer_label, 22)
+	MiniGameTheme.apply_body(feedback_label, 22)
+	MiniGameTheme.apply_muted(step_label, 14)
+	MiniGameTheme.apply_primary(dial_label, 28)
 	
 	MiniGameTheme.style_progress_bar(progress_bar)
 	
@@ -123,6 +123,8 @@ func update_ui(step_data: Dictionary, step_index: int, total_steps: int, lives: 
 	
 	if keycap_rect:
 		var needs_keycap = (step_data.type == MiniFaintingFirstAid.StepType.HOLD_3 or step_data.type == MiniFaintingFirstAid.StepType.HOLD_ELEVATE or step_data.type == MiniFaintingFirstAid.StepType.TAP or step_data.type == MiniFaintingFirstAid.StepType.TIMED_PRESS or step_data.type == MiniFaintingFirstAid.StepType.ECG)
+		if needs_keycap and not keycap_rect.visible:
+			_animate_keycap_appear()
 		keycap_rect.visible = needs_keycap
 		
 	# Update dial label visibility
@@ -137,11 +139,11 @@ func update_timer(time_remaining: float) -> void:
 	var secs_remain: int = secs % 60
 	timer_label.text = "%02d:%02d" % [mins, secs_remain]
 	if time_remaining <= 10.0:
-		timer_label.modulate = Color.RED
+		timer_label.modulate = MiniGameTheme.FEEDBACK_BAD
 	elif time_remaining <= 30.0:
-		timer_label.modulate = Color.YELLOW
+		timer_label.modulate = MiniGameTheme.FEEDBACK_WARN
 	else:
-		timer_label.modulate = Color.WHITE
+		timer_label.modulate = MiniGameTheme.TEXT_PRIMARY
 
 func update_dial(target_keys: Array, current_index: int) -> void:
 	var display := ""
@@ -161,4 +163,9 @@ func show_feedback(text: String, color: Color) -> void:
 
 func clear_feedback() -> void:
 	feedback_label.text = ""
-	feedback_label.modulate = Color.WHITE
+	feedback_label.modulate = MiniGameTheme.TEXT_PRIMARY
+
+func _animate_keycap_appear() -> void:
+	keycap_rect.scale = Vector2(0, 0)
+	var tw := create_tween().set_trans(Tween.TRANS_BACK)
+	tw.tween_property(keycap_rect, "scale", Vector2(1, 1), 0.2)

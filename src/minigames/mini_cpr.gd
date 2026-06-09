@@ -138,13 +138,13 @@ func _ready() -> void:
 	heartbeat_player.play()
 	heartbeat_player.finished.connect(func(): heartbeat_player.play())
 
-	MiniGameTheme.apply_font(instruction_label, 18)
-	MiniGameTheme.apply_font(help_label, 14)
-	MiniGameTheme.apply_font(timer_label, 22)
-	MiniGameTheme.apply_font(feedback_label, 22)
-	MiniGameTheme.apply_font(step_label, 14)
-	MiniGameTheme.apply_font(dial_label, 28)
-	MiniGameTheme.apply_font(breath_prompt, 20)
+	MiniGameTheme.apply_body(instruction_label, 18)
+	MiniGameTheme.apply_muted(help_label, 14)
+	MiniGameTheme.apply_body(timer_label, 22)
+	MiniGameTheme.apply_body(feedback_label, 22)
+	MiniGameTheme.apply_muted(step_label, 14)
+	MiniGameTheme.apply_primary(dial_label, 28)
+	MiniGameTheme.apply_body(breath_prompt, 20)
 
 	MiniGameTheme.style_progress_bar(progress_bar)
 	MiniGameTheme.style_progress_bar(depth_bar)
@@ -158,11 +158,11 @@ func _update_timer_label() -> void:
 	var secs_remain: int = secs % 60
 	timer_label.text = "%02d:%02d" % [mins, secs_remain]
 	if _time_remaining <= 15.0:
-		timer_label.modulate = Color.RED
+		timer_label.modulate = MiniGameTheme.FEEDBACK_BAD
 	elif _time_remaining <= 30.0:
-		timer_label.modulate = Color.YELLOW
+		timer_label.modulate = MiniGameTheme.FEEDBACK_WARN
 	else:
-		timer_label.modulate = Color.WHITE
+		timer_label.modulate = MiniGameTheme.TEXT_PRIMARY
 
 
 func _update_ecg_freq() -> void:
@@ -206,7 +206,7 @@ func _update_ui() -> void:
 func _get_patient_color() -> Color:
 	match _lives:
 		5, 4:
-			return Color.WHITE
+			return MiniGameTheme.TEXT_PRIMARY
 		3:
 			return Color(1, 0.7, 0.7)
 		2:
@@ -352,11 +352,11 @@ func _register_compression() -> void:
 
 	if quality == CompressionQuality.PERFECT:
 		correct_sound.play()
-		feedback_label.modulate = Color.GREEN
+		feedback_label.modulate = MiniGameTheme.FEEDBACK_GOOD
 		feedback_label.text = "PERFECT"
 	else:
 		step_sound.play()
-		feedback_label.modulate = Color.YELLOW
+		feedback_label.modulate = MiniGameTheme.FEEDBACK_WARN
 		feedback_label.text = "OK"
 
 	progress_bar.value = _compression_count
@@ -454,7 +454,7 @@ func _handle_breaths(delta: float, _step: Dictionary) -> void:
 			_breath_substep_active = false
 			_breath_count += 1
 			correct_sound.play()
-			feedback_label.modulate = Color.GREEN
+			feedback_label.modulate = MiniGameTheme.FEEDBACK_GOOD
 			feedback_label.text = "Respiración %d/%d" % [_breath_count, BREATHS_PER_CYCLE]
 
 			if _breath_count >= BREATHS_PER_CYCLE:
@@ -505,7 +505,7 @@ func _update_dial_label() -> void:
 func _advance_step() -> void:
 	_current_step += 1
 	if _current_step >= STEP_DATA.size():
-		feedback_label.modulate = Color.GREEN
+		feedback_label.modulate = MiniGameTheme.FEEDBACK_GOOD
 		feedback_label.text = "✓ RCP exitosa. Ritmo restaurado."
 		_state = "complete_delay"
 		_state_timer = 2.0
@@ -532,7 +532,7 @@ func _advance_step() -> void:
 func _lose_life(msg: String) -> void:
 	_lives -= 1
 	ScoreManager.record_minigame_step(false)
-	feedback_label.modulate = Color.RED
+	feedback_label.modulate = MiniGameTheme.FEEDBACK_BAD
 	feedback_label.text = "✗ " + msg
 	wrong_sound.play()
 
@@ -553,7 +553,7 @@ func _lose_life(msg: String) -> void:
 
 func _on_step_ok() -> void:
 	var step: Dictionary = STEP_DATA[_current_step]
-	feedback_label.modulate = Color.GREEN
+	feedback_label.modulate = MiniGameTheme.FEEDBACK_GOOD
 	feedback_label.text = "✓ " + step.feedback_ok
 	correct_sound.play()
 	ScoreManager.record_minigame_step(true)

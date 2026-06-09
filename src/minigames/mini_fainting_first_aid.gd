@@ -190,7 +190,7 @@ func _input(event: InputEvent) -> void:
 
 func _on_step_completed() -> void:
 	var step = STEP_DATA[_current_step]
-	ui.show_feedback("✓ " + step.feedback_ok, Color.GREEN)
+	ui.show_feedback("✓ " + step.feedback_ok, MiniGameTheme.FEEDBACK_GOOD)
 	var s = get_node_or_null("CorrectSound")
 	if s: s.play()
 	ScoreManager.record_minigame_step(true)
@@ -202,7 +202,7 @@ func _on_step_completed() -> void:
 func _advance_step() -> void:
 	_current_step += 1
 	if _current_step >= STEP_DATA.size():
-		ui.show_feedback("✓ ¡Completaste los primeros auxilios!", Color.GREEN)
+		ui.show_feedback("✓ ¡Completaste los primeros auxilios!", MiniGameTheme.FEEDBACK_GOOD)
 		var s = get_node_or_null("SuccessFanfare")
 		if s: s.play()
 		_state = "complete_delay"
@@ -212,7 +212,7 @@ func _advance_step() -> void:
 
 func _lose_life(msg: String) -> void:
 	_lives -= 1
-	ui.show_feedback("✗ " + msg, Color.RED)
+	ui.show_feedback("✗ " + msg, MiniGameTheme.FEEDBACK_BAD)
 	var wrong = get_node_or_null("WrongSound")
 	if wrong: wrong.play()
 	ScoreManager.record_minigame_step(false)
@@ -223,7 +223,7 @@ func _lose_life(msg: String) -> void:
 	if _lives <= 0:
 		var fail = get_node_or_null("FailSound")
 		if fail: fail.play()
-		ui.show_feedback("✗ EL ESTUDIANTE HA FALLECIDO", Color.RED)
+		ui.show_feedback("✗ EL ESTUDIANTE HA FALLECIDO", MiniGameTheme.FEEDBACK_BAD)
 		if visual.action_sprite: visual.action_sprite.frame = 7
 		Global.student_died = true
 		_state = "death_delay"

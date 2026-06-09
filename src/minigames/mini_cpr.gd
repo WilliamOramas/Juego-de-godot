@@ -138,6 +138,17 @@ func _ready() -> void:
 	heartbeat_player.play()
 	heartbeat_player.finished.connect(func(): heartbeat_player.play())
 
+	MiniGameTheme.apply_font(instruction_label, 18)
+	MiniGameTheme.apply_font(help_label, 14)
+	MiniGameTheme.apply_font(timer_label, 22)
+	MiniGameTheme.apply_font(feedback_label, 22)
+	MiniGameTheme.apply_font(step_label, 14)
+	MiniGameTheme.apply_font(dial_label, 28)
+	MiniGameTheme.apply_font(breath_prompt, 20)
+
+	MiniGameTheme.style_progress_bar(progress_bar)
+	MiniGameTheme.style_progress_bar(depth_bar)
+
 	_update_ui()
 
 

@@ -84,8 +84,8 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 
 	# Pulse prompt label
 	pulse_prompt = Label.new()
-	pulse_prompt.add_theme_font_size_override("font_size", 18)
-	pulse_prompt.add_theme_color_override("font_color", Color(0.65, 0.1, 0.08, 1))
+	MiniGameTheme.apply_font(pulse_prompt, 18)
+	pulse_prompt.add_theme_color_override("font_color", MiniGameTheme.DANGER)
 	pulse_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	pulse_prompt.visible = false
 	root.get_node("GameContainer").add_child(pulse_prompt)

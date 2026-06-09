@@ -63,6 +63,15 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	keycap_rect.visible = false
 	root.get_node("GameContainer").add_child(keycap_rect)
 	
+	MiniGameTheme.apply_font(instruction_label, 18)
+	MiniGameTheme.apply_font(help_label, 14)
+	MiniGameTheme.apply_font(timer_label, 22)
+	MiniGameTheme.apply_font(feedback_label, 22)
+	MiniGameTheme.apply_font(step_label, 14)
+	MiniGameTheme.apply_font(dial_label, 28)
+	
+	MiniGameTheme.style_progress_bar(progress_bar)
+	
 	# Progress bar reposition
 	progress_bar.set_anchors_preset(Control.PRESET_CENTER)
 	progress_bar.offset_left = -270

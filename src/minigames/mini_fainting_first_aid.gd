@@ -113,8 +113,8 @@ func _ready() -> void:
 	input.progress_updated.connect(ui.update_progress)
 	input.dial_updated.connect(ui.update_dial)
 	input.action_state_changed.connect(func(state): visual.set_action_frame(_current_step, state))
-	input.hold_decayed.connect(func(show: bool):
-		if show:
+	input.hold_decayed.connect(func(p_visible: bool):
+		if p_visible:
 			ui.show_feedback("¡Soltaste! Seguí manteniendo Q.", MiniGameTheme.FEEDBACK_BAD)
 		else:
 			ui.clear_feedback()

@@ -110,17 +110,23 @@ func _ready() -> void:
 	rhythm_ring.draw.connect(_on_rhythm_ring_draw)
 	ecg_line.draw.connect(_on_ecg_draw)
 
-	instruction_label.set_anchors_preset(Control.PRESET_CENTER)
-	instruction_label.offset_left = -320
-	instruction_label.offset_top = -220
-	instruction_label.offset_right = 180
-	instruction_label.offset_bottom = -170
+	instruction_label.anchor_left = 0.0
+	instruction_label.anchor_top = 0.0
+	instruction_label.anchor_right = 0.0
+	instruction_label.anchor_bottom = 0.0
+	instruction_label.offset_left = 80
+	instruction_label.offset_top = 80
+	instruction_label.offset_right = 580
+	instruction_label.offset_bottom = 130
 
-	help_label.set_anchors_preset(Control.PRESET_CENTER)
-	help_label.offset_left = -320
-	help_label.offset_top = -160
-	help_label.offset_right = 180
-	help_label.offset_bottom = -110
+	help_label.anchor_left = 0.0
+	help_label.anchor_top = 0.0
+	help_label.anchor_right = 0.0
+	help_label.anchor_bottom = 0.0
+	help_label.offset_left = 80
+	help_label.offset_top = 140
+	help_label.offset_right = 580
+	help_label.offset_bottom = 200
 
 	step_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	step_label.offset_left = 20
@@ -140,6 +146,8 @@ func _ready() -> void:
 
 	MiniGameTheme.apply_body(instruction_label, 18)
 	MiniGameTheme.apply_muted(help_label, 14)
+	MiniGameTheme.style_text_panel(instruction_label)
+	MiniGameTheme.style_text_panel(help_label)
 	MiniGameTheme.apply_body(timer_label, 22)
 	MiniGameTheme.apply_body(feedback_label, 22)
 	MiniGameTheme.apply_muted(step_label, 14)

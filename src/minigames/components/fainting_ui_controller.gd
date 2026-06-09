@@ -28,19 +28,25 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	dial_label = root.get_node("GameContainer/DialLabel")
 	var hearts_label = root.get_node("GameContainer/HeartsLabel")
 	
-	# Restyle texts to diegetic positions
-	instruction_label.set_anchors_preset(Control.PRESET_CENTER)
-	instruction_label.offset_left = -320
-	instruction_label.offset_top = -120
-	instruction_label.offset_right = 180
-	instruction_label.offset_bottom = -60
+	# Restyle texts to diegetic positions (anchored top-left for expand-safe layout)
+	instruction_label.anchor_left = 0.0
+	instruction_label.anchor_top = 0.0
+	instruction_label.anchor_right = 0.0
+	instruction_label.anchor_bottom = 0.0
+	instruction_label.offset_left = 80
+	instruction_label.offset_top = 180
+	instruction_label.offset_right = 580
+	instruction_label.offset_bottom = 240
 	instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	
-	help_label.set_anchors_preset(Control.PRESET_CENTER)
-	help_label.offset_left = -320
-	help_label.offset_top = -50
-	help_label.offset_right = 180
-	help_label.offset_bottom = 30
+	help_label.anchor_left = 0.0
+	help_label.anchor_top = 0.0
+	help_label.anchor_right = 0.0
+	help_label.anchor_bottom = 0.0
+	help_label.offset_left = 80
+	help_label.offset_top = 250
+	help_label.offset_right = 580
+	help_label.offset_bottom = 330
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	
 	step_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
@@ -55,16 +61,21 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	# Keycap
 	keycap_rect = TextureRect.new()
 	keycap_rect.texture = KEYCAP_NORMAL
-	keycap_rect.set_anchors_preset(Control.PRESET_CENTER)
-	keycap_rect.offset_left = -320
-	keycap_rect.offset_top = 50
-	keycap_rect.offset_right = -288
-	keycap_rect.offset_bottom = 82
+	keycap_rect.anchor_left = 0.0
+	keycap_rect.anchor_top = 0.0
+	keycap_rect.anchor_right = 0.0
+	keycap_rect.anchor_bottom = 0.0
+	keycap_rect.offset_left = 80
+	keycap_rect.offset_top = 350
+	keycap_rect.offset_right = 112
+	keycap_rect.offset_bottom = 382
 	keycap_rect.visible = false
 	root.get_node("GameContainer").add_child(keycap_rect)
 	
 	MiniGameTheme.apply_body(instruction_label, 18)
 	MiniGameTheme.apply_muted(help_label, 14)
+	MiniGameTheme.style_text_panel(instruction_label)
+	MiniGameTheme.style_text_panel(help_label)
 	MiniGameTheme.apply_body(timer_label, 22)
 	MiniGameTheme.apply_body(feedback_label, 22)
 	MiniGameTheme.apply_muted(step_label, 14)
@@ -73,10 +84,14 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	MiniGameTheme.style_progress_bar(progress_bar)
 	
 	# Progress bar reposition
-	progress_bar.set_anchors_preset(Control.PRESET_CENTER)
-	progress_bar.offset_left = -270
-	progress_bar.offset_top = 50
-	progress_bar.offset_bottom = 82
+	progress_bar.anchor_left = 0.0
+	progress_bar.anchor_top = 0.0
+	progress_bar.anchor_right = 0.0
+	progress_bar.anchor_bottom = 0.0
+	progress_bar.offset_left = 130
+	progress_bar.offset_top = 350
+	progress_bar.offset_right = 330
+	progress_bar.offset_bottom = 382
 
 	# Hearts Box
 	if hearts_label: hearts_label.visible = false

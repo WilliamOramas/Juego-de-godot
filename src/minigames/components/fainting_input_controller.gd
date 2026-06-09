@@ -6,7 +6,7 @@ signal step_failed(reason: String)
 signal progress_updated(value: float)
 signal dial_updated(target: Array, current_index: int)
 signal action_state_changed(state: String)
-signal hold_decayed(show_feedback: bool)
+signal hold_decayed(p_visible: bool)
 
 var root: MiniFaintingFirstAid
 var visual: FaintingVisualController

@@ -36,6 +36,20 @@ static func apply_muted(label: Label, size: int) -> void:
 	_apply_font(label, size)
 	label.add_theme_constant_override("outline_size", 1)
 
+static func style_text_panel(label: Label) -> void:
+	var bg := StyleBoxFlat.new()
+	bg.bg_color = Color(0.0, 0.0, 0.0, 0.55)
+	bg.border_width_left = 2
+	bg.border_width_top = 2
+	bg.border_width_right = 2
+	bg.border_width_bottom = 2
+	bg.border_color = Color(0.3, 0.35, 0.5, 0.7)
+	bg.corner_radius_top_left = 6
+	bg.corner_radius_top_right = 6
+	bg.corner_radius_bottom_left = 6
+	bg.corner_radius_bottom_right = 6
+	label.add_theme_stylebox_override("normal", bg)
+
 static func style_progress_bar(bar: TextureProgressBar) -> void:
 	var fill := StyleBoxFlat.new()
 	fill.bg_color = BAR_FILL

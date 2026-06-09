@@ -24,9 +24,16 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	pulse_point = root.get_node_or_null("GameContainer/PulsePoint")
 	heart_icon = root.get_node_or_null("GameContainer/HeartIcon")
 	
-	# Create ECG Line Control
+	# Create ECG Line Control (bottom strip, below all text)
 	ecg_line = ECGLineControl.new()
-	ecg_line.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ecg_line.anchor_left = 0.0
+	ecg_line.anchor_top = 0.0
+	ecg_line.anchor_right = 1.0
+	ecg_line.anchor_bottom = 0.0
+	ecg_line.offset_left = 0
+	ecg_line.offset_top = 400
+	ecg_line.offset_right = 0
+	ecg_line.offset_bottom = 560
 	root.get_node("GameContainer").add_child(ecg_line)
 
 	# Hide world patient and create local one

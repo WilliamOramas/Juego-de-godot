@@ -7,8 +7,8 @@
 [ext_resource type="AudioStream" uid="uid://cn6u1iywkuf6l" path="res://src/assets/sounds/step.wav" id="5_step"]
 [ext_resource type="AudioStream" uid="uid://bm4grfjgebhqc" path="res://src/assets/sounds/success_fanfare.wav" id="6_success"]
 [ext_resource type="AudioStream" uid="uid://b66svau71u142" path="res://src/assets/sounds/fail_sound.wav" id="7_fail"]
-[ext_resource type="AudioStream" uid="uid://dx0lpxtjsl3j8" path="res://src/assets/sounds/Waiting_For_The_Lock.mp3" id="8_bgm"]
-[ext_resource type="AudioStream" uid="uid://d4s4yym2iskcb" path="res://src/assets/sounds/freesound_community-corazon-66362.mp3" id="9_heart"]
+[ext_resource type="AudioStream" path="res://src/assets/sounds/Waiting_For_The_Lock.mp3" id="8_bgm"]
+[ext_resource type="AudioStream" path="res://src/assets/sounds/freesound_community-corazon-66362.mp3" id="9_heart"]
 [node name="MiniFaintingFirstAid" unique_id=806309109 instance=ExtResource("2_base")]
 script = ExtResource("1_script")
 
@@ -20,13 +20,14 @@ layout_mode = 3
 
 [node name="InstructionLabel" type="Label" parent="GameContainer" index="0" unique_id=228527046]
 layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.05
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -300.0
-offset_right = 300.0
-offset_bottom = 60.0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 80.0
+offset_top = 180.0
+offset_right = 580.0
+offset_bottom = 240.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -40,14 +41,14 @@ autowrap_mode = 2
 [node name="HelpLabel" type="Label" parent="GameContainer" index="1" unique_id=365702817]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.05
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -250.0
-offset_top = 76.0
-offset_right = 250.0
-offset_bottom = 111.0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 80.0
+offset_top = 250.0
+offset_right = 580.0
+offset_bottom = 330.0
 theme_override_colors/font_color = Color(0.7, 0.7, 0.9, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 1
@@ -97,15 +98,15 @@ theme_override_font_sizes/font_size = 14
 
 [node name="FeedbackLabel" type="Label" parent="GameContainer" index="5" unique_id=1528400705]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -9.0
-offset_top = 91.0
-offset_right = 224.0
-offset_bottom = 131.0
+anchors_preset = -1
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 80.0
+offset_top = 340.0
+offset_right = 580.0
+offset_bottom = 380.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -118,14 +119,14 @@ vertical_alignment = 1
 [node name="DialLabel" type="Label" parent="GameContainer" index="6" unique_id=1549764728]
 visible = false
 layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -120.0
-offset_top = -150.0
-offset_right = 120.0
-offset_bottom = -110.0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 340.0
+offset_top = 150.0
+offset_right = 460.0
+offset_bottom = 190.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 1, 0.8, 1)
@@ -137,15 +138,15 @@ vertical_alignment = 1
 
 [node name="ProgressBar" type="TextureProgressBar" parent="GameContainer" index="7" unique_id=1178175127]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 12.0
-offset_top = 94.0
-offset_right = 212.0
-offset_bottom = 134.0
+anchors_preset = -1
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 130.0
+offset_top = 350.0
+offset_right = 330.0
+offset_bottom = 382.0
 grow_horizontal = 2
 grow_vertical = 2
 value = 50.0

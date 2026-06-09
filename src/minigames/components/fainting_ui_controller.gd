@@ -19,14 +19,14 @@ const KEYCAP_PRESSED = preload("res://src/assets/sprites/keycap_q_pressed.svg")
 func setup(minigame: MiniFaintingFirstAid) -> void:
 	root = minigame
 	
-	instruction_label = root.get_node("GameContainer/InstructionLabel")
-	help_label = root.get_node("GameContainer/HelpLabel")
-	timer_label = root.get_node("GameContainer/TimerLabel")
-	feedback_label = root.get_node("GameContainer/FeedbackLabel")
-	step_label = root.get_node("GameContainer/StepLabel")
-	progress_bar = root.get_node("GameContainer/ProgressBar")
-	dial_label = root.get_node("GameContainer/DialLabel")
-	var hearts_label = root.get_node("GameContainer/HeartsLabel")
+	instruction_label = root.game_container.get_node("InstructionLabel")
+	help_label = root.game_container.get_node("HelpLabel")
+	timer_label = root.game_container.get_node("TimerLabel")
+	feedback_label = root.game_container.get_node("FeedbackLabel")
+	step_label = root.game_container.get_node("StepLabel")
+	progress_bar = root.game_container.get_node("ProgressBar")
+	dial_label = root.game_container.get_node("DialLabel")
+	var hearts_label = root.game_container.get_node("HeartsLabel")
 	
 	# Restyle texts to diegetic positions (anchored top-left for expand-safe layout)
 	instruction_label.anchor_left = 0.0
@@ -70,7 +70,7 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	keycap_rect.offset_right = 112
 	keycap_rect.offset_bottom = 292
 	keycap_rect.visible = false
-	root.get_node("GameContainer").add_child(keycap_rect)
+	root.game_container.add_child(keycap_rect)
 	
 	MiniGameTheme.apply_body(instruction_label, 18)
 	MiniGameTheme.apply_muted(help_label, 16)
@@ -105,7 +105,7 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	hearts_box.offset_right = -30
 	hearts_box.offset_bottom = 47
 	hearts_box.alignment = BoxContainer.ALIGNMENT_END
-	root.get_node("GameContainer").add_child(hearts_box)
+	root.game_container.add_child(hearts_box)
 	for i in range(3):
 		var heart_rect = TextureRect.new()
 		heart_rect.texture = load("res://src/assets/sprites/heart_pixel.svg")

@@ -275,7 +275,7 @@ func _process(delta: float) -> void:
 	if rhythm_ring and rhythm_ring.visible:
 		rhythm_ring.queue_redraw()
 
-	var main_camera: Camera2D = get_viewport().get_camera_2d()
+	var main_camera: Camera2D = get_tree().root.get_camera_2d()
 	if main_camera:
 		if _camera_shake > 0.01:
 			main_camera.offset = Vector2(randf_range(-_camera_shake, _camera_shake), randf_range(-_camera_shake, _camera_shake))
@@ -827,6 +827,6 @@ func _on_ecg_draw() -> void:
 
 
 func _exit_tree() -> void:
-	var main_camera = get_viewport().get_camera_2d()
+	var main_camera = get_tree().root.get_camera_2d()
 	if main_camera:
 		main_camera.offset = Vector2.ZERO

@@ -24,7 +24,7 @@ func start() -> void:
 	get_tree().paused = true
 	show()
 	var tween = create_tween()
-	tween.tween_property(background, "modulate:a", 0.65, 0.15)
+	tween.tween_property(background, "modulate:a", 0.5, 0.15)
 
 func end(success: bool) -> void:
 	if not _is_running:

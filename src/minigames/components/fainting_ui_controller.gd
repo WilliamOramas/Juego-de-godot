@@ -119,10 +119,11 @@ func update_ui(step_data: Dictionary, step_index: int, total_steps: int, lives: 
 			else:
 				child.modulate.a = 0.2
 	
-	progress_bar.visible = (step_data.type == MiniFaintingFirstAid.StepType.HOLD_3 or step_data.type == MiniFaintingFirstAid.StepType.HOLD_ELEVATE)
+	var is_hold = (step_data.type == MiniFaintingFirstAid.StepType.HOLD_CHECK_RESPONSE or step_data.type == MiniFaintingFirstAid.StepType.HOLD_CHECK_BREATHING or step_data.type == MiniFaintingFirstAid.StepType.HOLD_ELEVATE)
+	progress_bar.visible = is_hold
 	
 	if keycap_rect:
-		var needs_keycap = (step_data.type == MiniFaintingFirstAid.StepType.HOLD_3 or step_data.type == MiniFaintingFirstAid.StepType.HOLD_ELEVATE or step_data.type == MiniFaintingFirstAid.StepType.TAP or step_data.type == MiniFaintingFirstAid.StepType.TIMED_PRESS or step_data.type == MiniFaintingFirstAid.StepType.ECG)
+		var needs_keycap = (step_data.type == MiniFaintingFirstAid.StepType.HOLD_CHECK_RESPONSE or step_data.type == MiniFaintingFirstAid.StepType.HOLD_CHECK_BREATHING or step_data.type == MiniFaintingFirstAid.StepType.HOLD_ELEVATE or step_data.type == MiniFaintingFirstAid.StepType.TAP or step_data.type == MiniFaintingFirstAid.StepType.TIMED_PRESS or step_data.type == MiniFaintingFirstAid.StepType.ECG)
 		if needs_keycap and not keycap_rect.visible:
 			_animate_keycap_appear()
 		keycap_rect.visible = needs_keycap

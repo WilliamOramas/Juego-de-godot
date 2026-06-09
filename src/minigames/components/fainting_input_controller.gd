@@ -6,6 +6,7 @@ signal step_failed(reason: String)
 signal progress_updated(value: float)
 signal dial_updated(target: Array, current_index: int)
 signal action_state_changed(state: String)
+signal hold_decayed(show_feedback: bool)
 
 var root: MiniFaintingFirstAid
 var visual: FaintingVisualController
@@ -94,7 +95,7 @@ func process_input(event: InputEvent, step: Dictionary) -> void:
 
 func process_frame(delta: float, step: Dictionary) -> void:
 	match step.type:
-		MiniFaintingFirstAid.StepType.HOLD_3, MiniFaintingFirstAid.StepType.HOLD_ELEVATE:
+		MiniFaintingFirstAid.StepType.HOLD_CHECK_RESPONSE, MiniFaintingFirstAid.StepType.HOLD_CHECK_BREATHING, MiniFaintingFirstAid.StepType.HOLD_ELEVATE:
 			_handle_hold(delta, step)
 		MiniFaintingFirstAid.StepType.TIMED_PRESS:
 			_handle_timed_press(delta, step)
@@ -128,11 +129,10 @@ func _handle_hold(delta: float, step: Dictionary) -> void:
 		progress_updated.emit(clamp(hold_timer / step.target * 100.0, 0.0, 100.0))
 		if hold_timer > 0:
 			action_state_changed.emit("idle")
-			root.get_node("GameContainer/FeedbackLabel").modulate = Color.RED
-			root.get_node("GameContainer/FeedbackLabel").text = "¡Soltaste! Seguí manteniendo Q."
+			hold_decayed.emit(true)
 		else:
 			if not hold_penalized:
-				root.get_node("GameContainer/FeedbackLabel").text = ""
+				hold_decayed.emit(false)
 
 func _handle_timed_press(delta: float, _step: Dictionary) -> void:
 	pulse_window += delta
@@ -166,7 +166,8 @@ func _handle_timed_press(delta: float, _step: Dictionary) -> void:
 					pulse_active = false
 					pulse_skipped = true
 					if visual.pulse_prompt: visual.pulse_prompt.text = ""
-					step_failed.emit("¡Te saltaste el pulso carotídeo! Es obligatorio.")
+					if root._lives > 0:
+						step_failed.emit("¡Te saltaste el pulso carotídeo! Es obligatorio.")
 				_retry_timed_press()
 				pulse_tween = null
 			)
@@ -175,7 +176,8 @@ func _handle_timed_press(delta: float, _step: Dictionary) -> void:
 			pulse_active = false
 			pulse_skipped = true
 			if visual.pulse_prompt: visual.pulse_prompt.text = ""
-			step_failed.emit("¡Te saltaste el pulso carotídeo! Es obligatorio.")
+			if root._lives > 0:
+				step_failed.emit("¡Te saltaste el pulso carotídeo! Es obligatorio.")
 			_retry_timed_press()
 
 func _retry_timed_press() -> void:

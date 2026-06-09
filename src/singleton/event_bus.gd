@@ -26,6 +26,9 @@ signal objective_advanced(quest_id: String, objective_id: String, description: S
 signal quest_completed(quest_id: String, quest_name: String)
 
 @warning_ignore("unused_signal")
+signal student_died
+
+@warning_ignore("unused_signal")
 signal score_updated
 @warning_ignore("unused_signal")
 signal journal_entry_added(entry: Resource)

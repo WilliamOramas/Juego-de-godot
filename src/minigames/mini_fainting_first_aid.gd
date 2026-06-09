@@ -1,7 +1,7 @@
 extends MiniGameBase
 class_name MiniFaintingFirstAid
 
-enum StepType { HOLD_3, TIMED_PRESS, DIAL_112, HOLD_ELEVATE, TAP, ECG }
+enum StepType { HOLD_CHECK_RESPONSE, HOLD_CHECK_BREATHING, TIMED_PRESS, DIAL_112, HOLD_ELEVATE, TAP, ECG }
 
 const CURACION_HFRAMES = 4
 const CURACION_VFRAMES = 2
@@ -20,7 +20,7 @@ const STEP_DATA: Array[Dictionary] = [
 	{
 		"instruction": "La persona está en el suelo.\n¿Qué hacés primero?",
 		"help": "Paso 1: Verificar si responde.\nGritale fuerte y tocale el hombro.\n[Q] Mantené 1.5 segundos.",
-		"type": StepType.HOLD_3,
+		"type": StepType.HOLD_CHECK_RESPONSE,
 		"target": 1.5,
 		"feedback_ok": "¡Bien! Verificaste si responde.",
 		"feedback_fail": "Tenés que verificar si responde primero.",
@@ -28,7 +28,7 @@ const STEP_DATA: Array[Dictionary] = [
 	{
 		"instruction": "No responde. ¿Qué hacés ahora?",
 		"help": "Paso 2: Verificar respiración.\nObservá su pecho.\n[Q] Mantené 3 segundos.",
-		"type": StepType.HOLD_3,
+		"type": StepType.HOLD_CHECK_BREATHING,
 		"target": 3.0,
 		"feedback_ok": "¡Bien! Verificaste la respiración.",
 		"feedback_fail": "Tenés que mantener Q para verificar.",
@@ -89,6 +89,9 @@ var ui: FaintingUIController
 var visual: FaintingVisualController
 var input: FaintingInputController
 
+@onready var bgm_player: AudioStreamPlayer = $BgmPlayer
+@onready var heartbeat_player: AudioStreamPlayer = $HeartbeatPlayer
+
 func _ready() -> void:
 	super()
 	_time_remaining = TIME_LIMIT
@@ -110,21 +113,17 @@ func _ready() -> void:
 	input.progress_updated.connect(ui.update_progress)
 	input.dial_updated.connect(ui.update_dial)
 	input.action_state_changed.connect(func(state): visual.set_action_frame(_current_step, state))
+	input.hold_decayed.connect(func(show: bool):
+		if show:
+			ui.show_feedback("¡Soltaste! Seguí manteniendo Q.", MiniGameTheme.FEEDBACK_BAD)
+		else:
+			ui.clear_feedback()
+	)
 	
-	# Audio Setup
-	var bgm_player = AudioStreamPlayer.new()
-	bgm_player.stream = load("res://src/assets/sounds/Waiting_For_The_Lock.mp3")
-	bgm_player.volume_db = -8.0
-	get_node("GameContainer").add_child(bgm_player)
 	bgm_player.play(109.0)
 	bgm_player.finished.connect(func(): bgm_player.play(109.0))
-	
-	var heart_player = AudioStreamPlayer.new()
-	heart_player.stream = load("res://src/assets/sounds/freesound_community-corazon-66362.mp3")
-	heart_player.volume_db = 0.0
-	get_node("GameContainer").add_child(heart_player)
-	heart_player.play()
-	heart_player.finished.connect(func(): heart_player.play())
+	heartbeat_player.play()
+	heartbeat_player.finished.connect(func(): heartbeat_player.play())
 
 	_reset_step()
 
@@ -226,6 +225,7 @@ func _lose_life(msg: String) -> void:
 		ui.show_feedback("✗ EL ESTUDIANTE HA FALLECIDO", MiniGameTheme.FEEDBACK_BAD)
 		if visual.action_sprite: visual.action_sprite.frame = 7
 		Global.student_died = true
+		EventBus.student_died.emit()
 		_state = "death_delay"
 		_state_timer = 2.5
 		JournalManager.add_system_entry("Estudiante fallecido", "No se pudieron completar los primeros auxilios a tiempo.")

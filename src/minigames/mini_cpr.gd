@@ -543,6 +543,7 @@ func _lose_life(msg: String) -> void:
 		fail_sound.play()
 		feedback_label.text = "✗ EL PACIENTE HA FALLECIDO"
 		Global.student_died = true
+		EventBus.student_died.emit()
 		_state = "death_delay"
 		_state_timer = 2.5
 		return
@@ -561,30 +562,12 @@ func _on_step_ok() -> void:
 	_state_timer = 0.8
 
 
-func end(success: bool) -> void:
-	if not _is_running:
-		return
-	_is_running = false
-	process_mode = PROCESS_MODE_INHERIT
+func _on_before_end(success: bool) -> void:
 	ScoreManager.record_minigame_result("cpr", success, _lives, _time_remaining)
 	if success:
 		JournalManager.add_system_entry("RCP completada", "Se completaron 3 ciclos de RCP correctamente.")
 	else:
 		JournalManager.add_system_entry("RCP fallida", "No se pudo reanimar al paciente.")
-
-	if SceneManager and SceneManager.has_method("play_time_passage"):
-		SceneManager.play_time_passage(1.5, func():
-			get_tree().paused = false
-			hide()
-			game_completed.emit(game_id, success)
-		)
-	else:
-		get_tree().paused = false
-		var tween = create_tween()
-		tween.tween_property(background, "modulate:a", 0.0, 0.3)
-		await tween.finished
-		hide()
-		game_completed.emit(game_id, success)
 
 
 func _on_rhythm_ring_draw() -> void:
@@ -662,10 +645,6 @@ func _on_ecg_draw() -> void:
 	if points.size() > 1:
 		for i in range(points.size() - 1):
 			ecg_line.draw_line(points[i], points[i + 1], color, 2.0, true)
-
-
-func get_result() -> bool:
-	return _lives > 0
 
 
 func _exit_tree() -> void:

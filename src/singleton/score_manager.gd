@@ -19,6 +19,7 @@ func _ready() -> void:
 	EventBus.minigame_completed.connect(_on_minigame_completed)
 	EventBus.quest_completed.connect(_on_quest_completed)
 	EventBus.dialog_finished.connect(_on_dialog_finished)
+	EventBus.student_died.connect(record_student_death)
 
 
 func record_minigame_step(success: bool, action: String = "Acción médica", time_taken: float = 0.0, health: String = "Estable") -> void:

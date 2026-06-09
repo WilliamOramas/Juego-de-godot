@@ -28,7 +28,7 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	ecg_line = ECGLineControl.new()
 	ecg_line.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.get_node("GameContainer").add_child(ecg_line)
-	
+
 	# Apply CRT Shader
 	var mat = ShaderMaterial.new()
 	mat.shader = preload("res://src/minigames/retro_crt.gdshader")

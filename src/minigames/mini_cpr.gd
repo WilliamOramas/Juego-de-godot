@@ -110,14 +110,6 @@ func _ready() -> void:
 	rhythm_ring.draw.connect(_on_rhythm_ring_draw)
 	ecg_line.draw.connect(_on_ecg_draw)
 
-	# Apply CRT Shader
-	var mat = ShaderMaterial.new()
-	mat.shader = load("res://src/minigames/retro_crt.gdshader")
-	mat.set_shader_parameter("vignette_intensity", 0.4)
-	mat.set_shader_parameter("vignette_opacity", 0.8)
-	mat.set_shader_parameter("vignette_color", Color.BLACK)
-	background.material = mat
-
 	instruction_label.set_anchors_preset(Control.PRESET_CENTER)
 	instruction_label.offset_left = -320
 	instruction_label.offset_top = -220
@@ -147,6 +139,14 @@ func _ready() -> void:
 	heartbeat_player.finished.connect(func(): heartbeat_player.play())
 
 	_update_ui()
+
+	# Apply CRT Shader
+	var mat = ShaderMaterial.new()
+	mat.shader = load("res://src/minigames/retro_crt.gdshader")
+	mat.set_shader_parameter("vignette_intensity", 0.4)
+	mat.set_shader_parameter("vignette_opacity", 0.8)
+	mat.set_shader_parameter("vignette_color", Color.BLACK)
+	background.material = mat
 
 
 func _update_timer_label() -> void:

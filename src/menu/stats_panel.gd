@@ -4,7 +4,7 @@ class_name StatsPanel
 
 func build_ui() -> void:
 	super()
-	_main_panel.set_size(Vector2(380, 420))
+	_main_panel.set_size(Vector2(460, 400))
 	call_deferred(&"_center_panel")
 
 	var margin := MarginContainer.new()

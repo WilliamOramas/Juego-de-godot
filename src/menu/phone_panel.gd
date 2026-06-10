@@ -23,7 +23,7 @@ func build_ui() -> void:
 	add_child(_overlay)
 
 	_main_panel = Panel.new()
-	_main_panel.set_size(Vector2(400, 450))
+	_main_panel.set_size(Vector2(500, 450))
 	var panel_style := StyleBoxFlat.new()
 	panel_style.bg_color = Color(0.117647, 0.117647, 0.137255, 0.95)
 	panel_style.border_width_left = 2

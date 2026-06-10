@@ -16,7 +16,7 @@ var _current_filter: int = -1
 
 func build_ui() -> void:
 	super()
-	_main_panel.set_size(Vector2(420, 480))
+	_main_panel.set_size(Vector2(500, 450))
 	call_deferred(&"_center_panel")
 
 	var margin := MarginContainer.new()

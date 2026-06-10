@@ -103,6 +103,7 @@ func _ready() -> void:
 	add_child(_interact)
 	_interact.setup(self, Vector2(-14, -82), _on_interact_pressed)
 
+
 func _physics_process(delta: float) -> void:
 	if _player_in_range != null:
 		velocity = Vector2.ZERO

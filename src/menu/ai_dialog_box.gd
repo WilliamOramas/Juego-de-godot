@@ -60,8 +60,8 @@ func show_dialog(npc_name: String, lines: Array[String], ai_system_prompt: Strin
 
 	panel.offset_top = 0
 	_slide_tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	# Increased height from -170.0 to -240.0 to accommodate input area
-	_slide_tween.tween_property(panel, "offset_top", -240.0, AnimHelper.DIALOG_SLIDE_IN)
+	# Increased height from -170.0 to -350.0 to accommodate input area
+	_slide_tween.tween_property(panel, "offset_top", -350.0, AnimHelper.DIALOG_SLIDE_IN)
 	_slide_tween.finished.connect(_start_typewriter)
 	audio_select.play()
 	EventBus.dialog_started.emit()

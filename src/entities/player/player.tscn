@@ -5,7 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://cn6u1iywkuf6l" path="res://src/assets/sounds/step.wav" id="4_step"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_phys"]
-size = Vector2(23, 56)
+size = Vector2(23, 52)
 
 [sub_resource type="Animation" id="Animation_f50pn"]
 length = 0.001
@@ -285,7 +285,7 @@ vframes = 4
 frame = 15
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=310722239]
-position = Vector2(0, 17)
+position = Vector2(-1.5, 19)
 shape = SubResource("RectangleShape2D_phys")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1941436272]
@@ -301,7 +301,7 @@ parameters/walk/blend_position = Vector2(-0.06351185, 0.41637015)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1358318262]
 position = Vector2(-1, 11)
-zoom = Vector2(2, 2)
+zoom = Vector2(2.5, 2.5)
 limit_left = 0
 limit_top = 0
 limit_right = 0

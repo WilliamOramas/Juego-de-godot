@@ -30,7 +30,7 @@ var _camera_zoom_modified: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	$Phone.position = Vector2(580, 650)
+	$Phone.position = Vector2(948, 800)
 	visible = false
 	face_anim.play("talk")
 	EventBus.scene_changing.connect(_on_scene_changing)
@@ -43,8 +43,8 @@ func _ready() -> void:
 	EventBus.quest_completed.connect(_on_quest_event)
 	EventBus.journal_entry_added.connect(_on_journal_entry_added)
 
-	_add_hint_label(25, 215, "[J] Bit\u00e1cora")
-	_add_hint_label(25, 240, "[K] Stats")
+	_add_hint_label(18, 220, "[J] Bit\u00e1cora")
+	_add_hint_label(18, 248, "[K] Stats")
 
 
 func _on_scene_loaded(_scene_path: String) -> void:
@@ -60,7 +60,7 @@ func _add_hint_label(x: int, y: int, text: String) -> void:
 	lbl.position = Vector2(x, y)
 	lbl.text = text
 	lbl.add_theme_font_override("font", load("res://src/fonts/coolvetica/Coolvetica Rg.otf") as Font)
-	lbl.add_theme_font_size_override("font_size", 11)
+	lbl.add_theme_font_size_override("font_size", 9)
 	lbl.add_theme_color_override("font_color", Color(0.227451, 0.886275, 0.886275, 1))
 	_hint_labels.append(lbl)
 	$Phone.add_child(lbl)

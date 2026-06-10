@@ -101,6 +101,7 @@ libraries/ = SubResource("AnimationLibrary_npc")
 position = Vector2(-1, 21.5)
 shape = SubResource("RectangleShape2D_phys")
 
+
 [node name="DetectionArea" type="Area2D" parent="." unique_id=1168980355]
 collision_layer = 0
 collision_mask = 2

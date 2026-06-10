@@ -123,19 +123,19 @@ func _ready() -> void:
 	instruction_label.anchor_top = 0.0
 	instruction_label.anchor_right = 0.0
 	instruction_label.anchor_bottom = 0.0
-	instruction_label.offset_left = 80
-	instruction_label.offset_top = 95
-	instruction_label.offset_right = 580
-	instruction_label.offset_bottom = 155
+	instruction_label.offset_left = 64
+	instruction_label.offset_top = 72
+	instruction_label.offset_right = 960
+	instruction_label.offset_bottom = 132
 
 	help_label.anchor_left = 0.0
 	help_label.anchor_top = 0.0
 	help_label.anchor_right = 0.0
 	help_label.anchor_bottom = 0.0
-	help_label.offset_left = 80
-	help_label.offset_top = 160
-	help_label.offset_right = 580
-	help_label.offset_bottom = 230
+	help_label.offset_left = 64
+	help_label.offset_top = 138
+	help_label.offset_right = 960
+	help_label.offset_bottom = 210
 
 	step_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	step_label.offset_left = 20
@@ -146,7 +146,7 @@ func _ready() -> void:
 	timer_label.offset_top = 15
 	timer_label.offset_right = 50
 
-	patient_sprite.position = Vector2(400, 510)
+	patient_sprite.position = Vector2(512, 336)
 	patient_sprite.scale = Vector2(2.5, 2.5)
 
 	bgm_player.play()
@@ -171,10 +171,10 @@ func _ready() -> void:
 
 	_hearts_box = HBoxContainer.new()
 	_hearts_box.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	_hearts_box.offset_left = -200
-	_hearts_box.offset_top = 15
+	_hearts_box.offset_left = -250
+	_hearts_box.offset_top = 12
 	_hearts_box.offset_right = -30
-	_hearts_box.offset_bottom = 47
+	_hearts_box.offset_bottom = 50
 	_hearts_box.alignment = BoxContainer.ALIGNMENT_END
 	game_container.add_child(_hearts_box)
 	for i in range(5):

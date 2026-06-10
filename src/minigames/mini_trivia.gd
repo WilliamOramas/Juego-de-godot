@@ -117,13 +117,13 @@ func _build_ui() -> void:
 	
 	p1_player_strikes = _create_label(p1_container, "Tus Strikes: 0/3", -1, Color.AQUA, HORIZONTAL_ALIGNMENT_LEFT)
 	p1_player_strikes.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	p1_player_strikes.position = Vector2(50, 70)
-	p1_player_strikes.size = Vector2(250, 40)
+	p1_player_strikes.position = Vector2(48, 66)
+	p1_player_strikes.size = Vector2(320, 42)
 	
 	p1_enrique_strikes = _create_label(p1_container, "Strikes de Enrique: 0/3", -1, Color.ORANGE, HORIZONTAL_ALIGNMENT_RIGHT)
 	p1_enrique_strikes.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	p1_enrique_strikes.position = Vector2(-300, 70)
-	p1_enrique_strikes.size = Vector2(250, 40)
+	p1_enrique_strikes.position = Vector2(-368, 66)
+	p1_enrique_strikes.size = Vector2(320, 42)
 	
 	p1_question = _create_label(p1_container, "Pregunta...", 20)
 	p1_question.autowrap_mode = TextServer.AUTOWRAP_WORD
@@ -132,7 +132,7 @@ func _build_ui() -> void:
 	p1_options = VBoxContainer.new()
 	p1_container.add_child(p1_options)
 	p1_options.add_theme_constant_override("separation", 15)
-	_set_center(p1_options, 500, 300, 60)
+	_set_center(p1_options, 672, 240, 48)
 	
 	p1_status = _create_label(p1_container, "", -1)
 	p1_status.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
@@ -161,11 +161,11 @@ func _build_ui() -> void:
 	p2_grid.columns = 5
 	p2_grid.add_theme_constant_override("h_separation", 10)
 	p2_grid.add_theme_constant_override("v_separation", 10)
-	_set_center(p2_grid, 340, 410, 50) # Approx 5 cols of 60px+10px, 6 rows of 60px+10px, shifted down
+	_set_center(p2_grid, 480, 336, 36) # Approx 5 cols of 60px+10px, 6 rows of 60px+10px, shifted down
 	
 	for i in range(30):
 		var panel = PanelContainer.new()
-		panel.custom_minimum_size = Vector2(60, 60)
+		panel.custom_minimum_size = Vector2(64, 60)
 		var style = StyleBoxFlat.new()
 		style.bg_color = Color(0.2, 0.2, 0.2)
 		style.border_width_bottom = 2
@@ -210,7 +210,7 @@ func _next_question() -> void:
 		var btn = Button.new()
 		btn.text = q["ops"][i]
 		btn.add_theme_font_size_override("font_size", 18)
-		btn.custom_minimum_size = Vector2(500, 45)
+		btn.custom_minimum_size = Vector2(672, 48)
 		btn.pressed.connect(_on_option_selected.bind(i))
 		p1_options.add_child(btn)
 

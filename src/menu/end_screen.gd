@@ -38,7 +38,7 @@ func build_ui() -> void:
 	var font := load("res://src/fonts/coolvetica/Coolvetica Rg.otf") as Font
 
 	_panel = Panel.new()
-	_panel.set_size(Vector2(420, 460))
+	_panel.set_size(Vector2(500, 450))
 	var panel_style := StyleBoxFlat.new()
 	panel_style.bg_color = Color(0.117647, 0.117647, 0.137255, 0.95)
 	panel_style.border_width_left = 2

@@ -33,9 +33,9 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	ecg_line.anchor_right = 1.0
 	ecg_line.anchor_bottom = 0.0
 	ecg_line.offset_left = 0
-	ecg_line.offset_top = 400
+	ecg_line.offset_top = 336
 	ecg_line.offset_right = 0
-	ecg_line.offset_bottom = 560
+	ecg_line.offset_bottom = 432
 	root.game_container.add_child(ecg_line)
 
 	# Hide world patient and create local one
@@ -75,7 +75,7 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	if pulse_point:
 		pulse_point.custom_minimum_size = Vector2(48, 48)
 		pulse_point.size = Vector2(48, 48)
-		pulse_point.position = Vector2(326, 426)
+		pulse_point.position = Vector2(416, 312)
 		var style = StyleBoxFlat.new()
 		style.bg_color = Color(0.0, 0.75, 1.0, 0.25)
 		style.border_width_left = 4
@@ -102,7 +102,7 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	if heart_icon:
 		heart_icon.custom_minimum_size = Vector2(32, 32)
 		heart_icon.size = Vector2(32, 32)
-		heart_icon.position = Vector2(378, 458)
+		heart_icon.position = Vector2(480, 336)
 		heart_icon.texture = load("res://src/assets/sprites/heart_pixel.svg")
 		heart_icon.pivot_offset = Vector2(16, 16)
 

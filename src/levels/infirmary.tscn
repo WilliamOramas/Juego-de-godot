@@ -7,8 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
 [ext_resource type="Texture2D" uid="uid://ckfk1i1404ys6" path="res://src/assets/sprites/npc_spritesheet.png" id="6_nurse_tex"]
 [ext_resource type="Script" uid="uid://dtl581vlfbxui" path="res://src/levels/level_limits.gd" id="7_limits"]
-[ext_resource type="Resource" path="res://src/quests/quest_emergency.tres" id="8_quest_emergency"]
-[ext_resource type="Script" path="res://src/entities/cpr_trigger.gd" id="9_cpr_trigger"]
+[ext_resource type="Resource" uid="uid://bpjju3kwde2by" path="res://src/quests/quest_emergency.tres" id="8_quest_emergency"]
+[ext_resource type="Script" uid="uid://m5epbddkyfn4" path="res://src/entities/cpr_trigger.gd" id="9_cpr_trigger"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left_bottom"]
 size = Vector2(2, 219)
@@ -136,7 +136,7 @@ shape = SubResource("RectangleShape2D_door")
 position = Vector2(59, 110)
 
 [node name="EnfermeroGuardia" parent="." unique_id=1267357982 instance=ExtResource("5_npc")]
-position = Vector2(240, 120)
+position = Vector2(58, 218)
 sprite_texture = ExtResource("6_nurse_tex")
 npc_name = "Carlos (Enfermero)"
 is_ai = true
@@ -144,8 +144,8 @@ ai_system_prompt = "Eres Carlos, el enfermero venezolano de la universidad UNEFA
 dialog_lines = Array[String](["Hola. Toma asiento, por favor.", "Dime, ¿qué síntomas tienes hoy? Vamos a evaluarte rápido y bien."])
 dialog_lines_repeat = Array[String](["¿Todo bien, muchacho? ¿Sigues con molestias?", "Recuerda descansar un poco. Si te sientes mal de nuevo, regresa."])
 dialog_lines_blocked = Array[String](["Todavía no es momento, joven. Primero conoce bien las instalaciones y luego hablamos de lo que hay que hacer."])
-routine_type = "Estático"
 quest_to_start = ExtResource("8_quest_emergency")
+routine_type = "Estático"
 
 [node name="Furniture" type="Node2D" parent="." unique_id=653743026]
 

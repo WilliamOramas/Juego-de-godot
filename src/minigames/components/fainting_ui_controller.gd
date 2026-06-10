@@ -46,20 +46,20 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	instruction_label.anchor_top = 0.0
 	instruction_label.anchor_right = 0.0
 	instruction_label.anchor_bottom = 0.0
-	instruction_label.offset_left = 80
-	instruction_label.offset_top = 95
-	instruction_label.offset_right = 580
-	instruction_label.offset_bottom = 155
+	instruction_label.offset_left = 64
+	instruction_label.offset_top = 72
+	instruction_label.offset_right = 960
+	instruction_label.offset_bottom = 132
 	instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 	help_label.anchor_left = 0.0
 	help_label.anchor_top = 0.0
 	help_label.anchor_right = 0.0
 	help_label.anchor_bottom = 0.0
-	help_label.offset_left = 80
-	help_label.offset_top = 160
-	help_label.offset_right = 580
-	help_label.offset_bottom = 230
+	help_label.offset_left = 64
+	help_label.offset_top = 138
+	help_label.offset_right = 960
+	help_label.offset_bottom = 210
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 	step_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
@@ -78,10 +78,10 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	keycap_rect.anchor_top = 0.0
 	keycap_rect.anchor_right = 0.0
 	keycap_rect.anchor_bottom = 0.0
-	keycap_rect.offset_left = 80
-	keycap_rect.offset_top = 260
-	keycap_rect.offset_right = 112
-	keycap_rect.offset_bottom = 292
+	keycap_rect.offset_left = 64
+	keycap_rect.offset_top = 264
+	keycap_rect.offset_right = 115
+	keycap_rect.offset_bottom = 302
 	keycap_rect.visible = false
 	root.game_container.add_child(keycap_rect)
 
@@ -104,19 +104,19 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	progress_bar.anchor_top = 0.0
 	progress_bar.anchor_right = 0.0
 	progress_bar.anchor_bottom = 0.0
-	progress_bar.offset_left = 130
-	progress_bar.offset_top = 260
-	progress_bar.offset_right = 330
-	progress_bar.offset_bottom = 292
+	progress_bar.offset_left = 272
+	progress_bar.offset_top = 264
+	progress_bar.offset_right = 752
+	progress_bar.offset_bottom = 302
 
 	# Hearts Box
 	if hearts_label: hearts_label.visible = false
 	hearts_box = HBoxContainer.new()
 	hearts_box.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	hearts_box.offset_left = -150
-	hearts_box.offset_top = 15
+	hearts_box.offset_left = -220
+	hearts_box.offset_top = 12
 	hearts_box.offset_right = -30
-	hearts_box.offset_bottom = 47
+	hearts_box.offset_bottom = 50
 	hearts_box.alignment = BoxContainer.ALIGNMENT_END
 	root.game_container.add_child(hearts_box)
 	for i in range(3):
@@ -169,10 +169,10 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	touch_button.anchor_top = 0.0
 	touch_button.anchor_right = 0.0
 	touch_button.anchor_bottom = 0.0
-	touch_button.offset_left = 300
-	touch_button.offset_top = 400
-	touch_button.offset_right = 500
-	touch_button.offset_bottom = 470
+	touch_button.offset_left = 352
+	touch_button.offset_top = 336
+	touch_button.offset_right = 672
+	touch_button.offset_bottom = 408
 	touch_button.visible = false
 	touch_button.mouse_filter = Control.MOUSE_FILTER_STOP
 
@@ -226,10 +226,10 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	touch_dial_container.anchor_top = 0.0
 	touch_dial_container.anchor_right = 0.0
 	touch_dial_container.anchor_bottom = 0.0
-	touch_dial_container.offset_left = 240
-	touch_dial_container.offset_top = 320
-	touch_dial_container.offset_right = 560
-	touch_dial_container.offset_bottom = 390
+	touch_dial_container.offset_left = 272
+	touch_dial_container.offset_top = 312
+	touch_dial_container.offset_right = 752
+	touch_dial_container.offset_bottom = 396
 	touch_dial_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	touch_dial_container.visible = false
 	touch_dial_container.add_theme_constant_override("separation", 20)

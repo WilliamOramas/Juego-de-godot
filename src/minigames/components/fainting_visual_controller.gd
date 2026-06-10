@@ -21,8 +21,8 @@ const PLAYER_ACTION_POS = Vector2(732.0, 620.0)
 func setup(minigame: MiniFaintingFirstAid) -> void:
 	root = minigame
 	
-	pulse_point = root.get_node_or_null("GameContainer/PulsePoint")
-	heart_icon = root.get_node_or_null("GameContainer/HeartIcon")
+	pulse_point = root.game_container.get_node_or_null("PulsePoint")
+	heart_icon = root.game_container.get_node_or_null("HeartIcon")
 	
 	# Create ECG Line Control (bottom strip, below all text)
 	ecg_line = ECGLineControl.new()
@@ -34,7 +34,7 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	ecg_line.offset_top = 400
 	ecg_line.offset_right = 0
 	ecg_line.offset_bottom = 560
-	root.get_node("GameContainer").add_child(ecg_line)
+	root.game_container.add_child(ecg_line)
 
 	# Hide world patient and create local one
 	var world = root.get_tree().current_scene
@@ -95,7 +95,7 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 	pulse_prompt.add_theme_color_override("font_color", MiniGameTheme.DANGER)
 	pulse_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	pulse_prompt.visible = false
-	root.get_node("GameContainer").add_child(pulse_prompt)
+	root.game_container.add_child(pulse_prompt)
 
 	if heart_icon:
 		heart_icon.custom_minimum_size = Vector2(32, 32)
@@ -117,7 +117,7 @@ func _process(delta: float) -> void:
 		shake_timer -= delta
 		trauma = (shake_timer / 0.5) * 15.0
 	
-	var main_camera: Camera2D = root.get_viewport().get_camera_2d()
+	var main_camera: Camera2D = root.get_tree().root.get_camera_2d()
 	if main_camera:
 		var time: float = Time.get_ticks_msec() / 1000.0
 		var wobble_x = sin(time * 2.5) * 1.5 + cos(time * 1.7) * 2.0
@@ -201,6 +201,6 @@ func cleanup(success: bool) -> void:
 	if patient_sprite and is_instance_valid(patient_sprite):
 		patient_sprite.queue_free()
 		
-	var main_camera = root.get_viewport().get_camera_2d()
+	var main_camera = root.get_tree().root.get_camera_2d()
 	if main_camera:
 		main_camera.offset = Vector2.ZERO

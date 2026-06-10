@@ -138,6 +138,7 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_top = 400.0
 offset_bottom = 560.0
+grow_horizontal = 2
 mouse_filter = 2
 
 [node name="BreathPrompt" type="Label" parent="GameContainer" index="9" unique_id=200000011]
@@ -162,8 +163,8 @@ vertical_alignment = 1
 autowrap_mode = 1
 
 [node name="PatientSprite" type="Sprite2D" parent="GameContainer" index="10" unique_id=200000012]
-position = Vector2(442, 500)
-scale = Vector2(1.283019, 2.2903235)
+position = Vector2(404, 500)
+scale = Vector2(1.6415095, 2.2903235)
 texture = ExtResource("8_patient")
 centered = false
 

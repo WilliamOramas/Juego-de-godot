@@ -12,6 +12,7 @@
 | 6 | [06-sistemas-del-juego.md](06-sistemas-del-juego.md) | Guardado, misiones, minijuegos, diario, puntuación |
 | 7 | [07-pruebas.md](07-pruebas.md) | Pruebas unitarias GDScript |
 | 8 | [08-guia-presentacion.md](08-guia-presentacion.md) | Demo académica (SQLite + Supabase) |
+| 9 | [09-guia-exposicion-backend-bd.md](09-guia-exposicion-backend-bd.md) | **Guía para exponer backend y BD** (compañero) |
 
 ### Documentación adicional existente
 

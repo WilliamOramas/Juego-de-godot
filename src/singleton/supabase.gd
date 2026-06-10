@@ -44,6 +44,7 @@ func is_logged_in() -> bool:
 func logout() -> void:
 	access_token = ""
 	user_id = ""
+	current_session_id = -1
 
 func login(email: String, password: String) -> void:
 	_is_login_request = true
@@ -183,7 +184,26 @@ func _send_db_request(endpoint: String, method: int, body: String = "", callback
 	http.request(url, headers, method, body)
 
 func fetch_escenarios(callback: Callable) -> void:
-	_send_db_request("escenarios?select=*", HTTPClient.METHOD_GET, "", callback)
+	_send_db_request(SupabaseApi.build_escenarios_endpoint(), HTTPClient.METHOD_GET, "", callback)
+
+func fetch_protocolo(id_escenario: int, callback: Callable) -> void:
+	_send_db_request(SupabaseApi.build_protocolo_endpoint(id_escenario), HTTPClient.METHOD_GET, "", callback)
+
+func upsert_usuario(nombre: String, carrera: String = "", callback: Callable = Callable()) -> void:
+	if user_id == "":
+		if callback.is_valid():
+			callback.call(false, null, "No hay usuario activo")
+		return
+	var data := {
+		"nombre": nombre,
+		"carrera": carrera if carrera != "" else null,
+	}
+	_send_db_request(
+		SupabaseApi.build_usuario_patch_endpoint(user_id),
+		HTTPClient.METHOD_PATCH,
+		JSON.stringify(data),
+		callback
+	)
 
 func start_session(id_escenario: int, callback: Callable) -> void:
 	if user_id == "":
@@ -204,22 +224,15 @@ func start_session(id_escenario: int, callback: Callable) -> void:
 	)
 
 func send_telemetry(id_sesion: int, accion: String, es_correcto: bool, tiempo: float, salud: String = "") -> void:
-	var data = {
-		"id_sesion": id_sesion,
-		"accion_realizada": accion,
-		"es_correcto": es_correcto,
-		"tiempo_seg": tiempo,
-		"estado_salud_momento": salud
-	}
+	var data := SupabaseApi.build_telemetry_body(id_sesion, accion, es_correcto, tiempo, salud)
 	_send_db_request("telemetria_eventos", HTTPClient.METHOD_POST, JSON.stringify(data))
 
 func finish_session(id_sesion: int, resultado: String, callback: Callable = Callable()) -> void:
-	var data = {
-		"resultado": resultado
-	}
-	_send_db_request("sesiones?id_sesion=eq.%d" % id_sesion, HTTPClient.METHOD_PATCH, JSON.stringify(data), func(success, resp_data, error):
+	var data := SupabaseApi.build_finish_session_rpc_body(id_sesion, resultado)
+	_send_db_request("rpc/finalizar_sesion_transaccional", HTTPClient.METHOD_POST, JSON.stringify(data), func(success, resp_data, error):
 		current_session_id = -1
-		if callback.is_valid(): callback.call(success, resp_data, error)
+		if callback.is_valid():
+			callback.call(success, resp_data, error)
 	)
 
 # --- CLOUD SAVES ---
@@ -227,10 +240,7 @@ func push_cloud_saves(save_data: Dictionary, callback: Callable = Callable()) ->
 	if user_id == "":
 		if callback.is_valid(): callback.call(false, null, "No user")
 		return
-	var data = {
-		"user_id": user_id,
-		"save_data": save_data
-	}
+	var data := SupabaseApi.build_cloud_save_body(user_id, save_data)
 	# Utilizamos resolution=merge-duplicates para hacer un UPSERT (Insert o Update si ya existe)
 	_send_db_request("cloud_saves", HTTPClient.METHOD_POST, JSON.stringify(data), callback, PackedStringArray(["Prefer: resolution=merge-duplicates"]))
 

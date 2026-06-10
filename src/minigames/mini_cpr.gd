@@ -17,6 +17,7 @@ const STEP_DATA: Array[Dictionary] = [
 		"help": "Mirá alrededor. Si hay peligro, no te acerques.\n[Q] Presioná para confirmar.",
 		"type": StepType.SAFETY,
 		"target": 1,
+		"protocolo_accion": "Verificar escena segura",
 		"feedback_ok": "Escena segura. Iniciando RCP.",
 		"feedback_fail": "¡No te olvides de verificar la escena!",
 	},
@@ -26,6 +27,7 @@ const STEP_DATA: Array[Dictionary] = [
 		"type": StepType.COMPRESS,
 		"target": COMPRESSIONS_PER_CYCLE,
 		"cycle_label": "Ciclo 1/3",
+		"protocolo_accion": "30 compresiones torácicas",
 		"feedback_ok": "30 compresiones completadas.",
 		"feedback_fail": "¡No frenes las compresiones!",
 	},
@@ -35,6 +37,7 @@ const STEP_DATA: Array[Dictionary] = [
 		"type": StepType.BREATH,
 		"target": BREATHS_PER_CYCLE,
 		"cycle_label": "Ciclo 1/3",
+		"protocolo_accion": "2 respiraciones de rescate",
 		"feedback_ok": "Respiraciones completadas.",
 		"feedback_fail": "¡No olvides las respiraciones!",
 	},
@@ -43,6 +46,7 @@ const STEP_DATA: Array[Dictionary] = [
 		"help": "Repetí compresiones y respiraciones.",
 		"type": StepType.CYCLE,
 		"target": TOTAL_CYCLES - 1,
+		"protocolo_accion": "Ciclo completo 30:2",
 		"feedback_ok": "RCP completa. ¡Ritmo restaurado!",
 		"feedback_fail": "El paciente no resistió.",
 	},
@@ -51,6 +55,7 @@ const STEP_DATA: Array[Dictionary] = [
 		"help": "Marcá 1-1-2 en el teclado.\n[_][_][_]",
 		"type": StepType.DIAL_112,
 		"target": [KEY_1, KEY_1, KEY_2],
+		"protocolo_accion": "Llamar al 112",
 		"feedback_ok": "112 notificado. Ayuda en camino.",
 		"feedback_fail": "¡Tenés que avisar a emergencias!",
 	},
@@ -429,7 +434,6 @@ func _register_compression() -> void:
 		return
 
 	_compression_count += 1
-	ScoreManager.record_minigame_step(true)
 	step_sound.pitch_scale = 0.8
 	step_sound.play()
 
@@ -559,7 +563,6 @@ func _handle_breaths(delta: float, _step: Dictionary) -> void:
 				elif step.type == StepType.CYCLE:
 					_cycle_count += 1
 					if _cycle_count >= step.target:
-						ScoreManager.record_minigame_step(true)
 						_on_step_ok()
 					else:
 						_start_pulse_check()
@@ -685,7 +688,8 @@ func _advance_step() -> void:
 
 func _lose_life(msg: String) -> void:
 	_lives -= 1
-	ScoreManager.record_minigame_step(false)
+	var step: Dictionary = STEP_DATA[_current_step]
+	ScoreManager.record_minigame_step(false, step.get("protocolo_accion", "Acción médica") as String)
 	feedback_label.modulate = MiniGameTheme.FEEDBACK_BAD
 	feedback_label.text = "✗ " + msg
 	wrong_sound.play()
@@ -713,7 +717,7 @@ func _on_step_ok() -> void:
 	feedback_label.modulate = MiniGameTheme.FEEDBACK_GOOD
 	feedback_label.text = "✓ " + step.feedback_ok
 	correct_sound.play()
-	ScoreManager.record_minigame_step(true)
+	ScoreManager.record_minigame_step(true, step.get("protocolo_accion", "Acción médica") as String)
 	_state = "step_ok_delay"
 	_state_timer = 0.8
 

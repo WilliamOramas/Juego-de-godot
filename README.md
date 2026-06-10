@@ -37,6 +37,21 @@ Desarrollar un videojuego interactivo con Inteligencia Artificial para enseñar 
 
 ---
 
+## 📚 Documentación
+
+La documentación completa está dividida en partes en la carpeta [`docs/`](docs/README.md):
+
+1. [Introducción](docs/01-introduccion.md)
+2. [Instalación y configuración](docs/02-instalacion-y-configuracion.md)
+3. [Arquitectura de software](docs/03-arquitectura-software.md)
+4. [Base de datos](docs/04-base-de-datos.md)
+5. [Integración Supabase](docs/05-integracion-supabase.md)
+6. [Sistemas del juego](docs/06-sistemas-del-juego.md)
+7. [Pruebas unitarias](docs/07-pruebas.md)
+8. [Guía de presentación académica](docs/08-guia-presentacion.md)
+
+---
+
 ## 🚀 Cómo Iniciar el Proyecto
 1. Descarga e instala **Godot Engine 4** (versión recomendada: 4.2+ o compatible con GL Compatibility).
 2. Clona este repositorio o descarga los archivos:

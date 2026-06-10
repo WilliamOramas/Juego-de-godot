@@ -149,6 +149,7 @@ offset_bottom = 37.799988
 grow_vertical = 2
 
 [node name="Usuario" parent="." instance=ExtResource("1_1k071")]
+z_index = 10
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -167,6 +168,16 @@ text = "USUARIO"
 [node name="OpcionesPanel" parent="." instance=ExtResource("10_opciones")]
 [node name="CreditosPanel" parent="." instance=ExtResource("11_creditos")]
 [node name="SlotSelector" parent="." instance=ExtResource("12_slot")]
+
+[node name="LoginPanel" parent="." instance=ExtResource("13_login")]
+visible = false
+z_index = 50
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
 title = "Confirmar"

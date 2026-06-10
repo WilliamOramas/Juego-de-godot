@@ -8,18 +8,23 @@ var _pending_is_cloud: bool = false
 var _user_popup: PopupMenu
 
 func _ready() -> void:
+	add_to_group("main_menu_root")
 	get_tree().paused = false
 	$OpcionesPanel.panel_closed.connect(_on_panel_closed)
 	$ControlesPanel.panel_closed.connect(_on_panel_closed)
 	$CreditosPanel.panel_closed.connect(_on_panel_closed)
 	$SlotSelector.panel_closed.connect(_on_panel_closed)
 	$SlotSelector.slot_selected.connect(_on_slot_selected)
+	$LoginPanel.panel_closed.connect(_on_panel_closed)
+	$LoginPanel.login_completed.connect(_on_login_completed)
 	
 	_user_popup = PopupMenu.new()
 	_user_popup.add_item("Cerrar Sesión", 0)
 	_user_popup.id_pressed.connect(_on_user_popup_id_pressed)
 	add_child(_user_popup)
 	
+	$LoginPanel.visible = false
+	$LoginPanel.set_process_input(false)
 	_update_user_button()
 
 func _update_user_button() -> void:
@@ -124,10 +129,15 @@ func _on_creditos_pressed() -> void:
 
 func _on_usuario_pressed() -> void:
 	if Supabase.is_logged_in():
-		var btn_rect = $Usuario.get_global_rect()
+		var btn_rect: Rect2 = $Usuario.get_global_rect()
 		_user_popup.popup(Rect2i(btn_rect.position.x, btn_rect.position.y - 40, 150, 40))
 	else:
-		SceneManager.change_scene("res://src/menu/login_panel.tscn")
+		_active_panel = $LoginPanel
+		$LoginPanel.show_panel()
+
+
+func _on_login_completed(_success: bool) -> void:
+	_update_user_button()
 
 func _on_user_popup_id_pressed(id: int) -> void:
 	if id == 0: # Cerrar sesión

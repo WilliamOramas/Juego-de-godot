@@ -22,6 +22,7 @@ const STEP_DATA: Array[Dictionary] = [
 		"help": "Paso 1: Verificar si responde.\nGritale fuerte y tocale el hombro.\n[Q] Mantené 1.5 segundos.",
 		"type": StepType.HOLD_CHECK_RESPONSE,
 		"target": 1.5,
+		"protocolo_accion": "Verificar respuesta del paciente",
 		"feedback_ok": "¡Bien! Verificaste si responde.",
 		"feedback_fail": "Tenés que verificar si responde primero.",
 	},
@@ -30,6 +31,7 @@ const STEP_DATA: Array[Dictionary] = [
 		"help": "Paso 2: Verificar respiración.\nObservá su pecho.\n[Q] Mantené 3 segundos.",
 		"type": StepType.HOLD_CHECK_BREATHING,
 		"target": 3.0,
+		"protocolo_accion": "Verificar respiración",
 		"feedback_ok": "¡Bien! Verificaste la respiración.",
 		"feedback_fail": "Tenés que mantener Q para verificar.",
 	},
@@ -39,6 +41,7 @@ const STEP_DATA: Array[Dictionary] = [
 		"type": StepType.TIMED_PRESS,
 		"target": 1,
 		"window": 1.0,
+		"protocolo_accion": "Palpar pulso carotídeo",
 		"feedback_ok": "¡Bien! Pulso detectado.",
 		"feedback_fail": "¡No te saltes el pulso carotídeo!",
 	},
@@ -47,6 +50,7 @@ const STEP_DATA: Array[Dictionary] = [
 		"help": "Paso 4: Llamar emergencias.\nMarcá 1-1-2 en el teclado.\n[_][_][_]",
 		"type": StepType.DIAL_112,
 		"target": [KEY_1, KEY_1, KEY_2],
+		"protocolo_accion": "Llamar al 112",
 		"feedback_ok": "¡Bien! Pediste ayuda.",
 		"feedback_fail": "El número de emergencias es 112.",
 	},
@@ -55,6 +59,7 @@ const STEP_DATA: Array[Dictionary] = [
 		"help": "Paso 5: Elevar piernas.\n[Q] Mantené para elevarlas.\nEsto mejora la circulación.",
 		"type": StepType.HOLD_ELEVATE,
 		"target": 2.0,
+		"protocolo_accion": "Elevar piernas",
 		"feedback_ok": "¡Bien! Piernas elevadas.",
 		"feedback_fail": "Tenés que mantener Q para elevar piernas.",
 	},
@@ -63,6 +68,7 @@ const STEP_DATA: Array[Dictionary] = [
 		"help": "Paso 6: Aflojar ropa ajustada.\n[Q] Presioná para aflojar.",
 		"type": StepType.TAP,
 		"target": 1,
+		"protocolo_accion": "Aflojar ropa ajustada",
 		"feedback_ok": "¡Bien! Ropa aflojada.",
 		"feedback_fail": "Tenés que presionar Q.",
 	},
@@ -71,6 +77,7 @@ const STEP_DATA: Array[Dictionary] = [
 		"help": "Paso 7: Monitorear signos vitales.\n[Q] Presioná cuando el corazón parpadee.\n3 veces.",
 		"type": StepType.ECG,
 		"target": 3,
+		"protocolo_accion": "Monitorear signos vitales",
 		"feedback_ok": "¡Bien! Monitoreaste correctamente.",
 		"feedback_fail": "Tenés que presionar Q cuando el corazón parpadee.",
 	},
@@ -192,7 +199,7 @@ func _on_step_completed() -> void:
 	ui.show_feedback("✓ " + step.feedback_ok, MiniGameTheme.FEEDBACK_GOOD)
 	var s = get_node_or_null("CorrectSound")
 	if s: s.play()
-	ScoreManager.record_minigame_step(true)
+	ScoreManager.record_minigame_step(true, step.get("protocolo_accion", "Acción médica") as String)
 	JournalManager.add_minigame_entry("Paso %d superado" % (_current_step + 1), step.feedback_ok)
 	visual.set_action_frame(_current_step, "idle")
 	_state = "step_ok_delay"
@@ -214,7 +221,8 @@ func _lose_life(msg: String) -> void:
 	ui.show_feedback("✗ " + msg, MiniGameTheme.FEEDBACK_BAD)
 	var wrong = get_node_or_null("WrongSound")
 	if wrong: wrong.play()
-	ScoreManager.record_minigame_step(false)
+	var step: Dictionary = STEP_DATA[_current_step]
+	ScoreManager.record_minigame_step(false, step.get("protocolo_accion", "Acción médica") as String)
 	JournalManager.add_minigame_entry("Error en paso %d" % (_current_step + 1), msg)
 	visual.trigger_shake()
 	visual.update_patient_color(_lives)

@@ -12,7 +12,6 @@ var minigame_attempts: int = 0
 
 var _step_errors: int = 0
 var _minigame_results: Dictionary = {}
-var _student_died: bool = false
 
 
 func _ready() -> void:
@@ -44,12 +43,11 @@ func record_minigame_result(game_id: String, success: bool, lives: int, time: fl
 	EventBus.score_updated.emit()
 	
 	if Supabase.current_session_id != -1:
-		var resultado = "Salvado" if success and not _student_died else "Fallecido"
+		var resultado := GameProtocol.resolve_session_result(success, Global.student_died)
 		Supabase.finish_session(Supabase.current_session_id, resultado)
 
 
 func record_student_death() -> void:
-	_student_died = true
 	student_saved = false
 	EventBus.score_updated.emit()
 
@@ -87,7 +85,7 @@ func _recompute_summary() -> void:
 		student_saved = false
 	else:
 		minigame_passed = any_passed
-		student_saved = all_passed and not _student_died
+		student_saved = all_passed and not Global.student_died
 
 	lives_remaining = total_lives
 	time_remaining = total_time
@@ -148,7 +146,6 @@ func get_minigame_results() -> Dictionary:
 
 func reset() -> void:
 	_minigame_results.clear()
-	_student_died = false
 	_step_errors = 0
 	minigame_passed = false
 	student_saved = false

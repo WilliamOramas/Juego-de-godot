@@ -95,6 +95,7 @@ var _state_timer: float = 0.0
 var ui: FaintingUIController
 var visual: FaintingVisualController
 var input: FaintingInputController
+var anim: FaintingAnimationController
 
 @onready var bgm_player: AudioStreamPlayer = $BgmPlayer
 @onready var heartbeat_player: AudioStreamPlayer = $HeartbeatPlayer
@@ -103,17 +104,21 @@ func _ready() -> void:
 	super()
 	_time_remaining = TIME_LIMIT
 	
+	anim = FaintingAnimationController.new()
+	add_child(anim)
+	anim.setup(self)
+	
 	visual = FaintingVisualController.new()
 	add_child(visual)
-	visual.setup(self)
+	visual.setup(self, anim)
 	
 	ui = FaintingUIController.new()
 	add_child(ui)
-	ui.setup(self)
+	ui.setup(self, anim)
 	
 	input = FaintingInputController.new()
 	add_child(input)
-	input.setup(self, visual)
+	input.setup(self, visual, ui, anim)
 	
 	input.step_completed.connect(_on_step_completed)
 	input.step_failed.connect(_lose_life)
@@ -197,6 +202,7 @@ func _input(event: InputEvent) -> void:
 func _on_step_completed() -> void:
 	var step = STEP_DATA[_current_step]
 	ui.show_feedback("✓ " + step.feedback_ok, MiniGameTheme.FEEDBACK_GOOD)
+	ui.show_checkmark()
 	var s = get_node_or_null("CorrectSound")
 	if s: s.play()
 	ScoreManager.record_minigame_step(true, step.get("protocolo_accion", "Acción médica") as String)
@@ -214,11 +220,13 @@ func _advance_step() -> void:
 		_state = "complete_delay"
 		_state_timer = 2.0
 		return
-	_reset_step()
+	anim.play_step_transition(game_container, _reset_step)
 
 func _lose_life(msg: String) -> void:
 	_lives -= 1
 	ui.show_feedback("✗ " + msg, MiniGameTheme.FEEDBACK_BAD)
+	ui.show_x()
+	visual.flash_error()
 	var wrong = get_node_or_null("WrongSound")
 	if wrong: wrong.play()
 	var step: Dictionary = STEP_DATA[_current_step]

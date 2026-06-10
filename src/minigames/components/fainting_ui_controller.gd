@@ -2,6 +2,7 @@ class_name FaintingUIController
 extends Node
 
 var root: MiniFaintingFirstAid
+var anim: FaintingAnimationController
 
 var instruction_label: Label
 var help_label: Label
@@ -13,11 +14,23 @@ var dial_label: Label
 var hearts_box: HBoxContainer
 var keycap_rect: TextureRect
 
+var checkmark_label: Label
+var x_label: Label
+
+var touch_button: Button
+var touch_dial_container: HBoxContainer
+var _is_touch_pressed: bool = false
+
+signal touch_pressed
+signal touch_released
+signal touch_dial_pressed(key: int)
+
 const KEYCAP_NORMAL = preload("res://src/assets/sprites/keycap_q.svg")
 const KEYCAP_PRESSED = preload("res://src/assets/sprites/keycap_q_pressed.svg")
 
-func setup(minigame: MiniFaintingFirstAid) -> void:
+func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimationController) -> void:
 	root = minigame
+	anim = animation_controller
 	
 	instruction_label = root.game_container.get_node("InstructionLabel")
 	help_label = root.game_container.get_node("HelpLabel")
@@ -113,11 +126,164 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 		heart_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		heart_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		hearts_box.add_child(heart_rect)
+	
+	# Checkmark and X labels for feedback
+	checkmark_label = Label.new()
+	checkmark_label.text = "✓"
+	checkmark_label.add_theme_color_override("font_color", MiniGameTheme.FEEDBACK_GOOD)
+	checkmark_label.add_theme_font_size_override("font_size", 48)
+	checkmark_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	checkmark_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	checkmark_label.anchor_left = 0.5
+	checkmark_label.anchor_top = 0.5
+	checkmark_label.anchor_right = 0.5
+	checkmark_label.anchor_bottom = 0.5
+	checkmark_label.offset_left = -30
+	checkmark_label.offset_top = -100
+	checkmark_label.offset_right = 30
+	checkmark_label.offset_bottom = -40
+	checkmark_label.visible = false
+	root.game_container.add_child(checkmark_label)
+	
+	x_label = Label.new()
+	x_label.text = "✗"
+	x_label.add_theme_color_override("font_color", MiniGameTheme.FEEDBACK_BAD)
+	x_label.add_theme_font_size_override("font_size", 48)
+	x_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	x_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	x_label.anchor_left = 0.5
+	x_label.anchor_top = 0.5
+	x_label.anchor_right = 0.5
+	x_label.anchor_bottom = 0.5
+	x_label.offset_left = -30
+	x_label.offset_top = -100
+	x_label.offset_right = 30
+	x_label.offset_bottom = -40
+	x_label.visible = false
+	root.game_container.add_child(x_label)
+	
+	# Touch button (for hold/tap/timed_press/ecg)
+	touch_button = Button.new()
+	touch_button.text = "PRESIONAR"
+	touch_button.anchor_left = 0.0
+	touch_button.anchor_top = 0.0
+	touch_button.anchor_right = 0.0
+	touch_button.anchor_bottom = 0.0
+	touch_button.offset_left = 300
+	touch_button.offset_top = 320
+	touch_button.offset_right = 500
+	touch_button.offset_bottom = 390
+	touch_button.visible = false
+	touch_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	
+	# Style matching the game's theme (dark, subtle, pixel-art)
+	var touch_style_normal = StyleBoxFlat.new()
+	touch_style_normal.bg_color = Color(0.0, 0.0, 0.0, 0.65)
+	touch_style_normal.border_width_left = 2
+	touch_style_normal.border_width_top = 2
+	touch_style_normal.border_width_right = 2
+	touch_style_normal.border_width_bottom = 2
+	touch_style_normal.border_color = Color(0.3, 0.35, 0.5, 0.7)
+	touch_style_normal.corner_radius_top_left = 6
+	touch_style_normal.corner_radius_top_right = 6
+	touch_style_normal.corner_radius_bottom_left = 6
+	touch_style_normal.corner_radius_bottom_right = 6
+	
+	var touch_style_pressed = StyleBoxFlat.new()
+	touch_style_pressed.bg_color = Color(0.0, 0.15, 0.15, 0.75)
+	touch_style_pressed.border_width_left = 2
+	touch_style_pressed.border_width_top = 2
+	touch_style_pressed.border_width_right = 2
+	touch_style_pressed.border_width_bottom = 2
+	touch_style_pressed.border_color = Color(0.0, 1.0, 0.8, 0.9)
+	touch_style_pressed.corner_radius_top_left = 6
+	touch_style_pressed.corner_radius_top_right = 6
+	touch_style_pressed.corner_radius_bottom_left = 6
+	touch_style_pressed.corner_radius_bottom_right = 6
+	
+	touch_button.add_theme_stylebox_override("normal", touch_style_normal)
+	touch_button.add_theme_stylebox_override("pressed", touch_style_pressed)
+	
+	touch_button.add_theme_font_override("font", MiniGameTheme.SILKSCREEN)
+	touch_button.add_theme_font_size_override("font_size", 22)
+	touch_button.add_theme_color_override("font_color", Color.WHITE)
+	touch_button.add_theme_color_override("font_outline_color", Color.BLACK)
+	touch_button.add_theme_constant_override("outline_size", 3)
+	
+	touch_button.button_down.connect(func():
+		_is_touch_pressed = true
+		touch_pressed.emit()
+	)
+	touch_button.button_up.connect(func():
+		_is_touch_pressed = false
+		touch_released.emit()
+	)
+	root.game_container.add_child(touch_button)
+	
+	# Touch dial buttons (for DIAL_112)
+	touch_dial_container = HBoxContainer.new()
+	touch_dial_container.anchor_left = 0.0
+	touch_dial_container.anchor_top = 0.0
+	touch_dial_container.anchor_right = 0.0
+	touch_dial_container.anchor_bottom = 0.0
+	touch_dial_container.offset_left = 240
+	touch_dial_container.offset_top = 320
+	touch_dial_container.offset_right = 560
+	touch_dial_container.offset_bottom = 390
+	touch_dial_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	touch_dial_container.visible = false
+	touch_dial_container.add_theme_constant_override("separation", 20)
+	touch_dial_container.mouse_filter = Control.MOUSE_FILTER_STOP
+	
+	for i in range(3):
+		var dial_btn = Button.new()
+		dial_btn.text = str(i + 1)
+		dial_btn.custom_minimum_size = Vector2(60, 60)
+		
+		var dial_style_normal = StyleBoxFlat.new()
+		dial_style_normal.bg_color = Color(0.0, 0.0, 0.0, 0.65)
+		dial_style_normal.border_width_left = 2
+		dial_style_normal.border_width_top = 2
+		dial_style_normal.border_width_right = 2
+		dial_style_normal.border_width_bottom = 2
+		dial_style_normal.border_color = Color(0.3, 0.35, 0.5, 0.7)
+		dial_style_normal.corner_radius_top_left = 6
+		dial_style_normal.corner_radius_top_right = 6
+		dial_style_normal.corner_radius_bottom_left = 6
+		dial_style_normal.corner_radius_bottom_right = 6
+		
+		var dial_style_pressed = StyleBoxFlat.new()
+		dial_style_pressed.bg_color = Color(0.0, 0.15, 0.15, 0.75)
+		dial_style_pressed.border_width_left = 2
+		dial_style_pressed.border_width_top = 2
+		dial_style_pressed.border_width_right = 2
+		dial_style_pressed.border_width_bottom = 2
+		dial_style_pressed.border_color = Color(0.0, 1.0, 0.8, 0.9)
+		dial_style_pressed.corner_radius_top_left = 6
+		dial_style_pressed.corner_radius_top_right = 6
+		dial_style_pressed.corner_radius_bottom_left = 6
+		dial_style_pressed.corner_radius_bottom_right = 6
+		
+		dial_btn.add_theme_stylebox_override("normal", dial_style_normal)
+		dial_btn.add_theme_stylebox_override("pressed", dial_style_pressed)
+		dial_btn.add_theme_font_override("font", MiniGameTheme.SILKSCREEN)
+		dial_btn.add_theme_font_size_override("font_size", 24)
+		dial_btn.add_theme_color_override("font_color", Color.WHITE)
+		dial_btn.add_theme_color_override("font_outline_color", Color.BLACK)
+		dial_btn.add_theme_constant_override("outline_size", 3)
+		
+		var keycode = KEY_1 if i == 0 else KEY_2 if i == 1 else KEY_3
+		dial_btn.pressed.connect(func(): touch_dial_pressed.emit(keycode))
+		
+		touch_dial_container.add_child(dial_btn)
+	
+	root.game_container.add_child(touch_dial_container)
 
 func _process(_delta: float) -> void:
 	if not root._is_running:
 		return
-	if Input.is_action_pressed("Phone"):
+	var is_pressed = Input.is_action_pressed("Phone") or _is_touch_pressed
+	if is_pressed:
 		if keycap_rect and keycap_rect.texture != KEYCAP_PRESSED:
 			keycap_rect.texture = KEYCAP_PRESSED
 	else:
@@ -145,6 +311,24 @@ func update_ui(step_data: Dictionary, step_index: int, total_steps: int, lives: 
 		if needs_keycap and not keycap_rect.visible:
 			_animate_keycap_appear()
 		keycap_rect.visible = needs_keycap
+	
+	# Touch button visibility
+	var needs_touch_button = (step_data.type == MiniFaintingFirstAid.StepType.HOLD_CHECK_RESPONSE or step_data.type == MiniFaintingFirstAid.StepType.HOLD_CHECK_BREATHING or step_data.type == MiniFaintingFirstAid.StepType.HOLD_ELEVATE or step_data.type == MiniFaintingFirstAid.StepType.TAP or step_data.type == MiniFaintingFirstAid.StepType.TIMED_PRESS or step_data.type == MiniFaintingFirstAid.StepType.ECG)
+	touch_button.visible = needs_touch_button
+	if needs_touch_button:
+		match step_data.type:
+			MiniFaintingFirstAid.StepType.HOLD_CHECK_RESPONSE, MiniFaintingFirstAid.StepType.HOLD_CHECK_BREATHING, MiniFaintingFirstAid.StepType.HOLD_ELEVATE:
+				touch_button.text = "MANTENER"
+			MiniFaintingFirstAid.StepType.TAP:
+				touch_button.text = "PRESIONAR"
+			MiniFaintingFirstAid.StepType.TIMED_PRESS:
+				touch_button.text = "PULSO"
+			MiniFaintingFirstAid.StepType.ECG:
+				touch_button.text = "CORAZÓN"
+	
+	# Touch dial visibility
+	var needs_touch_dial = (step_data.type == MiniFaintingFirstAid.StepType.DIAL_112)
+	touch_dial_container.visible = needs_touch_dial
 		
 	# Update dial label visibility
 	if step_data.type != MiniFaintingFirstAid.StepType.DIAL_112:
@@ -185,6 +369,18 @@ func clear_feedback() -> void:
 	feedback_label.modulate = MiniGameTheme.TEXT_PRIMARY
 
 func _animate_keycap_appear() -> void:
-	keycap_rect.scale = Vector2(0, 0)
-	var tw := create_tween().set_trans(Tween.TRANS_BACK)
-	tw.tween_property(keycap_rect, "scale", Vector2(1, 1), 0.2)
+	anim.play_pop(keycap_rect)
+
+func show_checkmark() -> void:
+	checkmark_label.visible = true
+	anim.play_pop(checkmark_label)
+	var tw := create_tween()
+	tw.tween_interval(0.8)
+	tw.tween_callback(func(): checkmark_label.visible = false)
+
+func show_x() -> void:
+	x_label.visible = true
+	anim.play_pop(x_label)
+	var tw := create_tween()
+	tw.tween_interval(0.8)
+	tw.tween_callback(func(): x_label.visible = false)

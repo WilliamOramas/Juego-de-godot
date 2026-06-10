@@ -130,7 +130,7 @@ func _on_creditos_pressed() -> void:
 func _on_usuario_pressed() -> void:
 	if Supabase.is_logged_in():
 		var btn_rect: Rect2 = $Usuario.get_global_rect()
-		_user_popup.popup(Rect2i(btn_rect.position.x, btn_rect.position.y - 40, 150, 40))
+		_user_popup.popup(Rect2i(int(btn_rect.position.x), int(btn_rect.position.y - 40), 150, 40))
 	else:
 		_active_panel = $LoginPanel
 		$LoginPanel.show_panel()

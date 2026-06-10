@@ -194,9 +194,14 @@ func upsert_usuario(nombre: String, carrera: String = "", callback: Callable = C
 		if callback.is_valid():
 			callback.call(false, null, "No hay usuario activo")
 		return
+	var carrera_val: Variant
+	if carrera != "":
+		carrera_val = carrera
+	else:
+		carrera_val = null
 	var data := {
 		"nombre": nombre,
-		"carrera": carrera if carrera != "" else null,
+		"carrera": carrera_val,
 	}
 	_send_db_request(
 		SupabaseApi.build_usuario_patch_endpoint(user_id),

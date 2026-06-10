@@ -2,6 +2,7 @@ class_name FaintingVisualController
 extends Node
 
 var root: MiniFaintingFirstAid
+var anim: FaintingAnimationController
 var patient_sprite: Sprite2D
 var action_sprite: Sprite2D
 var real_player: Node2D
@@ -18,8 +19,9 @@ const PATIENT = preload("res://src/assets/sprites/patient_lying.png")
 const CURACION = preload("res://src/assets/sprites/curacion.png")
 const PLAYER_ACTION_POS = Vector2(732.0, 620.0)
 
-func setup(minigame: MiniFaintingFirstAid) -> void:
+func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimationController) -> void:
 	root = minigame
+	anim = animation_controller
 	
 	pulse_point = root.game_container.get_node_or_null("PulsePoint")
 	heart_icon = root.game_container.get_node_or_null("HeartIcon")
@@ -104,26 +106,13 @@ func setup(minigame: MiniFaintingFirstAid) -> void:
 		heart_icon.texture = load("res://src/assets/sprites/heart_pixel.svg")
 		heart_icon.pivot_offset = Vector2(16, 16)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if not root._is_running:
 		return
 	
 	if ecg_line:
 		ecg_line.lives = root._lives
 	
-	# Camera shake
-	var trauma: float = 0.0
-	if shake_timer > 0:
-		shake_timer -= delta
-		trauma = (shake_timer / 0.5) * 15.0
-	
-	var main_camera: Camera2D = root.get_tree().root.get_camera_2d()
-	if main_camera:
-		var time: float = Time.get_ticks_msec() / 1000.0
-		var wobble_x = sin(time * 2.5) * 1.5 + cos(time * 1.7) * 2.0
-		var wobble_y = cos(time * 3.1) * 1.5 + sin(time * 1.3) * 2.0
-		main_camera.offset = Vector2(wobble_x, wobble_y) + Vector2(randf_range(-trauma, trauma), randf_range(-trauma, trauma))
-
 	# Dynamic alignment of indicators on the patient
 	if patient_sprite and is_instance_valid(patient_sprite) and patient_sprite.texture:
 		var texture_size = patient_sprite.texture.get_size()
@@ -153,20 +142,18 @@ func set_action_frame(step_index: int, frame_type: String = "idle") -> void:
 			action_sprite.frame = frames.action
 
 func trigger_shake() -> void:
-	shake_timer = 0.5
-	if not action_sprite or not is_instance_valid(action_sprite):
-		return
-	var orig_pos = action_sprite.position
-	var shake = create_tween().set_trans(Tween.TRANS_QUINT)
-	shake.tween_property(action_sprite, "position", orig_pos + Vector2(4, 0), 0.05)
-	shake.tween_property(action_sprite, "position", orig_pos + Vector2(-4, 0), 0.05)
-	shake.tween_property(action_sprite, "position", orig_pos + Vector2(2, 0), 0.05)
-	shake.tween_property(action_sprite, "position", orig_pos, 0.05)
+	anim.add_trauma(0.6)
+	if action_sprite and is_instance_valid(action_sprite):
+		anim.play_shake(action_sprite, 10.0, 0.5)
+
+func flash_error() -> void:
+	anim.play_flash(root.background, Color(0.8, 0.1, 0.1, 0.5), 0.2)
 
 func update_patient_color(lives: int) -> void:
 	if patient_sprite:
 		var colors = {3: Color.WHITE, 2: Color(1, 0.7, 0.7), 1: Color(1, 0.3, 0.3)}
-		patient_sprite.modulate = colors.get(lives, Color(0.5, 0.1, 0.1))
+		var target_color = colors.get(lives, Color(0.5, 0.1, 0.1))
+		anim.play_color_transition(patient_sprite, target_color, 0.3)
 
 func toggle_indicators(step_type: int) -> void:
 	if pulse_point:
@@ -180,6 +167,9 @@ func toggle_indicators(step_type: int) -> void:
 		heart_icon.scale = Vector2(1.0, 1.0)
 
 func cleanup(success: bool) -> void:
+	anim.kill_all()
+	anim.reset_camera()
+	
 	if real_player and is_instance_valid(real_player):
 		real_player.z_index = 0
 		var real_sprite = real_player.get_node("Sprite2D")
@@ -200,7 +190,3 @@ func cleanup(success: bool) -> void:
 			
 	if patient_sprite and is_instance_valid(patient_sprite):
 		patient_sprite.queue_free()
-		
-	var main_camera = root.get_tree().root.get_camera_2d()
-	if main_camera:
-		main_camera.offset = Vector2.ZERO

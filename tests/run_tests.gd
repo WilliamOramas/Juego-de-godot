@@ -8,6 +8,7 @@ const TestCloudSaveMapperScript = preload("res://tests/unit/test_cloud_save_mapp
 const TestGameProtocolScript = preload("res://tests/unit/test_game_protocol.gd")
 const TestSupabaseApiScript = preload("res://tests/unit/test_supabase_api.gd")
 const TestScoreManagerScript = preload("res://tests/unit/test_score_manager.gd")
+const TestTriviaQuestionGeneratorScript = preload("res://tests/unit/test_trivia_question_generator.gd")
 
 func _initialize() -> void:
 	var runner = TestRunnerScript.new()
@@ -15,5 +16,6 @@ func _initialize() -> void:
 	TestGameProtocolScript.run(runner)
 	TestSupabaseApiScript.run(runner)
 	TestScoreManagerScript.run(runner)
+	TestTriviaQuestionGeneratorScript.run(runner)
 	var exit_code: int = runner.summary()
 	quit(exit_code)

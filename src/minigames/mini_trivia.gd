@@ -46,12 +46,6 @@ var p1_source_label: Label
 var _using_fallback_questions: bool = false
 var _questions_resolved: bool = false
 
-var p2_container: Control
-var p2_title: Label
-var p2_status: Label
-var p2_grid: GridContainer
-var wordle_labels: Array = []
-
 # === Audio ===
 var bgm: AudioStreamPlayer
 var correct_sound: AudioStreamPlayer
@@ -71,16 +65,6 @@ var _difficulty_max: int = TriviaQuestionGenerator.DIFFICULTY_MEDIUM
 var _consecutive_player_wrongs: int = 0
 var _consecutive_player_corrects: int = 0
 
-# === State Phase 2 (Wordle) ===
-var is_phase_2: bool = false
-var wordle_words: Array = ["VENDA", "SALUD", "DOLOR", "GOLPE", "CURAR", "PULSO", "CORTE", "SANAR", "VIRUS", "HUESO", "TOSER", "DOSIS", "SUDOR", "GRIPE", "VITAL", "CIEGO", "SORDO", "AGUJA", "VENAS", "RENAL", "GOTAS", "SUERO", "PARTO", "MUELA", "CALOR", "CREMA", "VISTA", "TACTO"]
-var target_word: String = ""
-var current_guess: String = ""
-var current_attempt: int = 0
-var p2_round: int = 1
-var player_w_wins: int = 0
-var enrique_w_wins: int = 0
-
 var _time_elapsed: float = 0.0
 var _step_start_time: float = 0.0
 
@@ -89,7 +73,6 @@ func _ready() -> void:
 	if background:
 		background.hide()
 	_build_ui()
-	wordle_words.shuffle()
 
 	bgm = _create_audio(preload("res://src/assets/sounds/Quiz_BACKGROUND_MUSIC.mp3"), -8.0)
 	bgm.play()
@@ -185,8 +168,6 @@ func _show_loading(is_loading: bool) -> void:
 	_loading_overlay.visible = is_loading
 	if is_instance_valid(p1_container):
 		p1_container.visible = not is_loading
-	if is_instance_valid(p2_container):
-		p2_container.visible = false
 	if is_loading:
 		_loading_dot_index = 0
 		_loading_dot_timer = 0.0
@@ -376,68 +357,16 @@ func _build_ui() -> void:
 	p1_options.add_theme_constant_override("v_separation", P1_OPTION_SEPARATION)
 	p1_container.add_child(p1_options)
 
-	# ================= PHASE 2 UI =================
-	p2_container = Control.new()
-	game_container.add_child(p2_container)
-	p2_container.visible = false
-	p2_container.set_anchors_preset(Control.PRESET_FULL_RECT)
-	
-	var p2_bg = ColorRect.new()
-	p2_container.add_child(p2_bg)
-	p2_bg.color = Color(0.1, 0.1, 0.2, 0.95)
-	p2_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-
-	var p2_center := CenterContainer.new()
-	p2_center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	p2_container.add_child(p2_center)
-
-	var p2_content := VBoxContainer.new()
-	p2_content.alignment = BoxContainer.ALIGNMENT_CENTER
-	p2_content.add_theme_constant_override("separation", 20)
-	p2_center.add_child(p2_content)
-
-	p2_title = _create_label(p2_content, "DESEMPATE WORDLE - RONDA 1/3", 28, Color.YELLOW)
-
-	p2_status = _create_label(p2_content, "Escribe una palabra de 5 letras (Teclado Real)", 18)
-
-	p2_grid = GridContainer.new()
-	p2_content.add_child(p2_grid)
-	p2_grid.columns = 5
-	p2_grid.add_theme_constant_override("h_separation", 10)
-	p2_grid.add_theme_constant_override("v_separation", 10)
-	
-	for i in range(30):
-		var panel = PanelContainer.new()
-		panel.custom_minimum_size = Vector2(64, 60)
-		var style = StyleBoxFlat.new()
-		style.bg_color = Color(0.2, 0.2, 0.2)
-		style.border_width_bottom = 2
-		style.border_width_top = 2
-		style.border_width_left = 2
-		style.border_width_right = 2
-		style.border_color = Color(0.5, 0.5, 0.5)
-		panel.add_theme_stylebox_override("panel", style)
-		
-		var lbl = _create_label(panel, "", 32)
-		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		
-		p2_grid.add_child(panel)
-		wordle_labels.append({"panel": panel, "label": lbl, "style": style})
-
 func _next_question() -> void:
 	if player_strikes >= STRIKE_LIMIT:
-		var time_remaining := maxf(0.0, TIME_LIMIT_SEC - _time_elapsed)
-		ScoreManager.record_minigame_result("trivia", false, 0, time_remaining)
-		end(false)
+		_finish_trivia_outcome("loss", false, 0)
 		return
 	if enrique_strikes >= STRIKE_LIMIT:
-		var time_remaining := maxf(0.0, TIME_LIMIT_SEC - _time_elapsed)
-		ScoreManager.record_minigame_result("trivia", true, STRIKE_LIMIT - player_strikes, time_remaining)
-		end(true)
+		_finish_trivia_outcome("win", true, STRIKE_LIMIT - player_strikes)
 		return
 
 	if questions_asked >= QUESTION_COUNT:
-		_start_phase_2()
+		_finish_trivia_outcome("tie", false, STRIKE_LIMIT - player_strikes)
 		return
 		
 	current_question = TriviaQuestionGenerator.pick_question(
@@ -788,137 +717,59 @@ func _on_option_selected(idx: int) -> void:
 	if _is_running:
 		_next_question()
 
-# ================= PHASE 2 WORDLE =================
 
-func _start_phase_2() -> void:
-	is_phase_2 = true
-	p1_container.visible = false
-	p2_container.visible = true
-	p2_round = 1
-	player_w_wins = 0
-	enrique_w_wins = 0
-	_setup_wordle_round()
+func _finish_trivia_outcome(result: String, success: bool, lives: int) -> void:
+	_outcome_sequence(result, success, lives)
 
-func _setup_wordle_round() -> void:
-	if p2_round > 3:
-		_end_phase_2()
+
+func _outcome_sequence(result: String, success: bool, lives: int) -> void:
+	Global.last_minigame_outcome = {"game_id": "trivia", "result": result}
+	Global.professor_challenge["last_trivia_result"] = result
+	Global.professor_challenge["trivia_tied"] = result == "tie"
+	if result != "tie":
+		Global.professor_challenge["first_arc_complete"] = true
+	Global.professor_challenge["show_enrique"] = true
+	SaveManager.mark_dirty()
+
+	var title := "Resultado"
+	var subtitle := ""
+	var accent := Color.WHITE
+	match result:
+		"win":
+			title = "¡Victoria!"
+			subtitle = "Ganaste la trivia contra Enrique."
+			accent = Color(0.45, 1.0, 0.55)
+		"loss":
+			title = "Derrota"
+			subtitle = "Enrique ganó la trivia esta vez."
+			accent = Color(1.0, 0.45, 0.45)
+		"tie":
+			title = "¡Empate!"
+			subtitle = "Nadie llegó a 3 strikes. Habla con el profesor para el desempate."
+			accent = Color(1.0, 0.85, 0.35)
+
+	await _present_trivia_outcome(title, subtitle, accent)
+	if not _is_running:
 		return
-		
-	p2_title.text = "DESEMPATE WORDLE - RONDA %d/3" % p2_round
-	p2_status.text = "Escribe una palabra de 5 letras (Tú: %d | Enrique: %d)" % [player_w_wins, enrique_w_wins]
-	p2_status.add_theme_color_override("font_color", Color.WHITE)
-	target_word = wordle_words[(p2_round - 1) % wordle_words.size()]
-	current_guess = ""
-	current_attempt = 0
-	
-	for w_dict in wordle_labels:
-		w_dict["label"].text = ""
-		w_dict["style"].bg_color = Color(0.2, 0.2, 0.2)
-		
-	_step_start_time = _time_elapsed
 
-func _unhandled_key_input(event: InputEvent) -> void:
-	if not is_phase_2 or not _is_running or not event is InputEventKey or not event.pressed:
-		return
-		
-	if event.keycode == KEY_BACKSPACE and current_guess.length() > 0:
-		current_guess = current_guess.substr(0, current_guess.length() - 1)
-		_update_grid_text()
-	elif event.keycode == KEY_ENTER and current_guess.length() == 5:
-		_submit_guess()
-	elif current_guess.length() < 5:
-		var chr = OS.get_keycode_string(event.keycode)
-		if chr.length() == 1 and chr >= "A" and chr <= "Z":
-			current_guess += chr
-			step_sound.play()
-			_update_grid_text()
+	var time_remaining := maxf(0.0, TIME_LIMIT_SEC - _time_elapsed)
+	ScoreManager.record_minigame_result("trivia", success, lives, time_remaining)
+	end(success)
 
-func _update_grid_text() -> void:
-	var start_idx = current_attempt * 5
-	for i in range(5):
-		wordle_labels[start_idx + i]["label"].text = current_guess[i] if i < current_guess.length() else ""
 
-func _submit_guess() -> void:
-	var start_idx = current_attempt * 5
-	var is_correct = current_guess == target_word
-	var used_indices = []
-	
-	for i in range(5):
-		var is_exact = current_guess[i] == target_word[i]
-		wordle_labels[start_idx + i]["style"].bg_color = Color(0.2, 0.6, 0.2) if is_exact else Color(0.3, 0.3, 0.3)
-		if is_exact: used_indices.append(i)
-	
-	for i in range(5):
-		if current_guess[i] != target_word[i]:
-			for j in range(5):
-				if current_guess[i] == target_word[j] and not j in used_indices:
-					wordle_labels[start_idx + i]["style"].bg_color = Color(0.7, 0.6, 0.1)
-					used_indices.append(j)
-					break
-	
-	current_attempt += 1
-	var time_taken = _time_elapsed - _step_start_time
-	_step_start_time = _time_elapsed
-	
-	if is_correct:
-		ScoreManager.record_minigame_step(true, "Acierto Wordle", time_taken)
-		_round_over(true)
-	elif current_attempt >= 6:
-		ScoreManager.record_minigame_step(false, "Fallo Wordle", time_taken)
-		_round_over(false)
-		
-	current_guess = ""
+func _present_trivia_outcome(title: String, subtitle: String, accent: Color) -> void:
+	_clear_round_feedback()
+	for child in p1_options.get_children():
+		child.queue_free()
 
-func _round_over(player_won: bool) -> void:
-	# Simulamos el turno de Enrique (35% de ganar)
-	var enrique_won = randf() < 0.35
-	
-	if player_won:
-		player_w_wins += 1
-		p2_status.text = "¡Adivinaste la palabra! "
-		p2_status.add_theme_color_override("font_color", Color.GREEN)
-		correct_sound.play()
-	else:
-		p2_status.text = "Fallaste. La palabra era %s. " % target_word
-		p2_status.add_theme_color_override("font_color", Color.RED)
-		wrong_sound.play()
-		
-	if enrique_won:
-		enrique_w_wins += 1
-		p2_status.text += "Enrique adivinó la suya."
-	else:
-		p2_status.text += "Enrique también falló."
-		
+	p1_question.text = title
+	p1_correction_title.text = "Fin de la trivia"
+	p1_correction_title.add_theme_color_override("font_color", accent)
+	p1_correction_label.text = subtitle
+	p1_correction_panel.visible = true
+	call_deferred("_layout_phase1_ui")
 	await get_tree().create_timer(3.0).timeout
-	p2_round += 1
-	if _is_running:
-		_setup_wordle_round()
 
-func _end_phase_2() -> void:
-	if player_w_wins > enrique_w_wins:
-		p2_title.text = "¡GANASTE EL DESEMPATE!"
-		p2_title.add_theme_color_override("font_color", Color.GREEN)
-		p2_status.text = "Tú: %d | Enrique: %d" % [player_w_wins, enrique_w_wins]
-		success_fanfare.play()
-		await get_tree().create_timer(3.0).timeout
-		var time_remaining := maxf(0.0, TIME_LIMIT_SEC - _time_elapsed)
-		ScoreManager.record_minigame_result("trivia", true, STRIKE_LIMIT - player_strikes, time_remaining)
-		end(true)
-	elif enrique_w_wins > player_w_wins:
-		p2_title.text = "ENRIQUE GANÓ EL DESEMPATE"
-		p2_title.add_theme_color_override("font_color", Color.RED)
-		p2_status.text = "Tú: %d | Enrique: %d" % [player_w_wins, enrique_w_wins]
-		fail_sound.play()
-		await get_tree().create_timer(3.0).timeout
-		var time_remaining := maxf(0.0, TIME_LIMIT_SEC - _time_elapsed)
-		ScoreManager.record_minigame_result("trivia", false, 0, time_remaining)
-		end(false)
-	else:
-		# Empate, repetimos la ronda 3
-		p2_status.text = "¡Empate! Ronda de muerte súbita."
-		p2_round -= 1
-		await get_tree().create_timer(2.0).timeout
-		_setup_wordle_round()
 
 func _process(delta: float) -> void:
 	if _is_running:
@@ -943,7 +794,7 @@ func _process(delta: float) -> void:
 		if c.get_child_count() > 0 and c.get_child(0) is ColorRect:
 			(c.get_child(0) as ColorRect).size = vp_size
 
-	[p1_container, p2_container, _loading_overlay].filter(is_active).map(resize_container)
+	[p1_container, _loading_overlay].filter(is_active).map(resize_container)
 
 	if is_instance_valid(p1_container) and p1_container.visible:
 		_layout_phase1_ui()

@@ -71,6 +71,7 @@ CREATE TABLE public.progreso_resumen (
     puntaje INTEGER DEFAULT 0,
     escenarios_completados TEXT[] DEFAULT '{}',
     quests_completadas INTEGER DEFAULT 0,
+    professor_challenge JSONB DEFAULT '{}'::jsonb,
     actualizado_en TIMESTAMPTZ DEFAULT timezone('utc'::text, now()),
     PRIMARY KEY (user_id, slot)
 );
@@ -309,7 +310,7 @@ BEGIN
 
             INSERT INTO public.progreso_resumen (
                 user_id, slot, ultima_escena, puntaje,
-                escenarios_completados, quests_completadas, actualizado_en
+                escenarios_completados, quests_completadas, professor_challenge, actualizado_en
             )
             VALUES (
                 NEW.user_id,
@@ -318,6 +319,7 @@ BEGIN
                 COALESCE(FLOOR((slot_data -> 'score_stats' ->> 'score')::numeric), 0)::integer,
                 COALESCE(escenarios_arr, '{}'),
                 COALESCE(FLOOR((slot_data -> 'score_stats' ->> 'quests_completed')::numeric), 0)::integer,
+                COALESCE(slot_data -> 'professor_challenge', '{}'::jsonb),
                 timezone('utc'::text, now())
             )
             ON CONFLICT (user_id, slot) DO UPDATE SET
@@ -325,6 +327,7 @@ BEGIN
                 puntaje = EXCLUDED.puntaje,
                 escenarios_completados = EXCLUDED.escenarios_completados,
                 quests_completadas = EXCLUDED.quests_completadas,
+                professor_challenge = EXCLUDED.professor_challenge,
                 actualizado_en = EXCLUDED.actualizado_en;
         END IF;
     END LOOP;
@@ -418,3 +421,6 @@ LEFT JOIN public.telemetria_eventos t ON t.id_sesion = s.id_sesion
 GROUP BY u.nombre, e.nombre, s.id_sesion, s.puntaje_final, s.resultado, s.fecha_hora;
 
 GRANT SELECT ON public.v_dashboard_jugador TO authenticated;
+
+-- Migración incremental (BD ya desplegada sin professor_challenge en progreso_resumen):
+-- ALTER TABLE public.progreso_resumen ADD COLUMN IF NOT EXISTS professor_challenge JSONB DEFAULT '{}'::jsonb;

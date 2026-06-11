@@ -16,6 +16,7 @@ static func extract_completed_scenarios(completed: Variant) -> Array[String]:
 static func extract_slot_summary(user_id: String, slot: int, slot_data: Dictionary) -> Dictionary:
 	var score_stats: Dictionary = slot_data.get("score_stats", {}) as Dictionary
 	var completed: Dictionary = slot_data.get("completed_scenarios", {}) as Dictionary
+	var professor_challenge: Dictionary = slot_data.get("professor_challenge", {}) as Dictionary
 	return {
 		"user_id": user_id,
 		"slot": slot,
@@ -23,6 +24,7 @@ static func extract_slot_summary(user_id: String, slot: int, slot_data: Dictiona
 		"puntaje": int(score_stats.get("score", 0)),
 		"escenarios_completados": extract_completed_scenarios(completed),
 		"quests_completadas": int(score_stats.get("quests_completed", 0)),
+		"professor_challenge": professor_challenge.duplicate(),
 	}
 
 

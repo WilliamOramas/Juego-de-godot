@@ -201,6 +201,8 @@ func _get_fallback_dialog(is_first: bool) -> Array[String]:
 	return [dialog_text if not dialog_text.is_empty() else "..."]
 
 func _on_interact_pressed() -> void:
+	if ProfessorReplayChoice.is_active():
+		return
 	if DialogBox.is_open or AiDialogBox.is_open:
 		return
 

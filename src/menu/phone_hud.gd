@@ -36,6 +36,7 @@ func _ready() -> void:
 	EventBus.scene_changing.connect(_on_scene_changing)
 	EventBus.scene_changed.connect(_on_scene_loaded)
 	EventBus.minigame_completed.connect(_on_minigame_completed)
+	SceneManager.game_paused.connect(_on_game_paused)
 	EventBus.dialog_started.connect(_on_dialog_started)
 	EventBus.dialog_finished.connect(_on_dialog_finished)
 	EventBus.quest_started.connect(_on_quest_event)
@@ -241,6 +242,22 @@ func _on_scene_changing(_scene_path: String) -> void:
 	reset()
 
 
+func _on_game_paused(paused: bool) -> void:
+	if not paused:
+		return
+	_hide_for_pause()
+
+
+func _hide_for_pause() -> void:
+	if _mode == PhoneMode.MESSAGE or _mode == PhoneMode.SCENARIO:
+		_message_queue.clear()
+		_scenario_timer = 0.0
+		_mode = PhoneMode.HOME
+	if visible:
+		visible = false
+		_closing = false
+
+
 func _on_minigame_completed(game_id: String, success: bool) -> void:
 	if not MiniGameManager.has_scenario(game_id):
 		return
@@ -252,14 +269,56 @@ func _on_minigame_completed(game_id: String, success: bool) -> void:
 				var zoom_tween := create_tween().set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
 				zoom_tween.tween_property(cam, "zoom", _saved_camera_zoom, 0.6)
 		_camera_zoom_modified = false
-	var texts: Dictionary = {
-		"fainting_first_aid": "Emergencia resuelta.\nEstudiante estabilizado." if success else "Falleció el estudiante.",
-		"cpr": "RCP completada.\nPaciente reanimado." if success else "RCP fallida.\nPaciente fallecido.",
-	}
-	var text: String = texts.get(game_id, "Minijuego completado." if success else "Minijuego fallido.")
+
+	var text := _get_minigame_completion_text(game_id, success)
+	var mood := _get_minigame_completion_mood(game_id, success)
 	push_notification("PIXEL v1.0", text, false, "")
-	set_mood(Mood.HAPPY if success else Mood.SAD)
-	_pending_mood = Mood.HAPPY if success else Mood.SAD
+	set_mood(mood)
+	_pending_mood = mood
+
+
+func _get_minigame_completion_text(game_id: String, success: bool) -> String:
+	var save_hint := "\n[ESC] Guardar partida"
+	match game_id:
+		"trivia":
+			var outcome := String(Global.last_minigame_outcome.get("result", ""))
+			match outcome:
+				"win":
+					return "¡Ganaste la trivia!%s" % save_hint
+				"loss":
+					return "Perdiste la trivia.%s" % save_hint
+				"tie":
+					return "Empataste con Enrique.\nHabla con el profesor para el desempate.%s" % save_hint
+			return (
+				"¡Ganaste la trivia!%s" % save_hint if success
+				else "Perdiste la trivia.%s" % save_hint
+			)
+		"wordle":
+			return (
+				"¡Ganaste el Wordle!\nDesempate a tu favor.%s" % save_hint if success
+				else "Perdiste el Wordle.\nPuedes volver a intentarlo.%s" % save_hint
+			)
+		"fainting_first_aid":
+			return (
+				"Emergencia resuelta.\nEstudiante estabilizado.%s" % save_hint if success
+				else "Falleció el estudiante.%s" % save_hint
+			)
+		"cpr":
+			return (
+				"RCP completada.\nPaciente reanimado.%s" % save_hint if success
+				else "RCP fallida.\nPaciente fallecido.%s" % save_hint
+			)
+		_:
+			return (
+				"Minijuego completado.%s" % save_hint if success
+				else "Minijuego fallido.%s" % save_hint
+			)
+
+
+func _get_minigame_completion_mood(game_id: String, success: bool) -> Mood:
+	if game_id == "trivia" and Global.last_minigame_outcome.get("result") == "tie":
+		return Mood.TALK
+	return Mood.HAPPY if success else Mood.SAD
 
 
 func _on_dialog_started() -> void:

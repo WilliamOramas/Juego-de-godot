@@ -28,7 +28,7 @@ func set_button_visible(is_shown: bool) -> void:
 	prompt_texture.visible = is_shown
 
 func _unhandled_input(event: InputEvent) -> void:
-	if get_tree().paused:
+	if get_tree().paused or ProfessorReplayChoice.is_active():
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_E and prompt_texture.visible and not DialogBox.is_open:

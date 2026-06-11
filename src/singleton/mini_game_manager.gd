@@ -19,6 +19,12 @@ const SCENARIOS: Dictionary = {
 		"db_id": 3,
 		"cinematic": true,
 	},
+	"wordle": {
+		"path": "res://src/minigames/mini_wordle.tscn",
+		"id": "wordle",
+		"db_id": 3,
+		"cinematic": true,
+	},
 }
 
 var _active_minigame: MiniGameBase = null

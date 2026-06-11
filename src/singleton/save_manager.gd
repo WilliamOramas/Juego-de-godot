@@ -70,6 +70,14 @@ func reset_game(slot: int, is_cloud: bool) -> void:
 	active_is_cloud = is_cloud
 	Global.dialogs_seen.clear()
 	Global.completed_scenarios.clear()
+	Global.professor_challenge = {
+		"show_enrique": false,
+		"trivia_tied": false,
+		"first_arc_complete": false,
+		"last_trivia_result": "",
+		"replay_sessions": 0,
+	}
+	Global.last_minigame_outcome = {}
 	Global.pending_position_restore = false
 	Global.saved_player_position = Vector2.ZERO
 	ScoreManager.reset()
@@ -182,6 +190,14 @@ func load_game(slot: int, is_cloud: bool) -> String:
 
 	Global.dialogs_seen.clear()
 	Global.completed_scenarios.clear()
+	Global.professor_challenge = {
+		"show_enrique": false,
+		"trivia_tied": false,
+		"first_arc_complete": false,
+		"last_trivia_result": "",
+		"replay_sessions": 0,
+	}
+	Global.last_minigame_outcome = {}
 	Global.pending_position_restore = false
 	Global.saved_player_position = Vector2.ZERO
 	Global.return_spawn_name = ""
@@ -223,6 +239,7 @@ func _build_game_data(override_last_scene: String = "") -> Dictionary:
 		"score_stats": ScoreManager.get_stats(),
 		"journal_entries": JournalManager.serialize(),
 		"completed_scenarios": Global.completed_scenarios.duplicate(),
+		"professor_challenge": Global.professor_challenge.duplicate(),
 	}
 	var player := _get_player()
 	if player:
@@ -262,4 +279,7 @@ func _apply_game_data(data: Dictionary) -> String:
 		JournalManager.deserialize(data["journal_entries"] as Array)
 	if data.has("completed_scenarios"):
 		Global.completed_scenarios = data["completed_scenarios"].duplicate()
+	if data.has("professor_challenge") and data["professor_challenge"] is Dictionary:
+		Global.professor_challenge = (data["professor_challenge"] as Dictionary).duplicate()
+	Global.normalize_professor_challenge()
 	return data.get("last_scene", "")

@@ -10,6 +10,9 @@ const P1_STATUS_RESERVE: float = 100.0
 const P1_OPTION_FONT_SIZE: int = 16
 const P1_OPTION_SEPARATION: int = 10
 const QUESTIONS_LOAD_TIMEOUT_SEC: float = 15.0
+const ENRIQUE_CORRECT_CHANCE: float = 0.5
+const P1_FEEDBACK_DELAY_SEC: float = 2.0
+const P1_WRONG_FEEDBACK_DELAY_SEC: float = 3.5
 
 # === UI Nodes ===
 var _loading_overlay: Control
@@ -151,7 +154,7 @@ func _update_source_label() -> void:
 		p1_source_label.text = "Fuente: preguntas predeterminadas"
 		p1_source_label.add_theme_color_override("font_color", Color(1.0, 0.72, 0.35))
 	else:
-		p1_source_label.text = "Fuente: preguntas generadas por IA"
+		p1_source_label.text = "Fuente: IA (%s)" % AiClient.get_content_model()
 		p1_source_label.add_theme_color_override("font_color", Color(0.4, 0.9, 0.9))
 
 
@@ -435,39 +438,67 @@ func _create_option_button(option_text: String, index: int) -> Button:
 	return btn
 
 
+func _get_correct_answer_text(q: Dictionary) -> String:
+	var ops: Array = q.get("ops", [])
+	var correct_idx := int(q.get("ans", -1))
+	if correct_idx < 0 or correct_idx >= ops.size():
+		return ""
+	return String(ops[correct_idx])
+
+
+func _highlight_option_buttons(selected_idx: int, correct_idx: int) -> void:
+	for i in range(p1_options.get_child_count()):
+		var child := p1_options.get_child(i)
+		if not child is Button:
+			continue
+		var btn := child as Button
+		if i == correct_idx:
+			btn.modulate = Color(0.55, 1.0, 0.55)
+		elif i == selected_idx:
+			btn.modulate = Color(1.0, 0.45, 0.45)
+
+
 func _on_option_selected(idx: int) -> void:
 	for child in p1_options.get_children():
 		if child is BaseButton:
 			(child as BaseButton).disabled = true
-		
+
 	var q = questions[current_q_index]
-	var player_correct = (idx == q["ans"])
-	
+	var correct_idx := int(q.get("ans", -1))
+	var player_correct = idx == correct_idx
+	var correct_text := _get_correct_answer_text(q)
+
 	var time_taken = _time_elapsed - _step_start_time
 	_step_start_time = _time_elapsed
-	
+	var feedback_delay := P1_FEEDBACK_DELAY_SEC
+
 	if not player_correct:
 		player_strikes += 1
 		p1_player_strikes.text = "Tus Strikes: %d/%d" % [player_strikes, STRIKE_LIMIT]
-		p1_status.text = "¡Incorrecto!"
+		_highlight_option_buttons(idx, correct_idx)
+		if correct_text.is_empty():
+			p1_status.text = "¡Incorrecto!"
+		else:
+			p1_status.text = "¡Incorrecto! La respuesta correcta era: %s" % correct_text
 		wrong_sound.play()
+		feedback_delay = P1_WRONG_FEEDBACK_DELAY_SEC
 		ScoreManager.record_minigame_step(false, "Respuesta incorrecta a la trivia", time_taken)
 	else:
 		p1_status.text = "¡Correcto!"
 		correct_sound.play()
 		ScoreManager.record_minigame_step(true, "Respuesta correcta a la trivia", time_taken)
-		
-	var enrique_correct = randf() < 0.75
+
+	var enrique_correct := randf() < ENRIQUE_CORRECT_CHANCE
 	if not enrique_correct:
 		enrique_strikes += 1
 		p1_enrique_strikes.text = "Strikes de Enrique: %d/%d" % [enrique_strikes, STRIKE_LIMIT]
 		p1_status.text += " | ¡Enrique falló!"
 	else:
 		p1_status.text += " | Enrique acertó."
-		
+
 	questions_asked += 1
-	
-	await get_tree().create_timer(2.0).timeout
+
+	await get_tree().create_timer(feedback_delay).timeout
 	if _is_running:
 		_next_question()
 

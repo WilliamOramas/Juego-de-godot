@@ -1,11 +1,12 @@
 extends Node
 
 const CONFIG_PATH: String = "res://ai.cfg"
-const NPC_MODEL: String = "gemini-3.5-flash"
-const CONTENT_MODEL: String = "gemini-3.5-flash"
+const DEFAULT_MODEL: String = "gemini-3.5-flash"
 const CONTENT_REQUEST_TIMEOUT: float = 12.0
 
 var _api_key: String = ""
+var _npc_model: String = DEFAULT_MODEL
+var _content_model: String = DEFAULT_MODEL
 var _http_request: HTTPRequest
 var _content_http_request: HTTPRequest
 var _conversation_history: Dictionary = {}
@@ -14,7 +15,7 @@ var _content_callback: Callable = Callable()
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_api_key = _load_config()
+	_load_config()
 	_http_request = HTTPRequest.new()
 	_http_request.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_http_request)
@@ -31,12 +32,36 @@ func has_valid_api_key() -> bool:
 	return not _api_key.is_empty() and _api_key != "TU_API_KEY_AQUI"
 
 
-func _load_config() -> String:
+func get_content_model() -> String:
+	return _content_model
+
+
+func get_npc_model() -> String:
+	return _npc_model
+
+
+func _clean_config_value(value: Variant) -> String:
+	return String(value).strip_edges().trim_prefix("\"").trim_suffix("\"")
+
+
+func _load_config() -> void:
 	var config := ConfigFile.new()
 	if config.load(CONFIG_PATH) != OK:
 		push_error("No se pudo cargar ai.cfg.")
-		return ""
-	return config.get_value("gemini", "api_key", "").strip_edges().trim_prefix("\"").trim_suffix("\"")
+		return
+
+	_api_key = _clean_config_value(config.get_value("gemini", "api_key", ""))
+	var default_model := _clean_config_value(config.get_value("gemini", "model", DEFAULT_MODEL))
+	if default_model.is_empty():
+		default_model = DEFAULT_MODEL
+
+	_npc_model = _clean_config_value(config.get_value("gemini", "npc_model", default_model))
+	_content_model = _clean_config_value(config.get_value("gemini", "content_model", default_model))
+
+	if _npc_model.is_empty():
+		_npc_model = DEFAULT_MODEL
+	if _content_model.is_empty():
+		_content_model = DEFAULT_MODEL
 
 
 func _build_api_url(model: String) -> String:
@@ -60,7 +85,7 @@ func generate_npc_response(npc_name: String, user_message: String, system_prompt
 		"contents": _conversation_history[npc_name],
 	}
 
-	if _http_request.request(_build_api_url(NPC_MODEL) + _api_key, ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(req_data)) != OK:
+	if _http_request.request(_build_api_url(_npc_model) + _api_key, ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(req_data)) != OK:
 		EventBus.ai_error_received.emit("Error interno al hacer la petición HTTP.")
 
 
@@ -95,7 +120,7 @@ func generate_content(
 	if _content_http_request.get_http_client_status() != HTTPClient.STATUS_DISCONNECTED:
 		_content_http_request.cancel_request()
 
-	if _content_http_request.request(_build_api_url(CONTENT_MODEL) + _api_key, ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(req_data)) != OK:
+	if _content_http_request.request(_build_api_url(_content_model) + _api_key, ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(req_data)) != OK:
 		_fail_content_request("Error interno al hacer la petición HTTP.")
 
 

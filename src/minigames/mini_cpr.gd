@@ -111,6 +111,8 @@ var _pulse_check_active: bool = false
 var _pulse_peak_progress: float = 0.0
 var _pulse_peak_speed: float = 0.0
 
+var touch_controller: CPRTouchController
+
 
 func _ready() -> void:
 	super()
@@ -123,28 +125,28 @@ func _ready() -> void:
 	instruction_label.anchor_top = 0.0
 	instruction_label.anchor_right = 0.0
 	instruction_label.anchor_bottom = 0.0
-	instruction_label.offset_left = 64
-	instruction_label.offset_top = 72
-	instruction_label.offset_right = 960
-	instruction_label.offset_bottom = 132
+	instruction_label.offset_left = 48
+	instruction_label.offset_top = 85
+	instruction_label.offset_right = 976
+	instruction_label.offset_bottom = 145
 
 	help_label.anchor_left = 0.0
 	help_label.anchor_top = 0.0
 	help_label.anchor_right = 0.0
 	help_label.anchor_bottom = 0.0
-	help_label.offset_left = 64
-	help_label.offset_top = 138
-	help_label.offset_right = 960
-	help_label.offset_bottom = 210
+	help_label.offset_left = 56
+	help_label.offset_top = 152
+	help_label.offset_right = 968
+	help_label.offset_bottom = 220
 
 	step_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	step_label.offset_left = 20
-	step_label.offset_top = 20
+	step_label.offset_left = 16
+	step_label.offset_top = 16
 
 	timer_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	timer_label.offset_left = -50
-	timer_label.offset_top = 15
-	timer_label.offset_right = 50
+	timer_label.offset_left = -55
+	timer_label.offset_top = 10
+	timer_label.offset_right = 55
 
 	patient_sprite.position = Vector2(512, 336)
 	patient_sprite.scale = Vector2(2.5, 2.5)
@@ -153,37 +155,47 @@ func _ready() -> void:
 	heartbeat_player.play()
 	heartbeat_player.finished.connect(_on_heartbeat_finished)
 
-	MiniGameTheme.apply_body(instruction_label, 18)
-	MiniGameTheme.apply_muted(help_label, 16)
-	MiniGameTheme.style_text_panel(instruction_label)
-	MiniGameTheme.style_text_panel(help_label)
-	MiniGameTheme.apply_body(timer_label, 22)
-	MiniGameTheme.style_text_panel(timer_label)
-	MiniGameTheme.apply_body(feedback_label, 22)
-	MiniGameTheme.style_text_panel(feedback_label)
-	MiniGameTheme.apply_muted(step_label, 14)
-	MiniGameTheme.style_text_panel(step_label)
-	MiniGameTheme.apply_primary(dial_label, 28)
-	MiniGameTheme.apply_body(breath_prompt, 20)
-	MiniGameTheme.style_text_panel(breath_prompt)
+	MiniGameTheme.apply_primary(instruction_label, 22)
+	MiniGameTheme.apply_muted(help_label, 14)
+	MiniGameTheme.style_neon_panel(instruction_label, MiniGameTheme.NEON_CYAN)
+	MiniGameTheme.style_neon_panel(help_label, MiniGameTheme.NEON_CYAN * Color(0.7, 0.7, 0.7, 1.0))
+	MiniGameTheme.apply_primary(timer_label, 22)
+	MiniGameTheme.style_neon_panel(timer_label, MiniGameTheme.NEON_CYAN)
+	MiniGameTheme.apply_primary(feedback_label, 24)
+	MiniGameTheme.style_neon_panel(feedback_label, MiniGameTheme.NEON_GREEN)
+	MiniGameTheme.apply_muted(step_label, 12)
+	step_label.add_theme_color_override("font_color", MiniGameTheme.TEXT_MUTED)
+	MiniGameTheme.apply_primary(dial_label, 30)
+	dial_label.add_theme_color_override("font_color", MiniGameTheme.NEON_CYAN)
+	MiniGameTheme.apply_primary(breath_prompt, 22)
+	MiniGameTheme.style_neon_panel(breath_prompt, MiniGameTheme.NEON_CYAN)
 
-	MiniGameTheme.style_progress_bar(progress_bar)
+	MiniGameTheme.style_progress_bar_neon(progress_bar, MiniGameTheme.NEON_GREEN)
 
 	_hearts_box = HBoxContainer.new()
 	_hearts_box.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	_hearts_box.offset_left = -250
-	_hearts_box.offset_top = 12
-	_hearts_box.offset_right = -30
-	_hearts_box.offset_bottom = 50
+	_hearts_box.offset_left = -280
+	_hearts_box.offset_top = 10
+	_hearts_box.offset_right = -24
+	_hearts_box.offset_bottom = 52
 	_hearts_box.alignment = BoxContainer.ALIGNMENT_END
+	_hearts_box.add_theme_constant_override("separation", 10)
 	game_container.add_child(_hearts_box)
 	for i in range(5):
 		var heart_rect = TextureRect.new()
 		heart_rect.texture = load("res://src/assets/sprites/heart_pixel.svg")
-		heart_rect.custom_minimum_size = Vector2(32, 32)
+		heart_rect.custom_minimum_size = Vector2(36, 36)
 		heart_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		heart_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		_hearts_box.add_child(heart_rect)
+
+	touch_controller = CPRTouchController.new()
+	add_child(touch_controller)
+	touch_controller.setup(self)
+
+	touch_controller.touch_pressed.connect(_on_touch_pressed)
+	touch_controller.touch_released.connect(_on_touch_released)
+	touch_controller.touch_dial_pressed.connect(_on_touch_dial_pressed)
 
 	_update_ui()
 
@@ -248,6 +260,9 @@ func _update_ui() -> void:
 				child.modulate.a = 1.0
 			else:
 				child.modulate.a = 0.2
+
+	if touch_controller:
+		touch_controller.update_touch_visibility(step.type)
 
 
 func _flash_patient(color: Color, duration: float = 0.2) -> void:
@@ -346,23 +361,53 @@ func _process(delta: float) -> void:
 			pass
 
 
-func _is_click_press(event: InputEvent) -> bool:
-	return (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT) \
-		or (event is InputEventScreenTouch and event.pressed)
+func _on_touch_pressed() -> void:
+	if not _is_running or _state != "playing":
+		return
+	var step: Dictionary = STEP_DATA[_current_step]
+	match step.type:
+		StepType.SAFETY:
+			_on_step_ok()
+		StepType.COMPRESS, StepType.CYCLE:
+			if _cycle_phase == CyclePhase.COMPRESSIONS:
+				_register_compression()
+			elif _cycle_phase == CyclePhase.BREATHS:
+				_handle_breath_input()
+			elif _cycle_phase == CyclePhase.PULSE_CHECK:
+				_handle_pulse_input()
+		StepType.BREATH:
+			_handle_breath_input()
 
-func _is_click_release(event: InputEvent) -> bool:
-	return (event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT) \
-		or (event is InputEventScreenTouch and not event.pressed)
+func _on_touch_released() -> void:
+	pass
+
+func _on_touch_dial_pressed(key: int) -> void:
+	if not _is_running or _state != "playing":
+		return
+	var step: Dictionary = STEP_DATA[_current_step]
+	if step.type != StepType.DIAL_112:
+		return
+	var expected: int = step.target[_dial_index]
+	if key == expected:
+		_dial_index += 1
+		correct_sound.play()
+		_update_dial_label()
+		if _dial_index >= step.target.size():
+			_on_step_ok()
+	else:
+		_dial_index = 0
+		_update_dial_label()
+		_lose_life("Ese no es el número correcto.")
 
 func _input(event: InputEvent) -> void:
 	if not _is_running:
 		return
-	if event.is_action_pressed("Phone") or _is_click_press(event):
+	if event.is_action_pressed("Phone"):
 		get_viewport().set_input_as_handled()
 	if _state != "playing":
 		return
 
-	var is_press := event.is_action_pressed("Phone") or _is_click_press(event)
+	var is_press := event.is_action_pressed("Phone")
 
 	var step: Dictionary = STEP_DATA[_current_step]
 	match step.type:
@@ -516,6 +561,8 @@ func _update_cycle_ui() -> void:
 	_breath_substep = 0
 	_breath_substep_active = false
 	_update_breath_prompt()
+	if touch_controller:
+		touch_controller.update_touch_visibility(StepType.BREATH)
 
 
 func _update_breath_prompt() -> void:
@@ -642,6 +689,8 @@ func _continue_after_pulse() -> void:
 	help_label.text = "Presioná [Q] al ritmo del anillo."
 	feedback_label.text = ""
 	_metronome_timer = 0.0
+	if touch_controller:
+		touch_controller.update_touch_visibility(StepType.COMPRESS)
 
 func _update_dial_label() -> void:
 	var step: Dictionary = STEP_DATA[_current_step]

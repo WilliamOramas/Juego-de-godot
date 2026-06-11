@@ -46,30 +46,30 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	instruction_label.anchor_top = 0.0
 	instruction_label.anchor_right = 0.0
 	instruction_label.anchor_bottom = 0.0
-	instruction_label.offset_left = 64
-	instruction_label.offset_top = 72
-	instruction_label.offset_right = 960
-	instruction_label.offset_bottom = 132
+	instruction_label.offset_left = 48
+	instruction_label.offset_top = 85
+	instruction_label.offset_right = 976
+	instruction_label.offset_bottom = 145
 	instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 	help_label.anchor_left = 0.0
 	help_label.anchor_top = 0.0
 	help_label.anchor_right = 0.0
 	help_label.anchor_bottom = 0.0
-	help_label.offset_left = 64
-	help_label.offset_top = 138
-	help_label.offset_right = 960
-	help_label.offset_bottom = 210
+	help_label.offset_left = 56
+	help_label.offset_top = 152
+	help_label.offset_right = 968
+	help_label.offset_bottom = 220
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 	step_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	step_label.offset_left = 20
-	step_label.offset_top = 20
+	step_label.offset_left = 16
+	step_label.offset_top = 16
 
 	timer_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	timer_label.offset_left = -50
-	timer_label.offset_top = 15
-	timer_label.offset_right = 50
+	timer_label.offset_left = -55
+	timer_label.offset_top = 10
+	timer_label.offset_right = 55
 
 	# Keycap
 	keycap_rect = TextureRect.new()
@@ -85,44 +85,46 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	keycap_rect.visible = false
 	root.game_container.add_child(keycap_rect)
 
-	MiniGameTheme.apply_body(instruction_label, 18)
-	MiniGameTheme.apply_muted(help_label, 16)
-	MiniGameTheme.style_text_panel(instruction_label)
-	MiniGameTheme.style_text_panel(help_label)
-	MiniGameTheme.apply_body(timer_label, 22)
-	MiniGameTheme.style_text_panel(timer_label)
-	MiniGameTheme.apply_body(feedback_label, 22)
-	MiniGameTheme.style_text_panel(feedback_label)
-	MiniGameTheme.apply_muted(step_label, 14)
-	MiniGameTheme.style_text_panel(step_label)
-	MiniGameTheme.apply_primary(dial_label, 28)
+	MiniGameTheme.apply_primary(instruction_label, 22)
+	MiniGameTheme.apply_muted(help_label, 14)
+	MiniGameTheme.style_neon_panel(instruction_label, MiniGameTheme.NEON_CYAN)
+	MiniGameTheme.style_neon_panel(help_label, MiniGameTheme.NEON_CYAN * Color(0.7, 0.7, 0.7, 1.0))
+	MiniGameTheme.apply_primary(timer_label, 22)
+	MiniGameTheme.style_neon_panel(timer_label, MiniGameTheme.NEON_CYAN)
+	MiniGameTheme.apply_primary(feedback_label, 24)
+	MiniGameTheme.style_neon_panel(feedback_label, MiniGameTheme.NEON_GREEN)
+	MiniGameTheme.apply_muted(step_label, 12)
+	step_label.add_theme_color_override("font_color", MiniGameTheme.TEXT_MUTED)
+	MiniGameTheme.apply_primary(dial_label, 30)
+	dial_label.add_theme_color_override("font_color", MiniGameTheme.NEON_CYAN)
 
-	MiniGameTheme.style_progress_bar(progress_bar)
+	MiniGameTheme.style_progress_bar_neon(progress_bar, MiniGameTheme.NEON_GREEN)
 
 	# Progress bar reposition
 	progress_bar.anchor_left = 0.0
 	progress_bar.anchor_top = 0.0
 	progress_bar.anchor_right = 0.0
 	progress_bar.anchor_bottom = 0.0
-	progress_bar.offset_left = 272
-	progress_bar.offset_top = 264
-	progress_bar.offset_right = 752
-	progress_bar.offset_bottom = 302
+	progress_bar.offset_left = 240
+	progress_bar.offset_top = 258
+	progress_bar.offset_right = 784
+	progress_bar.offset_bottom = 298
 
 	# Hearts Box
 	if hearts_label: hearts_label.visible = false
 	hearts_box = HBoxContainer.new()
 	hearts_box.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	hearts_box.offset_left = -220
-	hearts_box.offset_top = 12
-	hearts_box.offset_right = -30
-	hearts_box.offset_bottom = 50
+	hearts_box.offset_left = -230
+	hearts_box.offset_top = 10
+	hearts_box.offset_right = -24
+	hearts_box.offset_bottom = 52
 	hearts_box.alignment = BoxContainer.ALIGNMENT_END
+	hearts_box.add_theme_constant_override("separation", 10)
 	root.game_container.add_child(hearts_box)
 	for i in range(3):
 		var heart_rect = TextureRect.new()
 		heart_rect.texture = load("res://src/assets/sprites/heart_pixel.svg")
-		heart_rect.custom_minimum_size = Vector2(32, 32)
+		heart_rect.custom_minimum_size = Vector2(36, 36)
 		heart_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		heart_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		hearts_box.add_child(heart_rect)
@@ -169,46 +171,15 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	touch_button.anchor_top = 0.0
 	touch_button.anchor_right = 0.0
 	touch_button.anchor_bottom = 0.0
-	touch_button.offset_left = 352
-	touch_button.offset_top = 336
-	touch_button.offset_right = 672
-	touch_button.offset_bottom = 408
+	touch_button.offset_left = 320
+	touch_button.offset_top = 330
+	touch_button.offset_right = 704
+	touch_button.offset_bottom = 400
 	touch_button.visible = false
 	touch_button.mouse_filter = Control.MOUSE_FILTER_STOP
 
-	# Style matching the game's theme (dark, subtle, pixel-art)
-	var touch_style_normal = StyleBoxFlat.new()
-	touch_style_normal.bg_color = Color(0.0, 0.0, 0.0, 0.65)
-	touch_style_normal.border_width_left = 2
-	touch_style_normal.border_width_top = 2
-	touch_style_normal.border_width_right = 2
-	touch_style_normal.border_width_bottom = 2
-	touch_style_normal.border_color = Color(0.3, 0.35, 0.5, 0.7)
-	touch_style_normal.corner_radius_top_left = 6
-	touch_style_normal.corner_radius_top_right = 6
-	touch_style_normal.corner_radius_bottom_left = 6
-	touch_style_normal.corner_radius_bottom_right = 6
-
-	var touch_style_pressed = StyleBoxFlat.new()
-	touch_style_pressed.bg_color = Color(0.0, 0.15, 0.15, 0.75)
-	touch_style_pressed.border_width_left = 2
-	touch_style_pressed.border_width_top = 2
-	touch_style_pressed.border_width_right = 2
-	touch_style_pressed.border_width_bottom = 2
-	touch_style_pressed.border_color = Color(0.0, 1.0, 0.8, 0.9)
-	touch_style_pressed.corner_radius_top_left = 6
-	touch_style_pressed.corner_radius_top_right = 6
-	touch_style_pressed.corner_radius_bottom_left = 6
-	touch_style_pressed.corner_radius_bottom_right = 6
-
-	touch_button.add_theme_stylebox_override("normal", touch_style_normal)
-	touch_button.add_theme_stylebox_override("pressed", touch_style_pressed)
-
-	touch_button.add_theme_font_override("font", MiniGameTheme.SILKSCREEN)
+	MiniGameTheme.style_neon_button(touch_button, MiniGameTheme.NEON_CYAN)
 	touch_button.add_theme_font_size_override("font_size", 22)
-	touch_button.add_theme_color_override("font_color", Color.WHITE)
-	touch_button.add_theme_color_override("font_outline_color", Color.BLACK)
-	touch_button.add_theme_constant_override("outline_size", 3)
 
 	touch_button.button_down.connect(func():
 		_is_touch_pressed = true
@@ -226,51 +197,22 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	touch_dial_container.anchor_top = 0.0
 	touch_dial_container.anchor_right = 0.0
 	touch_dial_container.anchor_bottom = 0.0
-	touch_dial_container.offset_left = 272
-	touch_dial_container.offset_top = 312
-	touch_dial_container.offset_right = 752
-	touch_dial_container.offset_bottom = 396
+	touch_dial_container.offset_left = 240
+	touch_dial_container.offset_top = 310
+	touch_dial_container.offset_right = 784
+	touch_dial_container.offset_bottom = 390
 	touch_dial_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	touch_dial_container.visible = false
-	touch_dial_container.add_theme_constant_override("separation", 20)
+	touch_dial_container.add_theme_constant_override("separation", 24)
 	touch_dial_container.mouse_filter = Control.MOUSE_FILTER_STOP
 
 	for i in range(3):
 		var dial_btn = Button.new()
 		dial_btn.text = str(i + 1)
-		dial_btn.custom_minimum_size = Vector2(60, 60)
+		dial_btn.custom_minimum_size = Vector2(64, 64)
 
-		var dial_style_normal = StyleBoxFlat.new()
-		dial_style_normal.bg_color = Color(0.0, 0.0, 0.0, 0.65)
-		dial_style_normal.border_width_left = 2
-		dial_style_normal.border_width_top = 2
-		dial_style_normal.border_width_right = 2
-		dial_style_normal.border_width_bottom = 2
-		dial_style_normal.border_color = Color(0.3, 0.35, 0.5, 0.7)
-		dial_style_normal.corner_radius_top_left = 6
-		dial_style_normal.corner_radius_top_right = 6
-		dial_style_normal.corner_radius_bottom_left = 6
-		dial_style_normal.corner_radius_bottom_right = 6
-
-		var dial_style_pressed = StyleBoxFlat.new()
-		dial_style_pressed.bg_color = Color(0.0, 0.15, 0.15, 0.75)
-		dial_style_pressed.border_width_left = 2
-		dial_style_pressed.border_width_top = 2
-		dial_style_pressed.border_width_right = 2
-		dial_style_pressed.border_width_bottom = 2
-		dial_style_pressed.border_color = Color(0.0, 1.0, 0.8, 0.9)
-		dial_style_pressed.corner_radius_top_left = 6
-		dial_style_pressed.corner_radius_top_right = 6
-		dial_style_pressed.corner_radius_bottom_left = 6
-		dial_style_pressed.corner_radius_bottom_right = 6
-
-		dial_btn.add_theme_stylebox_override("normal", dial_style_normal)
-		dial_btn.add_theme_stylebox_override("pressed", dial_style_pressed)
-		dial_btn.add_theme_font_override("font", MiniGameTheme.SILKSCREEN)
-		dial_btn.add_theme_font_size_override("font_size", 24)
-		dial_btn.add_theme_color_override("font_color", Color.WHITE)
-		dial_btn.add_theme_color_override("font_outline_color", Color.BLACK)
-		dial_btn.add_theme_constant_override("outline_size", 3)
+		MiniGameTheme.style_neon_button(dial_btn, MiniGameTheme.NEON_CYAN)
+		dial_btn.add_theme_font_size_override("font_size", 26)
 
 		var keycode = KEY_1 if i == 0 else KEY_2 if i == 1 else KEY_3
 		dial_btn.pressed.connect(func(): touch_dial_pressed.emit(keycode))

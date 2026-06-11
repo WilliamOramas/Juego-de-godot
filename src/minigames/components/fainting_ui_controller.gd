@@ -117,7 +117,7 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	hearts_box.offset_left = -230
 	hearts_box.offset_top = 10
 	hearts_box.offset_right = -24
-	hearts_box.offset_bottom = 52
+	hearts_box.offset_bottom = 50
 	hearts_box.alignment = BoxContainer.ALIGNMENT_END
 	hearts_box.add_theme_constant_override("separation", 10)
 	root.game_container.add_child(hearts_box)

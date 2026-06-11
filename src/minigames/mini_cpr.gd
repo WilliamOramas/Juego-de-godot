@@ -177,7 +177,7 @@ func _ready() -> void:
 	_hearts_box.offset_left = -280
 	_hearts_box.offset_top = 10
 	_hearts_box.offset_right = -24
-	_hearts_box.offset_bottom = 52
+	_hearts_box.offset_bottom = 50
 	_hearts_box.alignment = BoxContainer.ALIGNMENT_END
 	_hearts_box.add_theme_constant_override("separation", 10)
 	game_container.add_child(_hearts_box)

@@ -6,13 +6,15 @@ const TIME_LIMIT_SEC: float = 120.0
 const LOADING_DOTS: Array[String] = ["", ".", "..", "..."]
 const P1_MARGIN_X: float = 40.0
 const P1_HEADER_HEIGHT: float = 118.0
-const P1_STATUS_RESERVE: float = 100.0
+const P1_STATUS_RESERVE: float = 112.0
+const P1_CORRECTION_TOP: float = 108.0
 const P1_OPTION_FONT_SIZE: int = 16
 const P1_OPTION_SEPARATION: int = 10
 const QUESTIONS_LOAD_TIMEOUT_SEC: float = 15.0
 const ENRIQUE_CORRECT_CHANCE: float = 0.5
 const P1_FEEDBACK_DELAY_SEC: float = 2.0
 const P1_WRONG_FEEDBACK_DELAY_SEC: float = 3.5
+const EXTREME_DIFFICULTY_STREAK: int = 3
 
 # === UI Nodes ===
 var _loading_overlay: Control
@@ -26,7 +28,12 @@ var p1_question: Label
 var p1_options: VBoxContainer
 var p1_player_strikes: Label
 var p1_enrique_strikes: Label
-var p1_status: Label
+var p1_correction_panel: PanelContainer
+var p1_correction_title: Label
+var p1_correction_label: Label
+var p1_footer_panel: PanelContainer
+var p1_footer_player_label: Label
+var p1_footer_enrique_label: Label
 var p1_source_label: Label
 var _using_fallback_questions: bool = false
 var _questions_resolved: bool = false
@@ -49,7 +56,12 @@ var fail_sound: AudioStreamPlayer
 var player_strikes: int = 0
 var enrique_strikes: int = 0
 var questions_asked: int = 0
-var current_q_index: int = -1
+var question_pool: Array[Dictionary] = []
+var _used_question_keys: Array[String] = []
+var current_question: Dictionary = {}
+var _difficulty_max: int = TriviaQuestionGenerator.DIFFICULTY_MEDIUM
+var _consecutive_player_wrongs: int = 0
+var _consecutive_player_corrects: int = 0
 
 # === State Phase 2 (Wordle) ===
 var is_phase_2: bool = false
@@ -63,8 +75,6 @@ var enrique_w_wins: int = 0
 
 var _time_elapsed: float = 0.0
 var _step_start_time: float = 0.0
-
-var questions: Array[Dictionary] = []
 
 func _ready() -> void:
 	super._ready()
@@ -92,7 +102,7 @@ func start() -> void:
 	_show_loading(true)
 	_questions_resolved = false
 	_arm_questions_load_timeout()
-	TriviaQuestionGenerator.fetch_questions(QUESTION_COUNT, _on_questions_ready)
+	TriviaQuestionGenerator.fetch_session_pool(_on_questions_ready)
 
 
 func _arm_questions_load_timeout() -> void:
@@ -104,7 +114,7 @@ func _on_questions_load_timeout() -> void:
 		return
 	if not is_instance_valid(_loading_overlay) or not _loading_overlay.visible:
 		return
-	_on_questions_ready(TriviaQuestionGenerator.get_fallback_questions(QUESTION_COUNT), true)
+	_on_questions_ready(TriviaQuestionGenerator.get_fallback_pool(), true)
 
 
 func _on_questions_ready(questions_data: Array, used_fallback: bool) -> void:
@@ -112,14 +122,14 @@ func _on_questions_ready(questions_data: Array, used_fallback: bool) -> void:
 		return
 	_questions_resolved = true
 	_using_fallback_questions = used_fallback
-	questions.clear()
+	question_pool.clear()
 	for item: Variant in questions_data:
 		if typeof(item) == TYPE_DICTIONARY:
-			questions.append(item as Dictionary)
+			question_pool.append(item as Dictionary)
 	_reset_phase1_state()
 	_update_source_label()
 	_show_loading(false)
-	if questions.is_empty():
+	if question_pool.is_empty():
 		end(false)
 		return
 	_enter_paused_play()
@@ -138,13 +148,16 @@ func _reset_phase1_state() -> void:
 	player_strikes = 0
 	enrique_strikes = 0
 	questions_asked = 0
-	current_q_index = -1
+	_used_question_keys.clear()
+	current_question = {}
+	_difficulty_max = TriviaQuestionGenerator.DIFFICULTY_MEDIUM
+	_consecutive_player_wrongs = 0
+	_consecutive_player_corrects = 0
 	if is_instance_valid(p1_player_strikes):
 		p1_player_strikes.text = "Tus Strikes: 0/%d" % STRIKE_LIMIT
 	if is_instance_valid(p1_enrique_strikes):
 		p1_enrique_strikes.text = "Strikes de Enrique: 0/%d" % STRIKE_LIMIT
-	if is_instance_valid(p1_status):
-		p1_status.text = ""
+	_clear_round_feedback()
 
 
 func _update_source_label() -> void:
@@ -195,6 +208,33 @@ func _set_top_wide(node: Control, top_y: float, height: float) -> void:
 	node.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	node.offset_top = top_y
 	node.offset_bottom = top_y + height
+
+
+func _create_footer_result_box(parent: HBoxContainer, title: String, accent: Color) -> Label:
+	var box := PanelContainer.new()
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.custom_minimum_size = Vector2(0, 52)
+
+	var box_style := StyleBoxFlat.new()
+	box_style.bg_color = Color(0.12, 0.14, 0.18, 1.0)
+	box_style.border_color = accent.darkened(0.25)
+	box_style.set_border_width_all(1)
+	box_style.set_corner_radius_all(6)
+	box_style.content_margin_left = 10
+	box_style.content_margin_right = 10
+	box_style.content_margin_top = 6
+	box_style.content_margin_bottom = 6
+	box.add_theme_stylebox_override("panel", box_style)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 2)
+	box.add_child(vbox)
+
+	_create_label(vbox, title, 12, accent, HORIZONTAL_ALIGNMENT_CENTER)
+	var result_label := _create_label(vbox, "—", 15, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER)
+	parent.add_child(box)
+	return result_label
+
 
 func _build_loading_overlay() -> void:
 	_loading_overlay = Control.new()
@@ -255,21 +295,71 @@ func _build_ui() -> void:
 	p1_enrique_strikes.position = Vector2(-368, 66)
 	p1_enrique_strikes.size = Vector2(320, 42)
 	
+	p1_correction_panel = PanelContainer.new()
+	p1_correction_panel.visible = false
+	p1_correction_panel.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	p1_container.add_child(p1_correction_panel)
+
+	var correction_style := StyleBoxFlat.new()
+	correction_style.bg_color = Color(0.18, 0.1, 0.1, 0.95)
+	correction_style.border_color = Color(0.95, 0.45, 0.35)
+	correction_style.set_border_width_all(2)
+	correction_style.set_corner_radius_all(8)
+	correction_style.content_margin_left = 14
+	correction_style.content_margin_right = 14
+	correction_style.content_margin_top = 8
+	correction_style.content_margin_bottom = 10
+	p1_correction_panel.add_theme_stylebox_override("panel", correction_style)
+
+	var correction_vbox := VBoxContainer.new()
+	correction_vbox.add_theme_constant_override("separation", 4)
+	p1_correction_panel.add_child(correction_vbox)
+
+	p1_correction_title = _create_label(correction_vbox, "¡Incorrecto!", 17, Color(1.0, 0.55, 0.45), HORIZONTAL_ALIGNMENT_LEFT)
+	p1_correction_label = _create_label(correction_vbox, "", 15, Color(0.95, 0.95, 0.95), HORIZONTAL_ALIGNMENT_LEFT)
+	p1_correction_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
 	p1_question = _create_label(p1_container, "Pregunta...", 20)
 	p1_question.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	p1_question.set_anchors_preset(Control.PRESET_TOP_WIDE)
 
-	p1_status = _create_label(p1_container, "", -1)
-	p1_status.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	p1_status.offset_top = -100
-	p1_status.offset_bottom = -50
+	p1_footer_panel = PanelContainer.new()
+	p1_footer_panel.visible = false
+	p1_footer_panel.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	p1_footer_panel.offset_left = P1_MARGIN_X
+	p1_footer_panel.offset_right = -P1_MARGIN_X
+	p1_footer_panel.offset_top = -P1_STATUS_RESERVE
+	p1_footer_panel.offset_bottom = -28
+	p1_container.add_child(p1_footer_panel)
+
+	var footer_style := StyleBoxFlat.new()
+	footer_style.bg_color = Color(0.07, 0.09, 0.14, 0.96)
+	footer_style.border_color = Color(0.35, 0.42, 0.55)
+	footer_style.set_border_width_all(2)
+	footer_style.set_corner_radius_all(10)
+	footer_style.content_margin_left = 12
+	footer_style.content_margin_right = 12
+	footer_style.content_margin_top = 10
+	footer_style.content_margin_bottom = 10
+	p1_footer_panel.add_theme_stylebox_override("panel", footer_style)
+
+	var footer_row := HBoxContainer.new()
+	footer_row.add_theme_constant_override("separation", 16)
+	footer_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	p1_footer_panel.add_child(footer_row)
+
+	var player_box := _create_footer_result_box(footer_row, "TÚ", Color.AQUA)
+	p1_footer_player_label = player_box
+
+	var enrique_box := _create_footer_result_box(footer_row, "ENRIQUE", Color.ORANGE)
+	p1_footer_enrique_label = enrique_box
 
 	p1_source_label = _create_label(p1_container, "", 13, Color(0.7, 0.7, 0.7), HORIZONTAL_ALIGNMENT_LEFT)
 	p1_source_label.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	p1_source_label.offset_left = P1_MARGIN_X
-	p1_source_label.offset_top = -52
+	p1_source_label.offset_top = -22
 	p1_source_label.offset_right = 420
-	p1_source_label.offset_bottom = -24
+	p1_source_label.offset_bottom = -4
 
 	p1_options = VBoxContainer.new()
 	p1_options.z_index = 1
@@ -340,9 +430,22 @@ func _next_question() -> void:
 		_start_phase_2()
 		return
 		
-	current_q_index = (current_q_index + 1) % questions.size()
-	var q = questions[current_q_index]
-	
+	current_question = TriviaQuestionGenerator.pick_question(
+		question_pool,
+		_used_question_keys,
+		_get_pick_difficulty_max(),
+		_allows_extreme_questions()
+	)
+	if current_question.is_empty():
+		end(false)
+		return
+
+	var question_key := TriviaQuestionGenerator.question_key(current_question)
+	if not question_key.is_empty():
+		_used_question_keys.append(question_key)
+
+	var q := current_question
+	_clear_round_feedback()
 	p1_question.text = "Pregunta %d: %s" % [(questions_asked + 1), q["q"]]
 	_step_start_time = _time_elapsed
 
@@ -379,11 +482,21 @@ func _layout_phase1_ui() -> void:
 
 	var vp_size := get_viewport().get_visible_rect().size
 	var content_width := _get_p1_content_width()
+
+	if is_instance_valid(p1_correction_panel) and p1_correction_panel.visible:
+		p1_correction_panel.offset_left = P1_MARGIN_X
+		p1_correction_panel.offset_right = -P1_MARGIN_X
+		p1_correction_panel.offset_top = P1_CORRECTION_TOP
+		var correction_height := _measure_label_height(p1_correction_label, content_width - 28.0) + 40.0
+		p1_correction_panel.offset_bottom = P1_CORRECTION_TOP + correction_height
+
 	var options_height := _measure_options_block_height(content_width)
 	var question_height := _measure_label_height(p1_question, content_width)
 	var block_height := question_height + 16.0 + options_height
 	var area_top := P1_HEADER_HEIGHT
-	var area_bottom := vp_size.y - P1_STATUS_RESERVE
+	if is_instance_valid(p1_correction_panel) and p1_correction_panel.visible:
+		area_top = p1_correction_panel.offset_bottom + 12.0
+	var area_bottom := vp_size.y - P1_STATUS_RESERVE - 16.0
 	var block_top := area_top + maxf(0.0, (area_bottom - area_top - block_height) * 0.5)
 
 	p1_question.set_anchors_preset(Control.PRESET_TOP_LEFT)
@@ -438,12 +551,75 @@ func _create_option_button(option_text: String, index: int) -> Button:
 	return btn
 
 
+func _lower_difficulty_if_struggling() -> void:
+	var answered := maxi(questions_asked, 1)
+	var wrong_rate := float(player_strikes) / float(answered)
+	var is_struggling := player_strikes >= 2
+	is_struggling = is_struggling or _consecutive_player_wrongs >= 2
+	is_struggling = is_struggling or (questions_asked >= 1 and wrong_rate >= 0.5)
+	if not is_struggling:
+		return
+
+	_difficulty_max = maxi(TriviaQuestionGenerator.DIFFICULTY_MIN, _difficulty_max - 1)
+
+
+func _get_pick_difficulty_max() -> int:
+	if _allows_extreme_questions():
+		return TriviaQuestionGenerator.DIFFICULTY_EXTREME
+	return _difficulty_max
+
+
+func _allows_extreme_questions() -> bool:
+	return _consecutive_player_corrects >= EXTREME_DIFFICULTY_STREAK
+
+
+func _raise_difficulty_on_correct() -> void:
+	_consecutive_player_corrects += 1
+	_difficulty_max = mini(TriviaQuestionGenerator.DIFFICULTY_HARD, _difficulty_max + 1)
+
+
 func _get_correct_answer_text(q: Dictionary) -> String:
 	var ops: Array = q.get("ops", [])
 	var correct_idx := int(q.get("ans", -1))
 	if correct_idx < 0 or correct_idx >= ops.size():
 		return ""
 	return String(ops[correct_idx])
+
+
+func _clear_round_feedback() -> void:
+	if is_instance_valid(p1_correction_panel):
+		p1_correction_panel.visible = false
+	if is_instance_valid(p1_correction_label):
+		p1_correction_label.text = ""
+	if is_instance_valid(p1_footer_panel):
+		p1_footer_panel.visible = false
+	if is_instance_valid(p1_footer_player_label):
+		p1_footer_player_label.text = "—"
+	if is_instance_valid(p1_footer_enrique_label):
+		p1_footer_enrique_label.text = "—"
+
+
+func _show_correction_banner(correct_text: String) -> void:
+	if correct_text.is_empty():
+		p1_correction_label.text = "No se pudo determinar la respuesta correcta."
+	else:
+		p1_correction_label.text = "Respuesta correcta: %s" % correct_text
+	p1_correction_panel.visible = true
+	call_deferred("_layout_phase1_ui")
+
+
+func _show_round_footer(player_won: bool, enrique_won: bool) -> void:
+	p1_footer_player_label.text = "Acierto" if player_won else "Error"
+	p1_footer_player_label.add_theme_color_override(
+		"font_color",
+		Color(0.45, 1.0, 0.55) if player_won else Color(1.0, 0.45, 0.45)
+	)
+	p1_footer_enrique_label.text = "Acierto" if enrique_won else "Error"
+	p1_footer_enrique_label.add_theme_color_override(
+		"font_color",
+		Color(0.45, 1.0, 0.55) if enrique_won else Color(1.0, 0.45, 0.45)
+	)
+	p1_footer_panel.visible = true
 
 
 func _highlight_option_buttons(selected_idx: int, correct_idx: int) -> void:
@@ -463,7 +639,9 @@ func _on_option_selected(idx: int) -> void:
 		if child is BaseButton:
 			(child as BaseButton).disabled = true
 
-	var q = questions[current_q_index]
+	var q := current_question
+	if q.is_empty():
+		return
 	var correct_idx := int(q.get("ans", -1))
 	var player_correct = idx == correct_idx
 	var correct_text := _get_correct_answer_text(q)
@@ -474,17 +652,18 @@ func _on_option_selected(idx: int) -> void:
 
 	if not player_correct:
 		player_strikes += 1
+		_consecutive_player_wrongs += 1
+		_consecutive_player_corrects = 0
 		p1_player_strikes.text = "Tus Strikes: %d/%d" % [player_strikes, STRIKE_LIMIT]
 		_highlight_option_buttons(idx, correct_idx)
-		if correct_text.is_empty():
-			p1_status.text = "¡Incorrecto!"
-		else:
-			p1_status.text = "¡Incorrecto! La respuesta correcta era: %s" % correct_text
+		_show_correction_banner(correct_text)
+		_lower_difficulty_if_struggling()
 		wrong_sound.play()
 		feedback_delay = P1_WRONG_FEEDBACK_DELAY_SEC
 		ScoreManager.record_minigame_step(false, "Respuesta incorrecta a la trivia", time_taken)
 	else:
-		p1_status.text = "¡Correcto!"
+		_consecutive_player_wrongs = 0
+		_raise_difficulty_on_correct()
 		correct_sound.play()
 		ScoreManager.record_minigame_step(true, "Respuesta correcta a la trivia", time_taken)
 
@@ -492,9 +671,8 @@ func _on_option_selected(idx: int) -> void:
 	if not enrique_correct:
 		enrique_strikes += 1
 		p1_enrique_strikes.text = "Strikes de Enrique: %d/%d" % [enrique_strikes, STRIKE_LIMIT]
-		p1_status.text += " | ¡Enrique falló!"
-	else:
-		p1_status.text += " | Enrique acertó."
+
+	_show_round_footer(player_correct, enrique_correct)
 
 	questions_asked += 1
 

@@ -10,6 +10,13 @@ const P1_STATUS_RESERVE: float = 112.0
 const P1_CORRECTION_TOP: float = 108.0
 const P1_OPTION_FONT_SIZE: int = 16
 const P1_OPTION_SEPARATION: int = 10
+const P1_GRID_COLUMNS: int = 2
+const P1_LONG_QUESTION_MAX_HEIGHT: float = 72.0
+const P1_OPTION_BORDER_WIDTH: int = 2
+const P1_OPTION_RADIUS: int = 8
+const P1_OPTION_TEXT_COLOR := Color(0.93, 0.98, 1.0)
+const P1_OPTION_BORDER_COLOR := Color(0.42, 0.78, 0.92, 0.9)
+const P1_OPTION_BG_COLOR := Color(0.10, 0.15, 0.24, 0.84)
 const QUESTIONS_LOAD_TIMEOUT_SEC: float = 15.0
 const ENRIQUE_CORRECT_CHANCE: float = 0.5
 const P1_FEEDBACK_DELAY_SEC: float = 2.0
@@ -25,7 +32,8 @@ var _loading_dot_index: int = 0
 
 var p1_container: Control
 var p1_question: Label
-var p1_options: VBoxContainer
+var p1_options: GridContainer
+var _p1_options_use_grid: bool = true
 var p1_player_strikes: Label
 var p1_enrique_strikes: Label
 var p1_correction_panel: PanelContainer
@@ -361,9 +369,11 @@ func _build_ui() -> void:
 	p1_source_label.offset_right = 420
 	p1_source_label.offset_bottom = -4
 
-	p1_options = VBoxContainer.new()
+	p1_options = GridContainer.new()
 	p1_options.z_index = 1
-	p1_options.add_theme_constant_override("separation", P1_OPTION_SEPARATION)
+	p1_options.columns = P1_GRID_COLUMNS
+	p1_options.add_theme_constant_override("h_separation", P1_OPTION_SEPARATION)
+	p1_options.add_theme_constant_override("v_separation", P1_OPTION_SEPARATION)
 	p1_container.add_child(p1_options)
 
 	# ================= PHASE 2 UI =================
@@ -449,12 +459,20 @@ func _next_question() -> void:
 	p1_question.text = "Pregunta %d: %s" % [(questions_asked + 1), q["q"]]
 	_step_start_time = _time_elapsed
 
+	var content_width := _get_p1_content_width()
+	_p1_options_use_grid = _measure_label_height(p1_question, content_width) <= P1_LONG_QUESTION_MAX_HEIGHT
+	p1_options.columns = P1_GRID_COLUMNS if _p1_options_use_grid else 1
+
+	var option_width := content_width
+	if _p1_options_use_grid:
+		option_width = (content_width - float(P1_OPTION_SEPARATION)) / float(P1_GRID_COLUMNS)
+
 	for child in p1_options.get_children():
 		child.queue_free()
 
 	var ops: Array = q.get("ops", [])
 	for i in range(ops.size()):
-		p1_options.add_child(_create_option_button(String(ops[i]), i))
+		p1_options.add_child(_create_option_button(String(ops[i]), i, option_width))
 
 	call_deferred("_layout_phase1_ui")
 
@@ -508,16 +526,44 @@ func _layout_phase1_ui() -> void:
 
 
 func _measure_options_block_height(content_width: float) -> float:
-	var total_height := 0.0
-	var is_first := true
+	var buttons: Array[Button] = []
 	for child in p1_options.get_children():
 		if child is Button:
+			buttons.append(child as Button)
+
+	if buttons.is_empty():
+		return 0.0
+
+	var button_width := content_width
+	if _p1_options_use_grid:
+		button_width = (content_width - float(P1_OPTION_SEPARATION)) / float(P1_GRID_COLUMNS)
+
+	if not _p1_options_use_grid:
+		var total_height := 0.0
+		var is_first := true
+		for btn: Button in buttons:
 			if not is_first:
 				total_height += P1_OPTION_SEPARATION
 			is_first = false
-			_resize_option_button(child as Button, content_width)
-			total_height += (child as Button).custom_minimum_size.y
-	return total_height
+			_resize_option_button(btn, button_width)
+			total_height += btn.custom_minimum_size.y
+		return total_height
+
+	var row_count := ceili(float(buttons.size()) / float(P1_GRID_COLUMNS))
+	var total_grid_height := 0.0
+	for row in range(row_count):
+		var row_height := 0.0
+		for col in range(P1_GRID_COLUMNS):
+			var index := row * P1_GRID_COLUMNS + col
+			if index >= buttons.size():
+				break
+			var btn := buttons[index]
+			_resize_option_button(btn, button_width)
+			row_height = maxf(row_height, btn.custom_minimum_size.y)
+		if row > 0:
+			total_grid_height += P1_OPTION_SEPARATION
+		total_grid_height += row_height
+	return total_grid_height
 
 
 func _measure_option_text_height(text: String, width: float) -> float:
@@ -532,21 +578,64 @@ func _measure_option_text_height(text: String, width: float) -> float:
 	).y
 
 
+func _build_option_stylebox(bg_color: Color, border_color: Color, border_width: int = P1_OPTION_BORDER_WIDTH) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = bg_color
+	style.border_color = border_color
+	style.set_border_width_all(border_width)
+	style.set_corner_radius_all(P1_OPTION_RADIUS)
+	style.content_margin_left = 14
+	style.content_margin_right = 14
+	style.content_margin_top = 10
+	style.content_margin_bottom = 10
+	style.shadow_color = Color(0.0, 0.0, 0.0, 0.45)
+	style.shadow_size = 5
+	style.shadow_offset = Vector2(0, 2)
+	return style
+
+
+func _apply_option_button_styles(btn: Button) -> void:
+	var normal := _build_option_stylebox(P1_OPTION_BG_COLOR, P1_OPTION_BORDER_COLOR)
+	var hover := _build_option_stylebox(
+		Color(0.14, 0.21, 0.32, 0.92),
+		Color(0.58, 0.88, 1.0, 0.98)
+	)
+	var pressed := _build_option_stylebox(
+		Color(0.08, 0.24, 0.30, 0.94),
+		Color(0.70, 0.96, 1.0, 1.0)
+	)
+	var disabled := _build_option_stylebox(
+		Color(0.08, 0.11, 0.16, 0.62),
+		Color(0.30, 0.38, 0.48, 0.55),
+		1
+	)
+	btn.add_theme_stylebox_override("normal", normal)
+	btn.add_theme_stylebox_override("hover", hover)
+	btn.add_theme_stylebox_override("pressed", pressed)
+	btn.add_theme_stylebox_override("disabled", disabled)
+	btn.add_theme_stylebox_override("focus", normal)
+	btn.add_theme_color_override("font_color", P1_OPTION_TEXT_COLOR)
+	btn.add_theme_color_override("font_hover_color", Color.WHITE)
+	btn.add_theme_color_override("font_pressed_color", Color.WHITE)
+	btn.add_theme_color_override("font_disabled_color", Color(0.72, 0.78, 0.86))
+
+
 func _resize_option_button(btn: Button, content_width: float) -> void:
 	var text_height := _measure_option_text_height(btn.text, content_width - 32.0)
-	var option_height := maxf(48.0, text_height + 24.0)
+	var option_height := maxf(52.0, text_height + 28.0)
 	btn.custom_minimum_size = Vector2(content_width, option_height)
 
 
-func _create_option_button(option_text: String, index: int) -> Button:
-	var width := _get_p1_content_width()
+func _create_option_button(option_text: String, index: int, width: float) -> Button:
 	var text_height := _measure_option_text_height(option_text, width - 32.0)
-	var option_height := maxf(48.0, text_height + 24.0)
+	var option_height := maxf(52.0, text_height + 28.0)
 
 	var btn := Button.new()
 	btn.text = option_text
+	btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	btn.add_theme_font_size_override("font_size", P1_OPTION_FONT_SIZE)
 	btn.custom_minimum_size = Vector2(width, option_height)
+	_apply_option_button_styles(btn)
 	btn.pressed.connect(_on_option_selected.bind(index))
 	return btn
 
@@ -623,15 +712,34 @@ func _show_round_footer(player_won: bool, enrique_won: bool) -> void:
 
 
 func _highlight_option_buttons(selected_idx: int, correct_idx: int) -> void:
+	var dim_style := _build_option_stylebox(
+		Color(0.07, 0.09, 0.13, 0.5),
+		Color(0.22, 0.28, 0.36, 0.4),
+		1
+	)
+	var correct_style := _build_option_stylebox(
+		Color(0.10, 0.28, 0.17, 0.92),
+		Color(0.45, 1.0, 0.55, 0.95)
+	)
+	var wrong_style := _build_option_stylebox(
+		Color(0.28, 0.11, 0.11, 0.92),
+		Color(1.0, 0.45, 0.45, 0.95)
+	)
+
 	for i in range(p1_options.get_child_count()):
 		var child := p1_options.get_child(i)
 		if not child is Button:
 			continue
 		var btn := child as Button
 		if i == correct_idx:
-			btn.modulate = Color(0.55, 1.0, 0.55)
+			btn.add_theme_stylebox_override("disabled", correct_style)
+			btn.add_theme_color_override("font_disabled_color", Color(0.88, 1.0, 0.9))
 		elif i == selected_idx:
-			btn.modulate = Color(1.0, 0.45, 0.45)
+			btn.add_theme_stylebox_override("disabled", wrong_style)
+			btn.add_theme_color_override("font_disabled_color", Color(1.0, 0.82, 0.82))
+		else:
+			btn.add_theme_stylebox_override("disabled", dim_style)
+			btn.add_theme_color_override("font_disabled_color", Color(0.58, 0.62, 0.68))
 
 
 func _on_option_selected(idx: int) -> void:

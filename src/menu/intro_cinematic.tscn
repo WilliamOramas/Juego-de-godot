@@ -67,26 +67,23 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 3.0
-offset_top = -3.0
-offset_right = 3.0
-offset_bottom = -3.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Pixel" parent="Center" unique_id=1682655519 instance=ExtResource("2_pixel")]
 custom_minimum_size = Vector2(480, 480)
 layout_mode = 2
+scale = Vector2(2.5, 2.5)
 
 [node name="NarratorLabel" type="Label" parent="." unique_id=2114494236]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 31.0
-offset_top = 418.0
-offset_right = -49.0
-offset_bottom = -45.0
+offset_left = 40.0
+offset_top = 0.0
+offset_right = -40.0
+offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)

@@ -42,5 +42,3 @@ func _on_interact_pressed() -> void:
 
 	_interact.set_button_visible(false)
 	DialogBox.show_dialog(npc_name, dialog_lines)
-
-

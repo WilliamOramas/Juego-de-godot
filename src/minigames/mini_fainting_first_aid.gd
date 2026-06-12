@@ -231,7 +231,7 @@ func _lose_life(msg: String) -> void:
 	if wrong: wrong.play()
 	var step: Dictionary = STEP_DATA[_current_step]
 	ScoreManager.record_minigame_step(false, step.get("protocolo_accion", "Acción médica") as String)
-	JournalManager.add_minigame_entry("Error en paso %d" % (_current_step + 1), msg)
+	JournalManager.add_minigame_entry("Error en paso %d" % (_current_step + 1), "✗ " + msg)
 	visual.trigger_shake()
 	visual.update_patient_color(_lives)
 	
@@ -270,12 +270,14 @@ func end(success: bool) -> void:
 
 func show_end_screen(success: bool) -> void:
 	var screen := EndScreen.new()
-	screen.setup(success)
+	screen.setup(success, EndScreen.FAINTING_STEP_LABELS)
 	screen.continue_pressed.connect(_on_end_screen_continue.bind(success))
 	add_child(screen)
 
 func _on_end_screen_continue(success: bool) -> void:
 	get_tree().paused = false
+	bgm_player.stop()
+	heartbeat_player.stop()
 	if success:
 		var wp = get_tree().current_scene.find_child("PatientInWorld", true, false) as Sprite2D
 		if wp:

@@ -739,6 +739,7 @@ func _lose_life(msg: String) -> void:
 	_lives -= 1
 	var step: Dictionary = STEP_DATA[_current_step]
 	ScoreManager.record_minigame_step(false, step.get("protocolo_accion", "Acción médica") as String)
+	JournalManager.add_minigame_entry("Error en paso %d" % (_current_step + 1), "✗ " + msg)
 	feedback_label.modulate = MiniGameTheme.FEEDBACK_BAD
 	feedback_label.text = "✗ " + msg
 	wrong_sound.play()
@@ -755,6 +756,7 @@ func _lose_life(msg: String) -> void:
 		EventBus.student_died.emit()
 		_state = "death_delay"
 		_state_timer = 2.5
+		JournalManager.add_system_entry("Paciente fallecido", "No se pudo reanimar al paciente a tiempo.")
 		return
 
 	_state = "step_fail_delay"
@@ -767,6 +769,7 @@ func _on_step_ok() -> void:
 	feedback_label.text = "✓ " + step.feedback_ok
 	correct_sound.play()
 	ScoreManager.record_minigame_step(true, step.get("protocolo_accion", "Acción médica") as String)
+	JournalManager.add_minigame_entry("Paso %d superado" % (_current_step + 1), step.feedback_ok)
 	_state = "step_ok_delay"
 	_state_timer = 0.8
 
@@ -775,18 +778,40 @@ func _on_heartbeat_finished() -> void:
 	if is_instance_valid(heartbeat_player):
 		heartbeat_player.play()
 
-func _on_before_end(success: bool) -> void:
+func end(success: bool) -> void:
+	if not _is_running:
+		return
+	_is_running = false
+	process_mode = PROCESS_MODE_INHERIT
 	ScoreManager.record_minigame_result("cpr", success, _lives, _time_remaining)
 	if success:
 		JournalManager.add_system_entry("RCP completada", "Se completaron 3 ciclos de RCP correctamente.")
 	else:
 		JournalManager.add_system_entry("RCP fallida", "No se pudo reanimar al paciente.")
 
-func _on_after_end(_success: bool) -> void:
+	if SceneManager and SceneManager.has_method("play_time_passage"):
+		SceneManager.play_time_passage(1.5, func():
+			show_end_screen(success)
+		)
+	else:
+		show_end_screen(success)
+
+
+func show_end_screen(success: bool) -> void:
+	var screen := EndScreen.new()
+	screen.setup(success, EndScreen.CPR_STEP_LABELS, "✓ PACIENTE RECUPERADO", "✗ PACIENTE FALLECIDO")
+	screen.continue_pressed.connect(_on_end_screen_continue.bind(success))
+	add_child(screen)
+
+
+func _on_end_screen_continue(success: bool) -> void:
+	get_tree().paused = false
 	bgm_player.stop()
 	heartbeat_player.stop()
 	if heartbeat_player.finished.is_connected(_on_heartbeat_finished):
 		heartbeat_player.finished.disconnect(_on_heartbeat_finished)
+	hide()
+	game_completed.emit(game_id, success)
 
 
 func _on_rhythm_ring_draw() -> void:

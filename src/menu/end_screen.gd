@@ -3,7 +3,7 @@ class_name EndScreen
 
 signal continue_pressed
 
-const STEP_LABELS := [
+const FAINTING_STEP_LABELS := [
 	"Verificar si responde",
 	"Verificar respiración",
 	"Verificar pulso carotídeo",
@@ -13,9 +13,20 @@ const STEP_LABELS := [
 	"Monitorear signos",
 ]
 
+const CPR_STEP_LABELS := [
+	"Verificar escena segura",
+	"30 compresiones torácicas",
+	"2 respiraciones de rescate",
+	"Ciclo completo 30:2",
+	"Llamar al 112",
+]
+
 var _success: bool
 var _journal_entries: Array[JournalEntry]
 var _panel: Panel
+var _step_labels: Array
+var _success_text: String
+var _fail_text: String
 
 
 func _ready() -> void:
@@ -24,8 +35,11 @@ func _ready() -> void:
 	build_ui()
 
 
-func setup(success: bool) -> void:
+func setup(success: bool, step_labels: Array = [], success_text: String = "", fail_text: String = "") -> void:
 	_success = success
+	_step_labels = step_labels if step_labels.size() > 0 else FAINTING_STEP_LABELS
+	_success_text = success_text if success_text != "" else "✓ ESTUDIANTE ESTABILIZADO"
+	_fail_text = fail_text if fail_text != "" else "✗ ESTUDIANTE FALLECIDO"
 	_journal_entries = JournalManager.get_filtered(JournalEntry.Category.MINIGAME)
 
 
@@ -70,10 +84,10 @@ func build_ui() -> void:
 	var result_label := Label.new()
 	var stats := ScoreManager.get_stats()
 	if _success:
-		result_label.text = "✓ ESTUDIANTE ESTABILIZADO"
+		result_label.text = _success_text
 		result_label.add_theme_color_override("font_color", Color(0.2, 1.0, 0.2))
 	else:
-		result_label.text = "✗ ESTUDIANTE FALLECIDO"
+		result_label.text = _fail_text
 		result_label.add_theme_color_override("font_color", Color.RED)
 	result_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_label.add_theme_font_override("font", font)
@@ -120,7 +134,7 @@ func build_ui() -> void:
 	check_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(check_vbox)
 
-	for i in range(STEP_LABELS.size()):
+	for i in range(_step_labels.size()):
 		_add_step_row(check_vbox, i, font)
 
 	vbox.add_child(HSeparator.new())
@@ -148,7 +162,7 @@ func _add_step_row(parent: VBoxContainer, index: int, font: Font) -> void:
 	row.add_child(check)
 
 	var lbl := Label.new()
-	var txt := "Paso %d: %s" % [step_num, STEP_LABELS[index]]
+	var txt := "Paso %d: %s" % [step_num, _step_labels[index]]
 	lbl.text = txt
 	lbl.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8, 1) if step_done else Color(0.4, 0.4, 0.4, 1))
 	lbl.add_theme_font_override("font", font)

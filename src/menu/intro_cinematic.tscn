@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d2x7x1bpgu5te" path="res://src/menu/intro_cinematic.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://dswjytovfuu1t" path="res://src/menu/pixel.tscn" id="2_pixel"]
+[ext_resource type="FontFile" uid="uid://vuhiv8lxpkcd" path="res://src/fonts/Silkscreen-Regular.ttf" id="4_b3417"]
 [ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="4_cool"]
 [ext_resource type="AudioStream" uid="uid://c3lvq52ykjfm6" path="res://src/assets/sounds/nocopyrightsound633-arcade-beat-323176.mp3" id="5_music"]
 [ext_resource type="Shader" uid="uid://cp4sjikisi86u" path="res://src/minigames/crt_overlay.gdshader" id="6_vignette"]
@@ -71,7 +72,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Pixel" parent="PixelContainer" unique_id=1682655519 instance=ExtResource("2_pixel")]
-disable_bubble = true
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.192
@@ -82,6 +82,7 @@ offset_left = 242.23999
 offset_top = -7.4000015
 offset_right = 567.83997
 offset_bottom = 280.59998
+disable_bubble = true
 
 [node name="NarratorLabel" type="Label" parent="." unique_id=2114494236]
 layout_mode = 1
@@ -95,7 +96,7 @@ offset_bottom = -125.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("4_cool")
+theme_override_fonts/font = ExtResource("4_b3417")
 theme_override_font_sizes/font_size = 24
 horizontal_alignment = 1
 vertical_alignment = 1

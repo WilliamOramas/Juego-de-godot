@@ -9,14 +9,16 @@ var _dot_index: int = 0
 var _dot_timer: float = 0.0
 var _elapsed: float = 0.0
 
-@onready var title_label: Label = $Center/VBox/Title
-@onready var dots_label: Label = $Center/VBox/Dots
-@onready var skip_hint: Label = $Center/VBox/SkipHint
-@onready var pixel: Control = $Center/VBox/Pixel
+@onready var title_label: Label = $Title
+@onready var dots_label: Label = $Dots
+@onready var skip_hint: Label = $SkipHint
+@onready var pixel: Control = $PixelContainer/Pixel
 
 func _ready() -> void:
 	get_tree().paused = false
-
+	PhoneHud.visible = false
+	PhoneHud.set_process_input(false)
+	PhoneHud.set_process_unhandled_input(false)
 
 	dots_label.add_theme_font_size_override("font_size", 14)
 	dots_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6, 1))

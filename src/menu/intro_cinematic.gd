@@ -1,5 +1,7 @@
 extends Control
 
+const PIXEL_BASE_SIZE := Vector2(192, 192)
+
 @onready var pixel: Control = $PixelContainer/Pixel
 @onready var narrator_label: Label = $NarratorLabel
 @onready var skip_hint: Label = $SkipHint
@@ -11,6 +13,7 @@ var _face_happy: Texture2D
 var _face_normal: Texture2D
 var _skip: bool = false
 var _pixel_target_y: float
+var _pixel_size: Vector2
 
 
 func _ready() -> void:
@@ -27,9 +30,10 @@ func _ready() -> void:
 	_face_happy = load("res://src/assets/sprites/robot_face_happy.svg")
 	_face_normal = _pixel_face.texture
 
+	_pixel_size = PIXEL_BASE_SIZE * pixel.scale
 	_pixel_target_y = pixel.offset_top
 	pixel.offset_top = _pixel_target_y + 500
-	pixel.offset_bottom = _pixel_target_y + 500 + 480
+	pixel.offset_bottom = _pixel_target_y + 500 + _pixel_size.y
 	_run_intro()
 
 
@@ -49,7 +53,7 @@ func _run_intro() -> void:
 	var tween_slide = create_tween()
 	tween_slide.tween_property(pixel, "modulate:a", 1.0, 0.2)
 	tween_slide.parallel().tween_property(pixel, "offset_top", _pixel_target_y, 1.0).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween_slide.parallel().tween_property(pixel, "offset_bottom", _pixel_target_y + 480, 1.0).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween_slide.parallel().tween_property(pixel, "offset_bottom", _pixel_target_y + _pixel_size.y, 1.0).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	await tween_slide.finished
 	if _skip: return
 

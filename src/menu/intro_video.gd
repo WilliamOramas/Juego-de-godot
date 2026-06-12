@@ -47,4 +47,4 @@ func _go_to_menu() -> void:
 	var tween = create_tween()
 	tween.tween_property(fade_rect, "modulate:a", 1.0, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 	await tween.finished
-	get_tree().change_scene_to_file("res://src/menu/main_menu.tscn")
+	get_tree().change_scene_to_file("res://src/menu/splash_screen.tscn")

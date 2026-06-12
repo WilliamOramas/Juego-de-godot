@@ -135,7 +135,7 @@ func _ready() -> void:
 	bgm_player.play(109.0)
 	bgm_player.finished.connect(func(): bgm_player.play(109.0))
 	heartbeat_player.play()
-	heartbeat_player.finished.connect(func(): heartbeat_player.play())
+	heartbeat_player.finished.connect(_on_heartbeat_finished)
 
 	_reset_step()
 
@@ -278,6 +278,8 @@ func _on_end_screen_continue(success: bool) -> void:
 	get_tree().paused = false
 	bgm_player.stop()
 	heartbeat_player.stop()
+	if heartbeat_player.finished.is_connected(_on_heartbeat_finished):
+		heartbeat_player.finished.disconnect(_on_heartbeat_finished)
 	if success:
 		var wp = get_tree().current_scene.find_child("PatientInWorld", true, false) as Sprite2D
 		if wp:
@@ -297,3 +299,8 @@ func _on_end_screen_continue(success: bool) -> void:
 			wp.modulate.a = 1.0
 		hide()
 	game_completed.emit(game_id, success)
+
+
+func _on_heartbeat_finished() -> void:
+	if is_instance_valid(heartbeat_player):
+		heartbeat_player.play()

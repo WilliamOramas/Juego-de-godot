@@ -19,14 +19,14 @@ func _create_touch_ui() -> void:
 	# Main touch button (for hold/tap/compress)
 	touch_button = Button.new()
 	touch_button.text = "PRESIONAR"
-	touch_button.anchor_left = 0.0
+	touch_button.anchor_left = 0.5
 	touch_button.anchor_top = 0.0
-	touch_button.anchor_right = 0.0
+	touch_button.anchor_right = 0.5
 	touch_button.anchor_bottom = 0.0
-	touch_button.offset_left = 320
-	touch_button.offset_top = 330
-	touch_button.offset_right = 704
-	touch_button.offset_bottom = 400
+	touch_button.offset_left = -192
+	touch_button.offset_top = 440
+	touch_button.offset_right = 192
+	touch_button.offset_bottom = 510
 	touch_button.visible = false
 	touch_button.mouse_filter = Control.MOUSE_FILTER_STOP
 
@@ -45,14 +45,14 @@ func _create_touch_ui() -> void:
 
 	# Touch dial buttons (for DIAL_112)
 	touch_dial_container = HBoxContainer.new()
-	touch_dial_container.anchor_left = 0.0
+	touch_dial_container.anchor_left = 0.5
 	touch_dial_container.anchor_top = 0.0
-	touch_dial_container.anchor_right = 0.0
+	touch_dial_container.anchor_right = 0.5
 	touch_dial_container.anchor_bottom = 0.0
-	touch_dial_container.offset_left = 240
-	touch_dial_container.offset_top = 310
-	touch_dial_container.offset_right = 784
-	touch_dial_container.offset_bottom = 390
+	touch_dial_container.offset_left = -272
+	touch_dial_container.offset_top = 430
+	touch_dial_container.offset_right = 272
+	touch_dial_container.offset_bottom = 510
 	touch_dial_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	touch_dial_container.visible = false
 	touch_dial_container.add_theme_constant_override("separation", 24)

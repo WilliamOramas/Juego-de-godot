@@ -226,7 +226,6 @@ func _update_ecg_freq() -> void:
 
 func _update_ui() -> void:
 	var step: Dictionary = STEP_DATA[_current_step]
-	instruction_label.text = step.instruction
 	var help: String = step.help
 	if step.has("cycle_label"):
 		help = step.cycle_label + "\n" + help
@@ -234,7 +233,12 @@ func _update_ui() -> void:
 		var remaining = max(0, step.target - _cycle_count)
 		var cycle_display = _cycle_count + 2
 		help = "Ciclo %d/%d - Restan %d\n" % [cycle_display, TOTAL_CYCLES, remaining] + help
+	instruction_label.text = step.instruction
+	instruction_label.visible = false
+	instruction_label.visible = true
 	help_label.text = help
+	help_label.visible = false
+	help_label.visible = true
 	step_label.text = "Paso %d/%d" % [_current_step + 1, STEP_DATA.size()]
 	feedback_label.text = ""
 	_update_timer_label()
@@ -553,11 +557,15 @@ func _handle_cycle(delta: float, step: Dictionary) -> void:
 
 func _update_cycle_ui() -> void:
 	help_label.text = "Respiración %d/%d" % [_breath_count + 1, BREATHS_PER_CYCLE]
+	help_label.visible = false
+	help_label.visible = true
 	feedback_label.text = ""
 	progress_bar.visible = false
 	rhythm_ring.visible = false
 	breath_prompt.visible = true
 	instruction_label.text = "Respiraciones - Ciclo %d/%d" % [_cycle_count + 1, TOTAL_CYCLES]
+	instruction_label.visible = false
+	instruction_label.visible = true
 	_breath_substep = 0
 	_breath_substep_active = false
 	_update_breath_prompt()
@@ -631,7 +639,11 @@ func _start_pulse_check() -> void:
 	rhythm_ring.visible = false
 	feedback_label.text = ""
 	instruction_label.text = "Revisando pulso..."
+	instruction_label.visible = false
+	instruction_label.visible = true
 	help_label.text = "Pulsá [Q] cuando el pico pase el centro."
+	help_label.visible = false
+	help_label.visible = true
 	if heartbeat_player.playing:
 		heartbeat_player.stop()
 
@@ -686,7 +698,11 @@ func _continue_after_pulse() -> void:
 	rhythm_ring.visible = true
 	breath_prompt.visible = false
 	instruction_label.text = "30 compresiones - Ciclo %d/%d" % [_cycle_count + 1, TOTAL_CYCLES]
+	instruction_label.visible = false
+	instruction_label.visible = true
 	help_label.text = "Presioná [Q] al ritmo del anillo."
+	help_label.visible = false
+	help_label.visible = true
 	feedback_label.text = ""
 	_metronome_timer = 0.0
 	if touch_controller:
@@ -808,6 +824,7 @@ func _on_end_screen_continue(success: bool) -> void:
 	get_tree().paused = false
 	bgm_player.stop()
 	heartbeat_player.stop()
+	metronome_player.stop()
 	if heartbeat_player.finished.is_connected(_on_heartbeat_finished):
 		heartbeat_player.finished.disconnect(_on_heartbeat_finished)
 	hide()

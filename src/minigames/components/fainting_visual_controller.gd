@@ -33,9 +33,9 @@ func setup(minigame: MiniFaintingFirstAid, animation_controller: FaintingAnimati
 	ecg_line.anchor_right = 1.0
 	ecg_line.anchor_bottom = 0.0
 	ecg_line.offset_left = 0
-	ecg_line.offset_top = 336
+	ecg_line.offset_top = 560
 	ecg_line.offset_right = 0
-	ecg_line.offset_bottom = 432
+	ecg_line.offset_bottom = 656
 	root.game_container.add_child(ecg_line)
 
 	# Hide world patient and create local one

@@ -37,7 +37,7 @@ vertical_alignment = 1
 autowrap_mode = 2
 
 [node name="HelpLabel" type="Label" parent="GameContainer" index="1" unique_id=200000002]
-layout_mode = 1
+layout_mode = 0
 anchors_preset = -1
 offset_left = 56.0
 offset_top = 152.0

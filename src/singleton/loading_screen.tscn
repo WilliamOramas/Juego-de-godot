@@ -1,0 +1,110 @@
+[gd_scene format=3 uid="uid://ciembwmltfear"]
+
+[ext_resource type="Script" uid="uid://bp4tmkoyfetle" path="res://src/singleton/loading_screen.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://dswjytovfuu1t" path="res://src/menu/pixel.tscn" id="2_pixel"]
+[ext_resource type="FontFile" uid="uid://cr0ivbn1xn0bt" path="res://src/fonts/m5x7.ttf" id="3_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.2, 0.2, 0.25, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.3, 0.35, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
+bg_color = Color(0.227, 0.886, 0.886, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="LoadingScreen" type="CanvasLayer" unique_id=1478156167]
+layer = 101
+script = ExtResource("1_script")
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=85502248]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.85)
+
+[node name="Pixel" parent="." unique_id=1712415474 instance=ExtResource("2_pixel")]
+anchors_preset = -1
+anchor_left = 0.3
+anchor_top = 0.35
+anchor_right = 0.3
+anchor_bottom = 0.35
+offset_left = 63.0
+offset_top = -87.0
+offset_right = 255.0
+offset_bottom = 105.0
+scale = Vector2(0.5, 0.5)
+
+[node name="Center" type="CenterContainer" parent="." unique_id=952259749]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Center" unique_id=1002337561]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="LoadingHBox" type="HBoxContainer" parent="Center/VBox" unique_id=549807237]
+layout_mode = 2
+alignment = 1
+
+[node name="LoadingLabel" type="Label" parent="Center/VBox/LoadingHBox" unique_id=544891507]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.227, 0.886, 0.886, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 22
+text = "CARGANDO"
+
+[node name="DotsLabel" type="Label" parent="Center/VBox/LoadingHBox" unique_id=1558033761]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.227, 0.886, 0.886, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 22
+text = "..."
+
+[node name="ProgressBar" type="ProgressBar" parent="Center/VBox" unique_id=910435487]
+custom_minimum_size = Vector2(280, 14)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_fill")
+value = 50.0
+show_percentage = false
+
+[node name="ProgressLabel" type="Label" parent="Center/VBox" unique_id=628144544]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 10
+text = "0%"
+horizontal_alignment = 1
+
+[node name="TipSeparator" type="HSeparator" parent="Center/VBox" unique_id=528512964]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="TipLabel" type="Label" parent="Center/VBox" unique_id=1705172401]
+custom_minimum_size = Vector2(400, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 11
+text = "Presiona Q para abrir tu teléfono."
+horizontal_alignment = 1
+autowrap_mode = 2

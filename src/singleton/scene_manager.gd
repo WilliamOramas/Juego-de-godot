@@ -34,9 +34,9 @@ func _ready() -> void:
 	_anim.play("fade_in")
 
 	# Instanciar la pantalla de carga
-	var LoadingScript = load("res://src/singleton/loading_screen.gd")
-	if LoadingScript:
-		_loading_screen = LoadingScript.new()
+	var loading_scene = load("res://src/singleton/loading_screen.tscn") as PackedScene
+	if loading_scene:
+		_loading_screen = loading_scene.instantiate()
 		add_child(_loading_screen)
 		_loading_screen.hide()
 

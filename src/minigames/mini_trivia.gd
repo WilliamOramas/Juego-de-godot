@@ -182,7 +182,7 @@ func _create_audio(stream: AudioStream, volume: float = 0.0) -> AudioStreamPlaye
 	game_container.add_child(player)
 	return player
 
-func _create_label(parent: Node, text: String, font_size: int = -1, color: Color = Color.WHITE, align: int = HORIZONTAL_ALIGNMENT_CENTER) -> Label:
+func _create_label(parent: Node, text: String, font_size: int = -1, color: Color = Color.WHITE, 	align: HorizontalAlignment = HORIZONTAL_ALIGNMENT_CENTER) -> Label:
 	var lbl = Label.new()
 	lbl.text = text
 	lbl.horizontal_alignment = align

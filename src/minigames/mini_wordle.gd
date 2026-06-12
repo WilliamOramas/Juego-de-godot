@@ -85,7 +85,7 @@ func _create_label(
 	text: String,
 	font_size: int = -1,
 	color: Color = Color.WHITE,
-	align: int = HORIZONTAL_ALIGNMENT_CENTER
+	align: HorizontalAlignment = HORIZONTAL_ALIGNMENT_CENTER
 ) -> Label:
 	var lbl := Label.new()
 	lbl.text = text

@@ -27,13 +27,13 @@ size = Vector2(340, 86)
 size = Vector2(10, 749)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_interior1"]
-size = Vector2(24, 123)
+size = Vector2(25, 127)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_interior2"]
-size = Vector2(23, 121)
+size = Vector2(24, 125)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_interior3"]
-size = Vector2(339.19922, 258.5625)
+size = Vector2(339.19922, 257.64063)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_interior4"]
 size = Vector2(5, 591)
@@ -87,23 +87,23 @@ shape = SubResource("RectangleShape2D_wall_left")
 [node name="Interior1" type="StaticBody2D" parent="Walls" unique_id=1314916381]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Interior1" unique_id=1740287059]
-position = Vector2(352, 310.5)
+position = Vector2(352.5, 312.5)
 shape = SubResource("RectangleShape2D_interior1")
 
 [node name="Interior2" type="StaticBody2D" parent="Walls" unique_id=857721318]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Interior2" unique_id=509768340]
-position = Vector2(505.5, 309.5)
+position = Vector2(506, 311.5)
 shape = SubResource("RectangleShape2D_interior2")
 
 [node name="Interior3" type="StaticBody2D" parent="Walls" unique_id=824607518]
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Walls/Interior3" unique_id=1747128863]
-position = Vector2(170.40039, 378.28125)
+position = Vector2(170.40039, 377.8203)
 shape = SubResource("RectangleShape2D_interior3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Interior3" unique_id=327170293]
-position = Vector2(687.40234, 376.4375)
+position = Vector2(687.40234, 377.35938)
 shape = SubResource("RectangleShape2D_interior3")
 
 [node name="Interior4" type="StaticBody2D" parent="Walls" unique_id=2140947347]

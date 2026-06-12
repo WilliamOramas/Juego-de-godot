@@ -1,6 +1,6 @@
 extends Control
 
-@onready var pixel: Control = $Center/Pixel
+@onready var pixel: Control = $PixelContainer/Pixel
 @onready var narrator_label: Label = $NarratorLabel
 @onready var skip_hint: Label = $SkipHint
 @onready var audio: AudioStreamPlayer = $AudioStreamPlayer
@@ -10,6 +10,7 @@ var _pixel_arm_right: TextureRect
 var _face_happy: Texture2D
 var _face_normal: Texture2D
 var _skip: bool = false
+var _pixel_target_y: float
 
 
 func _ready() -> void:
@@ -26,7 +27,9 @@ func _ready() -> void:
 	_face_happy = load("res://src/assets/sprites/robot_face_happy.svg")
 	_face_normal = _pixel_face.texture
 
-	pixel.position.y = 500
+	_pixel_target_y = pixel.offset_top
+	pixel.offset_top = _pixel_target_y + 500
+	pixel.offset_bottom = _pixel_target_y + 500 + 480
 	_run_intro()
 
 
@@ -45,7 +48,8 @@ func _run_intro() -> void:
 	# 1. MEDI-BOT sube desde abajo
 	var tween_slide = create_tween()
 	tween_slide.tween_property(pixel, "modulate:a", 1.0, 0.2)
-	tween_slide.parallel().tween_property(pixel, "position:y", 0.0, 1.0).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween_slide.parallel().tween_property(pixel, "offset_top", _pixel_target_y, 1.0).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween_slide.parallel().tween_property(pixel, "offset_bottom", _pixel_target_y + 480, 1.0).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	await tween_slide.finished
 	if _skip: return
 

@@ -3,6 +3,7 @@ class_name LoadingScreen
 
 const LOADING_DOTS := ["", ".", "..", "..."]
 const MIN_DISPLAY_TIME: float = 0.5
+const PIXEL_SCALE := Vector2(0.5, 0.5)
 
 const LOADING_TIPS := [
 	"Presiona Q para abrir tu teléfono.",
@@ -49,7 +50,7 @@ func _build_ui() -> void:
 	var pixel_scene := load("res://src/menu/pixel.tscn") as PackedScene
 	if pixel_scene:
 		var pixel: Control = pixel_scene.instantiate()
-		pixel.scale = Vector2(0.6, 0.6)
+		pixel.scale = PIXEL_SCALE
 		var bubble = pixel.get_node_or_null("SpeechBubble")
 		if bubble:
 			bubble.hide()

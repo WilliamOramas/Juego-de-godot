@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c7eg1tsvlabrs"]
 
-[ext_resource type="Script" path="res://src/menu/quest_notification.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dduohcihvif3w" path="res://src/menu/quest_notification.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="2_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
@@ -15,31 +15,32 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[node name="QuestNotification" type="CanvasLayer"]
+[node name="QuestNotification" type="CanvasLayer" unique_id=1495500556]
 process_mode = 3
 layer = 99
 script = ExtResource("1_script")
 
-[node name="Root" type="Control" parent="."]
-anchors_preset = 0
+[node name="Root" type="Control" parent="." unique_id=1629601915]
+layout_mode = 3
+anchors_preset = 5
 anchor_left = 0.5
-anchor_top = 0.0
 anchor_right = 0.5
-anchor_bottom = 0.0
 offset_left = -200.0
 offset_top = -100.0
 offset_right = 200.0
-offset_bottom = 0.0
+grow_horizontal = 2
 mouse_filter = 2
 
-[node name="Panel" type="Panel" parent="Root"]
+[node name="Panel" type="Panel" parent="Root" unique_id=930747209]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="Label" type="Label" parent="Root/Panel"]
+[node name="Label" type="Label" parent="Root/Panel" unique_id=1059265443]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -48,8 +49,10 @@ offset_left = 12.0
 offset_top = 8.0
 offset_right = -12.0
 offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 12
-autowrap_mode = 2
-vertical_alignment = 1
 horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2

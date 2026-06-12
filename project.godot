@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="vital pixel"
-run/main_scene="res://src/menu/splash_screen.tscn"
+run/main_scene="res://src/menu/intro_cinematic.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 boot_splash/bg_color=Color(0.30692276, 0.30692267, 0.30692264, 1)
 

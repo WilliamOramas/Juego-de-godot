@@ -26,6 +26,16 @@ func _ready() -> void:
 	$LoginPanel.visible = false
 	$LoginPanel.set_process_input(false)
 	_update_user_button()
+	_fade_in()
+
+
+func _fade_in() -> void:
+	var fade_rect: ColorRect = $FadeRect
+	fade_rect.modulate.a = 1.0
+	var tween = create_tween()
+	tween.tween_property(fade_rect, "modulate:a", 0.0, 0.8).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	await tween.finished
+	fade_rect.queue_free()
 
 func _update_user_button() -> void:
 	if Supabase.is_logged_in():

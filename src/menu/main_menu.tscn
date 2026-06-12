@@ -7,13 +7,13 @@
 [ext_resource type="FontFile" uid="uid://bd6b7pih731t6" path="res://src/fonts/porky_s/PORKYS_.TTF" id="4_such8"]
 [ext_resource type="AudioStream" uid="uid://d17ksm17ebjcb" path="res://src/menu/WhatsApp_Audio.mp3" id="5_wkckh"]
 [ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="6_such8"]
-[ext_resource type="PackedScene" path="res://src/menu/mute_button.tscn" id="7_mute"]
-[ext_resource type="PackedScene" path="res://src/menu/pixel.tscn" id="8_pixel"]
+[ext_resource type="PackedScene" uid="uid://3t1cr3nwdrm3" path="res://src/menu/mute_button.tscn" id="7_mute"]
+[ext_resource type="PackedScene" uid="uid://dswjytovfuu1t" path="res://src/menu/pixel.tscn" id="8_pixel"]
 [ext_resource type="PackedScene" uid="uid://dxr0kqygwudel" path="res://src/menu/controles_panel.tscn" id="9_controls"]
 [ext_resource type="PackedScene" uid="uid://b7w4ojuqxa3qw" path="res://src/menu/opciones_panel.tscn" id="10_opciones"]
 [ext_resource type="PackedScene" uid="uid://c67ppnxp05lt0" path="res://src/menu/creditos_panel.tscn" id="11_creditos"]
 [ext_resource type="PackedScene" path="res://src/menu/slot_selector.tscn" id="12_slot"]
-[ext_resource type="PackedScene" path="res://src/menu/login_panel.tscn" id="13_login"]
+[ext_resource type="PackedScene" uid="uid://df67f3x" path="res://src/menu/login_panel.tscn" id="13_login"]
 
 [sub_resource type="Theme" id="Theme_g2ne3"]
 
@@ -59,7 +59,7 @@ theme_override_fonts/font = ExtResource("4_such8")
 theme_override_font_sizes/font_size = 46
 text = "VitaLPixeL"
 
-[node name="Jugar" parent="MarginContainer/VBoxContainer" instance=ExtResource("1_1k071")]
+[node name="Jugar" parent="MarginContainer/VBoxContainer" unique_id=1521003588 instance=ExtResource("1_1k071")]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("6_such8")
@@ -94,11 +94,11 @@ theme_override_font_sizes/font_size = 18
 text = "SALIDA
 "
 
-[node name="SubmenuButtons" type="VBoxContainer" parent="MarginContainer"]
+[node name="SubmenuButtons" type="VBoxContainer" parent="MarginContainer" unique_id=421427554]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-visible = false
 
 [node name="Nueva_Partida" parent="MarginContainer/SubmenuButtons" unique_id=364183220 instance=ExtResource("1_1k071")]
 layout_mode = 2
@@ -107,21 +107,21 @@ theme_override_fonts/font = ExtResource("6_such8")
 theme_override_font_sizes/font_size = 18
 text = "NUEVA PARTIDA"
 
-[node name="Cargar_Partida" parent="MarginContainer/SubmenuButtons" instance=ExtResource("1_1k071")]
+[node name="Cargar_Partida" parent="MarginContainer/SubmenuButtons" unique_id=1483614377 instance=ExtResource("1_1k071")]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("6_such8")
 theme_override_font_sizes/font_size = 18
 text = "CARGAR PARTIDA"
 
-[node name="Borrar_Partida" parent="MarginContainer/SubmenuButtons" instance=ExtResource("1_1k071")]
+[node name="Borrar_Partida" parent="MarginContainer/SubmenuButtons" unique_id=523375985 instance=ExtResource("1_1k071")]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("6_such8")
 theme_override_font_sizes/font_size = 18
 text = "BORRAR PARTIDA"
 
-[node name="Volver" parent="MarginContainer/SubmenuButtons" instance=ExtResource("1_1k071")]
+[node name="Volver" parent="MarginContainer/SubmenuButtons" unique_id=1941239728 instance=ExtResource("1_1k071")]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("6_such8")
@@ -134,21 +134,23 @@ autoplay = true
 parameters/looping = true
 
 [node name="MuteButton" parent="." unique_id=298513703 instance=ExtResource("7_mute")]
+layout_mode = 0
+anchors_preset = 0
 
 [node name="Pixel" parent="." unique_id=298094186 instance=ExtResource("8_pixel")]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.68600005
-anchor_top = 0.87200004
+anchor_top = 0.753
 anchor_right = 0.68600005
-anchor_bottom = 0.87200004
+anchor_bottom = 0.753
 offset_left = 25.199951
-offset_top = -154.20001
+offset_top = -68.52002
 offset_right = 217.19995
-offset_bottom = 37.799988
+offset_bottom = 123.47998
 grow_vertical = 2
 
-[node name="Usuario" parent="." instance=ExtResource("1_1k071")]
+[node name="Usuario" parent="." unique_id=502543075 instance=ExtResource("1_1k071")]
 z_index = 10
 layout_mode = 1
 anchors_preset = 2
@@ -164,35 +166,51 @@ theme_override_fonts/font = ExtResource("6_such8")
 theme_override_font_sizes/font_size = 24
 text = "USUARIO"
 
-[node name="ControlesPanel" parent="." instance=ExtResource("9_controls")]
-[node name="OpcionesPanel" parent="." instance=ExtResource("10_opciones")]
-[node name="CreditosPanel" parent="." instance=ExtResource("11_creditos")]
-[node name="SlotSelector" parent="." instance=ExtResource("12_slot")]
+[node name="ControlesPanel" parent="." unique_id=473594862 instance=ExtResource("9_controls")]
+layout_mode = 0
+anchors_preset = 0
 
-[node name="LoginPanel" parent="." instance=ExtResource("13_login")]
+[node name="OpcionesPanel" parent="." unique_id=80504132 instance=ExtResource("10_opciones")]
+layout_mode = 0
+anchors_preset = 0
+
+[node name="CreditosPanel" parent="." unique_id=1223864767 instance=ExtResource("11_creditos")]
+layout_mode = 0
+anchors_preset = 0
+
+[node name="SlotSelector" parent="." unique_id=1295084809 instance=ExtResource("12_slot")]
+layout_mode = 0
+anchors_preset = 0
+
+[node name="LoginPanel" parent="." unique_id=835996903 instance=ExtResource("13_login")]
 visible = false
 z_index = 50
+layout_mode = 1
+
+[node name="ConfirmationDialog" type="ConfirmationDialog" parent="." unique_id=260578631]
+title = "Confirmar"
+initial_position = 1
+size = Vector2i(400, 150)
+
+[node name="FadeRect" type="ColorRect" parent="." unique_id=687971606]
+z_index = 100
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
-title = "Confirmar"
-initial_position = 1
-size = Vector2i(400, 150)
+color = Color(0, 0, 0, 1)
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Jugar" to="." method="_on_jugar_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Opciones" to="." method="_on_opciones_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Controles" to="." method="_on_controles_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Creditos" to="." method="_on_creditos_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Exit_Game" to="." method="_on_exit_game_pressed"]
 [connection signal="pressed" from="MarginContainer/SubmenuButtons/Nueva_Partida" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="MarginContainer/SubmenuButtons/Cargar_Partida" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="MarginContainer/SubmenuButtons/Borrar_Partida" to="." method="_on_borrar_pressed"]
 [connection signal="pressed" from="MarginContainer/SubmenuButtons/Volver" to="." method="_on_volver_pressed"]
-[connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_confirmation_confirmed"]
-[connection signal="canceled" from="ConfirmationDialog" to="." method="_on_confirmation_canceled"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Opciones" to="." method="_on_opciones_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Controles" to="." method="_on_controles_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Creditos" to="." method="_on_creditos_pressed"]
 [connection signal="pressed" from="Usuario" to="." method="_on_usuario_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Exit_Game" to="." method="_on_exit_game_pressed"]
+[connection signal="canceled" from="ConfirmationDialog" to="." method="_on_confirmation_canceled"]
+[connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_confirmation_confirmed"]

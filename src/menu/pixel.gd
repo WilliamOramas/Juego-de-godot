@@ -1,17 +1,24 @@
 extends Control
 
+@export var disable_bubble: bool = false
+
 @onready var bubble: PanelContainer = $SpeechBubble
 
 var _message_timer: Timer
 
 func _ready() -> void:
 	bubble.hide()
-	
+	_setup_messages.call_deferred()
+
+func _setup_messages() -> void:
+	if disable_bubble:
+		return
+
 	_message_timer = Timer.new()
 	_message_timer.wait_time = 1800.0 # 30 minutes
 	_message_timer.timeout.connect(_on_timer_timeout)
 	add_child(_message_timer)
-	
+
 	# Show first message after 3 seconds if not logged in
 	get_tree().create_timer(3.0).timeout.connect(func():
 		if is_inside_tree():

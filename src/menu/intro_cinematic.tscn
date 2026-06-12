@@ -71,6 +71,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Pixel" parent="PixelContainer" unique_id=1682655519 instance=ExtResource("2_pixel")]
+disable_bubble = true
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.192

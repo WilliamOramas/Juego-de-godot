@@ -10,6 +10,9 @@ var _is_ending: bool = false
 
 func _ready() -> void:
 	skip_hint.modulate.a = 0.0
+	PhoneHud.visible = false
+	PhoneHud.set_process_input(false)
+	PhoneHud.set_process_unhandled_input(false)
 	fade_rect.modulate.a = 1.0
 	video.play()
 	_fade_in()

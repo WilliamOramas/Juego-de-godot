@@ -17,6 +17,9 @@ func _ready() -> void:
 	narrator_label.modulate.a = 0.0
 	skip_hint.modulate.a = 0.0
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	PhoneHud.visible = false
+	PhoneHud.set_process_input(false)
+	PhoneHud.set_process_unhandled_input(false)
 
 	_pixel_face = pixel.get_node("Body/Face")
 	_pixel_arm_right = pixel.get_node("ArmRight")

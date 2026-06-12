@@ -239,6 +239,8 @@ func _dismiss_message() -> void:
 
 
 func _on_scene_changing(_scene_path: String) -> void:
+	set_process_input(true)
+	set_process_unhandled_input(true)
 	reset()
 
 

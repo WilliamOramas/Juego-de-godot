@@ -13,25 +13,23 @@ description: Core architectural rules, tech stack (Godot 4, Supabase), and GDScr
 
 ## 🏗️ Architecture & File Structure
 The project strictly follows a **Feature-Oriented Architecture**. All game code is located inside `src/`:
-- `src/entities/`: Game actors (player, NPCs, interactive objects).
-- `src/levels/`: Main map scenes (e.g., `school_hallway`).
-- `src/minigames/`: First aid interactive scenarios (e.g., CPR, fainting).
-- `src/menu/`: UI components, login screens, and the main in-game `PhoneHUD`.
-- `src/singleton/`: Global Managers (`EventBus`, `Supabase`, `QuestManager`, `ScoreManager`).
-- `database_schema.sql`: PostgreSQL schema definitions, RLS policies, and triggers.
-- `supabase.cfg`: Local environment variables for Supabase connection.
+- `src/core/`: Foundation logic, singletons, and integrations (`managers`, `infrastructure`, `models`).
+- `src/features/`: Isolated game logic and screens (`levels`, `minigames`, `menu`, `quests`).
+- `src/shared/`: Reusable logic and assets (`entities`, `ui`, `components`, `assets`).
+- `config.cfg`: Global configuration for AI and Supabase API keys.
+- `tools/db/`: PostgreSQL schema definitions, RLS policies, and migrations.
 
 ## 🧠 Core Systems & Patterns
 1. **Event Bus (Decoupled Communication):**
    - NEVER couple UI directly to game logic.
-   - ALWAYS use `src/singleton/event_bus.gd` for cross-system communication.
+   - ALWAYS use `src/core/managers/event_bus.gd` for cross-system communication.
    - Key signals: `minigame_completed`, `dialog_started`, `quest_started`, `scene_changing`.
 2. **Backend & Database (Supabase):**
-   - `src/singleton/supabase.gd` handles Auth and REST API queries.
+   - `src/core/infrastructure/supabase/supabase.gd` handles Auth and REST API queries.
    - **Database Triggers:** The DB handles score deduction automatically (e.g., a trigger deducts 10 points in `sesiones` if `telemetria_eventos.es_correcto = false`). Do NOT duplicate this logic in GDScript.
    - **Telemetry:** Minigame actions must be logged using `Supabase.send_telemetry(session_id, action, is_correct, time)`.
 3. **In-Game Phone HUD:**
-   - The primary UI interface is `src/menu/phone_hud.gd`. It handles push notifications, quest tracking, and minigame launching via different states (`HOME`, `MESSAGE`, `SCENARIO`).
+   - The primary UI interface is `src/features/menu/phone_hud.gd`. It handles push notifications, quest tracking, and minigame launching via different states (`HOME`, `MESSAGE`, `SCENARIO`).
 
 ## 💻 GDScript Coding Standards
 Enforce the following rules strictly on all GDScript modifications:
@@ -50,5 +48,5 @@ Enforce the following rules strictly on all GDScript modifications:
 
 ## 🤖 Required Skills Utilization
 - Apply `godot-gdscript-patterns` for state machines, components, and singletons.
-- Apply `supabase-postgres-best-practices` when modifying `database_schema.sql` or `supabase.gd`.
+- Apply `supabase-postgres-best-practices` when modifying `tools/db/database_schema.sql` or `supabase.gd`.
 - Use `caveman-commit` for commit message generation.

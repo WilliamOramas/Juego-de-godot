@@ -1,98 +1,44 @@
-# Sesión: Sistema de Diálogo — Vital Pixel
+# Bitácora de Desarrollo — Vital Pixel
 
-**Fecha:** 2026-05-30
-**Motor:** Godot 4 · GDScript · Pixel Art 2.5x (800×600)
-
----
-
-## Qué se construyó
-
-Sistema completo de diálogo con panel tipo JRPG, efecto typewriter, soporte multipágina, sonidos sincronizados y estado "visto/no visto" por NPC.
-
-### Archivos creados
-
-- `src/menu/dialog_box.tscn` — Panel de diálogo (CanvasLayer, autoload)
-- `src/menu/dialog_box.gd` — Lógica: typewriter, páginas, sonido, animación
-- `src/menu/interact_prompt.tscn` — Botón imagen "E" (28×28)
-- `src/menu/interact_prompt.gd` — Animación pop-in, tecla E
-
-### Archivos modificados
-
-- `src/entities/npc/npc.gd` — `dialog_lines`, `dialog_lines_repeat`, estado visto
-- `src/levels/global.gd` — `dialogs_seen: Dictionary` como estado persistente
-- `src/levels/classroom_1.tscn` — Compañero + Profesor Méndez (nombres, diálogos multi-línea)
-- `src/levels/school_hallway.tscn` — Luis + Pedro (idem)
-- `src/levels/infirmary.tscn` — Enfermero (idem)
-- `project.godot` — Autoloads: Global, SceneManager, DialogBox
-
-### Funcionalidades
-
-- Panel deslizante (offset_top 0 → -170, cubic, 0.3s)
-- Typewriter 0.015s/char, saltable con E
-- Diálogos multi-página `Array[String]`
-- Nombre NPC en Porky's 12px (oculto si vacío)
-- Texto en Coolvetica 16px
-- Prompt `▼` cyan parpadeante al completar línea
-- Sonido typewriter (rate-limited, se detiene al completar/saltar/cerrar)
-- Sonido UI select al abrir/avanzar/cerrar
-- Estado `dialogs_seen` por NPC (1ª vez → repeat)
-- Prompt E en `y=-82` — sin solapamiento con sprites
-
-### NPCs
-
-| NPC | Ubicación | Diálogo 1ª vez | Diálogo repeat |
-|---|---|---|---|
-| Compañero | classroom_1 | 3 líneas | 2 líneas |
-| Profesor Méndez | classroom_1 | 3 líneas | 2 líneas |
-| Luis | school_hallway | 3 líneas | 2 líneas |
-| Pedro | school_hallway | 3 líneas | 2 líneas |
-| Enfermero | infirmary | 3 líneas | 2 líneas |
+Esta bitácora documenta las fases más importantes del desarrollo, la evolución arquitectónica y las integraciones avanzadas de Vital Pixel.
 
 ---
 
-## Actualización posterior: Puertas con botón E
+## 🚀 Hito Actual: Inteligencia Artificial, Telemetría y Clean Architecture (Junio 2026)
 
-Se unificó la interacción de puertas al mismo sistema que NPCs: botón E.
+El proyecto experimentó una evolución masiva, pasando de un prototipo básico a una arquitectura escalable de Nivel Empresarial, e integrando sistemas backend e Inteligencia Artificial en tiempo real.
 
-### Cambios
+### 🏛️ 1. Refactorización a Feature-Oriented Architecture
+Se reestructuró todo el código base bajo una estricta **Feature-Oriented Architecture** (Arquitectura Orientada a Funcionalidades). Todo el código está en `src/`:
+- **`core/`**: Infraestructura (IA, Supabase, Network) y Managers globales (EventBus, Score, Quest, Journal).
+- **`features/`**: Lógica de juego aislada (niveles, menú principal del celular, minijuegos, misiones).
+- **`shared/`**: Recursos reutilizables (entidades como NPCs, UI genérica, componentes físicos).
+- **Espejo de Pruebas**: El directorio `tests/` fue reflejado exactamente para seguir la misma estructura. Contamos con **129 pruebas unitarias** pasando exitosamente.
 
-- `src/entities/door/door.gd` — Reescrito: eliminados `require_confirmation`, `confirmation_message`, `_is_ignored`. Ahora instancia `interact_prompt.tscn` (icono E 28×28) en lugar de `door_prompt.tscn`. Transición con `SceneManager.change_scene()` al pulsar E.
-- `src/menu/door_prompt.tscn` — Eliminado (reemplazado por `interact_prompt.tscn`)
-- `src/menu/door_prompt.gd` — Eliminado
+### 🧠 2. Integración de IA Generativa (Gemini 1.5)
+Se implementó un sistema agnóstico de proveedores de IA para potenciar a los NPCs:
+- **`AiClient` & `AiProvider`**: Patrón Strategy que delega las llamadas a la API de `GeminiProvider`.
+- **NPCs Dinámicos**: El NPC (ej. Doctor Carlos en la enfermería) ya no solo tiene texto estático, sino que permite interacciones por texto libre con personalidad e historial inyectados vía *System Prompts*.
+- **Trivia Generativa (`TriviaQuestionGenerator`)**: Integración de Gemini para crear infinitas preguntas de opción múltiple con JSON tipado basado en escenarios médicos.
 
-### Archivos limpiados (propiedades obsoletas)
+### 🛡️ 3. UX de Red y Fallback Mode Silencioso
+Para proteger la experiencia del jugador ante fallas de internet o de la API:
+- **Fallback Silencioso**: Si falla una petición a la IA, la caja de texto (`AiDialogBox`) oculta automáticamente el campo de entrada y presenta botones de opción múltiple (Badges) con respuestas estáticas locales preconfiguradas.
+- **Inmersión Total**: El sistema no imprime textos rojos de error en la UI, garantizando que el usuario sienta que la limitación es parte del flujo normal de un juego RPG.
+- **Logs de Desarrollador**: Todos los errores de red se envían a la terminal de Godot con `push_error` para visibilidad técnica sin interrumpir el juego.
 
-- `src/levels/classroom_1.tscn` — `require_confirmation` removido
-- `src/levels/classroom_2.tscn` — `require_confirmation` removido
-- `src/levels/school_hallway.tscn` — `confirmation_message` removido (3 puertas)
-- `src/levels/infirmary.tscn` — `require_confirmation` removido
-
-### Flujo final
-
-```
-Jugador entra en área de Door → icono E aparece (pop-in)
-Jugador pulsa E → SceneManager.change_scene() con fade
-Jugador sale del área → icono E desaparece
-```
-
-### Ventajas
-
-- Consistencia total: misma tecla (E), mismo icono, misma mecánica que NPCs
-- Sin transiciones automáticas ni panel SÍ/NO
-- Cero UI nueva: reutiliza `InteractPrompt` sin cambios
-
-### Assets
-
-- **Fuentes:** Porky's (12px, nombres NPC), Coolvetica (16px, diálogo)
-- **Sonidos:** `magiaz-teclado-371741.mp3` (typewriter, -15dB), `emilianodleon-select-button-ui-395763.mp3` (select)
-- **Sprites:** `E-Photoroom.png` (28×28 prompt interactuar), spritesheets NPC (171×433, 5×4 frames)
+### 📊 4. Telemetría y Backend (Supabase)
+Conexión directa con PostgreSQL a través de Supabase REST API:
+- **Autenticación y Sesiones**: Creación de IDs de sesión únicas al iniciar.
+- **Registro de Eventos**: Sistema de telemetría que envía datos analíticos cada vez que el usuario responde una trivia o realiza una acción en un minijuego (`is_correct`, `time`, `action`).
+- **Deducción Dinámica**: El `ScoreManager` sincroniza la vida/puntaje del jugador basándose en el éxito o fracaso registrado en los minijuegos.
 
 ---
 
-## Próximos pasos posibles
+## ⏪ Hito Anterior: Sistema de Diálogo JRPG y Entidades (Mayo 2026)
 
-- Eventos al finalizar diálogo (abrir puerta, recibir objeto)
-- Diálogos con ramas/elecciones
-- Archivos JSON externos para muchos NPCs
-- Retratos de personajes en el panel
-- Log de diálogos vistos
+Previo a la IA, se sentaron las bases de interacción clásicas:
+
+- **Typewriter y UI**: Panel deslizante (offset_top 0 → -170), efecto typewriter a 0.015s/char, soporte multipágina, fuentes Coolvetica y Porky's, sonidos sincronizados.
+- **NPCs Clásicos**: Interacciones predefinidas con arreglos `Array[String]` y estado "visto/no visto" gestionado globalmente.
+- **Sistema de Interacción Unificado**: Tanto puertas como NPCs instancian el mismo `interact_prompt.tscn` (tecla E), permitiendo transiciones de escena fluidas y sin menús invasivos de confirmación.

@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://0hxb8ekkrfig"]
+
+[ext_resource type="Script" uid="uid://bxtmvusvu78ps" path="res://src/features/quests/quest_data.gd" id="1_kf0m2"]
+[ext_resource type="Script" uid="uid://yu5hagbhhy8o" path="res://src/features/quests/quest_objective.gd" id="2_qw8t3"]
+
+[sub_resource type="Resource" id="Resource_1111"]
+script = ExtResource("2_qw8t3")
+objective_id = "talk_luis"
+description = "Hablar con Luis"
+target_id = "Luis"
+
+[sub_resource type="Resource" id="Resource_2222"]
+script = ExtResource("2_qw8t3")
+objective_id = "talk_pedro"
+description = "Hablar con Pedro"
+target_id = "Pedro"
+
+[sub_resource type="Resource" id="Resource_3333"]
+script = ExtResource("2_qw8t3")
+objective_id = "talk_jorge"
+description = "Hablar con Jorge"
+target_id = "Jorge"
+
+[resource]
+script = ExtResource("1_kf0m2")
+quest_id = "quest_introduction"
+quest_name = "Habla con los compañeros"
+description = "Tus amigos en el pasillo están inquietos. Acércate a Luis, Pedro y Jorge para saber qué les pasa."
+objectives = Array[ExtResource("2_qw8t3")]([SubResource("Resource_1111"), SubResource("Resource_2222"), SubResource("Resource_3333")])

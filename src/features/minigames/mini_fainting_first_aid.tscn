@@ -1,0 +1,196 @@
+[gd_scene format=3 uid="uid://brvb1vq0h76oi"]
+
+[ext_resource type="Script" uid="uid://cjxvm0kmxxan8" path="res://src/features/minigames/mini_fainting_first_aid.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://src/features/minigames/mini_game_base.tscn" id="2_base"]
+[ext_resource type="AudioStream" uid="uid://dbq2h86spyohm" path="res://src/shared/assets/sounds/correct.wav" id="3_correct"]
+[ext_resource type="AudioStream" uid="uid://cjaq5tl3lanbq" path="res://src/shared/assets/sounds/wrong.wav" id="4_wrong"]
+[ext_resource type="AudioStream" uid="uid://cn6u1iywkuf6l" path="res://src/shared/assets/sounds/step.wav" id="5_step"]
+[ext_resource type="AudioStream" uid="uid://bm4grfjgebhqc" path="res://src/shared/assets/sounds/success_fanfare.wav" id="6_success"]
+[ext_resource type="AudioStream" uid="uid://b66svau71u142" path="res://src/shared/assets/sounds/fail_sound.wav" id="7_fail"]
+[ext_resource type="AudioStream" path="res://src/shared/assets/sounds/Waiting_For_The_Lock.mp3" id="8_bgm"]
+[ext_resource type="AudioStream" path="res://src/shared/assets/sounds/freesound_community-corazon-66362.mp3" id="9_heart"]
+[node name="MiniFaintingFirstAid" unique_id=806309109 instance=ExtResource("2_base")]
+script = ExtResource("1_script")
+
+[node name="Background" parent="." index="0"]
+layout_mode = 3
+
+[node name="GameContainer" parent="." index="1"]
+layout_mode = 3
+
+[node name="InstructionLabel" type="Label" parent="GameContainer" index="0" unique_id=228527046]
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 48.0
+offset_top = 85.0
+offset_right = 976.0
+offset_bottom = 145.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="HelpLabel" type="Label" parent="GameContainer" index="1" unique_id=365702817]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 56.0
+offset_top = 152.0
+offset_right = 968.0
+offset_bottom = 220.0
+theme_override_colors/font_color = Color(0.55, 0.55, 0.75, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="TimerLabel" type="Label" parent="GameContainer" index="2" unique_id=1081575669]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -55.0
+offset_top = 10.0
+offset_right = 55.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0.9, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HeartsLabel" type="Label" parent="GameContainer" index="3" unique_id=1326157985]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -100.0
+offset_bottom = 40.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 2
+
+[node name="StepLabel" type="Label" parent="GameContainer" index="4" unique_id=982373464]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+theme_override_colors/font_color = Color(0.5, 0.5, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="FeedbackLabel" type="Label" parent="GameContainer" index="5" unique_id=1528400705]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 48.0
+offset_top = 48.0
+offset_right = 976.0
+offset_bottom = 82.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DialLabel" type="Label" parent="GameContainer" index="6" unique_id=1549764728]
+visible = false
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 320.0
+offset_top = 230.0
+offset_right = 704.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 1, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="GameContainer" index="7" unique_id=1178175127]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 240.0
+offset_top = 258.0
+offset_right = 784.0
+offset_bottom = 298.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 50.0
+
+[node name="PulsePoint" type="Panel" parent="GameContainer" index="8" unique_id=1104421566]
+visible = false
+layout_mode = 0
+offset_left = 416.0
+offset_top = 312.0
+offset_right = 492.0
+offset_bottom = 388.0
+
+[node name="HeartIcon" type="TextureRect" parent="GameContainer" index="9" unique_id=108333938]
+visible = false
+layout_mode = 0
+offset_left = 480.0
+offset_top = 336.0
+offset_right = 532.0
+offset_bottom = 388.0
+expand_mode = 1
+stretch_mode = 5
+
+
+[node name="CorrectSound" type="AudioStreamPlayer" parent="." index="2" unique_id=1736137967]
+stream = ExtResource("3_correct")
+
+[node name="WrongSound" type="AudioStreamPlayer" parent="." index="3" unique_id=2118269853]
+stream = ExtResource("4_wrong")
+
+[node name="StepSound" type="AudioStreamPlayer" parent="." index="4" unique_id=446346948]
+stream = ExtResource("5_step")
+
+[node name="SuccessFanfare" type="AudioStreamPlayer" parent="." index="5" unique_id=1905023926]
+stream = ExtResource("6_success")
+
+[node name="FailSound" type="AudioStreamPlayer" parent="." index="6" unique_id=1121766527]
+stream = ExtResource("7_fail")
+
+[node name="BgmPlayer" type="AudioStreamPlayer" parent="." index="7" unique_id=200000018]
+stream = ExtResource("8_bgm")
+volume_db = -8.0
+autoplay = false
+
+[node name="HeartbeatPlayer" type="AudioStreamPlayer" parent="." index="8" unique_id=200000019]
+stream = ExtResource("9_heart")
+volume_db = 0.0
+autoplay = false

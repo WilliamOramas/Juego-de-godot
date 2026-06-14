@@ -37,7 +37,7 @@ SELECT orden_logico, descripcion, penalizacion_tiempo
 FROM protocolo_maestro WHERE id_escenario = 1 ORDER BY orden_logico;
 ```
 
-Verificación completa: [`database_verification.sql`](../database_verification.sql) en la raíz del repo.
+Verificación completa: [`tools/db/database_verification.sql`](../tools/db/database_verification.sql) en la raíz del repo.
 
 ## Puntos clave para el profesor
 

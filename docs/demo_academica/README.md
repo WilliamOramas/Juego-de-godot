@@ -31,8 +31,8 @@ Ejecutar en **SQL Editor** de Supabase (con al menos un usuario que haya jugado 
 1. `demo_postgres_triggers.sql` — penalización por protocolo, puntaje negativo, vista dashboard
 2. `demo_postgres_transacciones.sql` — RPC `finalizar_sesion_transaccional`, rollback por excepción, `BEGIN/COMMIT`
 
-Esquema completo del juego: [`../../database_schema.sql`](../../database_schema.sql)  
-Migración aplicada: [`../../database_migration_apply.sql`](../../database_migration_apply.sql)
+Esquema completo del juego: [`../tools/db/database_schema.sql`](../tools/db/database_schema.sql)  
+Migración aplicada: [`../tools/db/database_migration_apply.sql`](../tools/db/database_migration_apply.sql)
 
 ## Guión rápido (5 min)
 
@@ -49,5 +49,5 @@ Migración aplicada: [`../../database_migration_apply.sql`](../../database_migra
 | `RAISE(ABORT, ...)` | `RAISE EXCEPTION` |
 | `es_correcto = 0` | `es_correcto = false` |
 | `id_usuario INTEGER` | `id_usuario UUID` + `auth.users` |
-| Triggers en `.sqbpro` | `database_migration_apply.sql` |
+| Triggers en `.sqbpro` | `tools/db/database_migration_apply.sql` |
 | `BEGIN … COMMIT` manual | `finalizar_sesion_transaccional()` + bloques `DO` |

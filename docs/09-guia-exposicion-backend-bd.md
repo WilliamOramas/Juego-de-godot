@@ -32,10 +32,10 @@ Godot (cliente)  →  Supabase Auth + PostgREST  →  PostgreSQL
 
 | Archivo | Rol |
 |---------|-----|
-| `database_schema.sql` | Esquema completo (referencia teórica) |
-| `database_migration_apply.sql` | Lo que está desplegado en Supabase |
-| `database_verification.sql` | Consultas para comprobar que todo existe |
-| `src/singleton/supabase.gd` | Cliente HTTP desde Godot |
+| `tools/db/database_schema.sql` | Esquema completo (referencia teórica) |
+| `tools/db/database_migration_apply.sql` | Lo que está desplegado en Supabase |
+| `tools/db/database_verification.sql` | Consultas para comprobar que todo existe |
+| `src/core/infrastructure/supabase/supabase.gd` | Cliente HTTP desde Godot |
 | `docs/demo_academica/` | Demos SQLite + scripts PostgreSQL para clase |
 
 ---
@@ -217,7 +217,7 @@ LIMIT 5;
 SELECT * FROM progreso_resumen ORDER BY actualizado_en DESC;
 ```
 
-Más consultas: [`database_verification.sql`](../database_verification.sql).
+Más consultas: [`tools/db/database_verification.sql`](../tools/db/database_verification.sql).
 
 ---
 
@@ -236,7 +236,7 @@ RLS limita filas a su `user_id`; no puede insertar telemetría en sesiones ajena
 Mismo modelo conceptual; SQLite es laboratorio offline; Supabase es producción con Auth, UUID, JSONB y RLS.
 
 **¿Cómo se despliega el esquema?**  
-`database_migration_apply.sql` en el SQL Editor de Supabase, o `tools/apply_migration.mjs` con `DATABASE_URL` (pooler, puerto 5432).
+`tools/db/database_migration_apply.sql` en el SQL Editor de Supabase, o `tools/apply_migration.mjs` con `DATABASE_URL` (pooler, puerto 5432).
 
 ---
 
@@ -247,7 +247,7 @@ Mismo modelo conceptual; SQLite es laboratorio offline; Supabase es producción 
 - [ ] `docs/demo_academica/demo_postgres_triggers.sql` probado una vez.
 - [ ] `docs/demo_academica/demo_postgres_transacciones.sql` probado una vez.
 - [ ] Backup offline: DB Browser + `vital_pixel_demo.db` por si falla internet.
-- [ ] No proyectar contraseñas ni `supabase.cfg` en pantalla.
+- [ ] No proyectar contraseñas ni `config.cfg` en pantalla.
 
 ---
 

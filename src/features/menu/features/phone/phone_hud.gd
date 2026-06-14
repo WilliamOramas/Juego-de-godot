@@ -114,6 +114,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if get_tree().paused:
 		return
+	if MiniGameManager.is_minigame_active():
+		return
 
 	if event.is_action_pressed("open_journal"):
 		if visible and _mode == PhoneMode.HOME:

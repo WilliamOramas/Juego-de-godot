@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b2vxwqo0r0pyg"]
 
-[ext_resource type="Script" uid="uid://jnolnkbo7t2d" path="res://src/menu/objeto_interactivo.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://jnolnkbo7t2d" path="res://src/menu/features/dialog/objeto_interactivo.gd" id="1_script"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_block"]
 

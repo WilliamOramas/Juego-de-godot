@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ciembwmltfear"]
 
 [ext_resource type="Script" uid="uid://bp4tmkoyfetle" path="res://src/singleton/loading_screen.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://dswjytovfuu1t" path="res://src/menu/pixel.tscn" id="2_pixel"]
+[ext_resource type="PackedScene" uid="uid://dswjytovfuu1t" path="res://src/menu/components/pixel.tscn" id="2_pixel"]
 [ext_resource type="FontFile" uid="uid://cr0ivbn1xn0bt" path="res://src/fonts/m5x7.ttf" id="3_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]

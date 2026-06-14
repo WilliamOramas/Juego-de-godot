@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://cwe6mjoekm3n6" path="res://src/assets/sprites/enfermeria.png" id="1_bg"]
 [ext_resource type="PackedScene" uid="uid://b12ykuofdv1m3" path="res://src/entities/player/player.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/entities/door/door.gd" id="3_door_gd"]
-[ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/menu/screens/pause_menu.tscn" id="4_pause"]
 [ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/entities/npc/npc.tscn" id="5_npc"]
 [ext_resource type="Texture2D" uid="uid://ckfk1i1404ys6" path="res://src/assets/sprites/npc_spritesheet.png" id="6_nurse_tex"]
 [ext_resource type="Script" uid="uid://dtl581vlfbxui" path="res://src/levels/level_limits.gd" id="7_limits"]

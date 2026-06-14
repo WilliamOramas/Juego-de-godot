@@ -163,7 +163,7 @@ func _process_notif_queue() -> void:
 	if not parent or not is_instance_valid(parent):
 		_notif_busy = false
 		return
-	var notif := preload("res://src/menu/quest_notification.tscn").instantiate() as QuestNotification
+	var notif := preload("res://src/menu/features/journal/quest_notification.tscn").instantiate() as QuestNotification
 	if not notif:
 		_notif_busy = false
 		return

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://buha4csr4deqe"]
 
-[ext_resource type="Script" uid="uid://d2x7x1bpgu5te" path="res://src/menu/intro_cinematic.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://dswjytovfuu1t" path="res://src/menu/pixel.tscn" id="2_pixel"]
+[ext_resource type="Script" uid="uid://d2x7x1bpgu5te" path="res://src/menu/screens/intro_cinematic.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://dswjytovfuu1t" path="res://src/menu/components/pixel.tscn" id="2_pixel"]
 [ext_resource type="FontFile" uid="uid://vuhiv8lxpkcd" path="res://src/fonts/Silkscreen-Regular.ttf" id="4_b3417"]
 [ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="4_cool"]
 [ext_resource type="AudioStream" uid="uid://c3lvq52ykjfm6" path="res://src/assets/sounds/nocopyrightsound633-arcade-beat-323176.mp3" id="5_music"]

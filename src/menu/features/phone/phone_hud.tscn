@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bgxces1206aa0"]
 
-[ext_resource type="Script" uid="uid://cr40t3p48f2l" path="res://src/menu/phone_hud.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cr40t3p48f2l" path="res://src/menu/features/phone/phone_hud.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://c5smul7n8yek4" path="res://src/assets/sprites/phone_holding_hand.svg" id="2_bg"]
 [ext_resource type="Texture2D" uid="uid://bxwu5sdekb6va" path="res://src/assets/sprites/robot_face_happy.svg" id="3_face_happy"]
 [ext_resource type="Texture2D" uid="uid://deq33brrv05w" path="res://src/assets/sprites/robot_face_blink.svg" id="4_face_blink"]

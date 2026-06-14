@@ -2,7 +2,7 @@ extends Control
 
 const LOADING_DOTS := ["", ".", "..", "..."]
 const MIN_DISPLAY_TIME: float = 1.5
-const TRANSITION_SCENE: String = "res://src/menu/main_menu.tscn"
+const TRANSITION_SCENE: String = "res://src/menu/screens/main_menu.tscn"
 
 var _ready_to_transition: bool = false
 var _dot_index: int = 0

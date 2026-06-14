@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="vital pixel"
-run/main_scene="res://src/menu/intro_cinematic.tscn"
+run/main_scene="res://src/menu/screens/intro_cinematic.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 boot_splash/bg_color=Color(0.30692276, 0.30692267, 0.30692264, 1)
 
@@ -21,14 +21,14 @@ Global="*res://src/levels/global.gd"
 SaveManager="*res://src/singleton/save_manager.gd"
 EventBus="*res://src/singleton/event_bus.gd"
 SceneManager="*res://src/singleton/scene_manager.gd"
-DialogBox="*res://src/menu/dialog_box.tscn"
-AiDialogBox="*res://src/menu/ai_dialog_box.tscn"
+DialogBox="*res://src/menu/features/dialog/dialog_box.tscn"
+AiDialogBox="*res://src/menu/features/dialog/ai_dialog_box.tscn"
 AiClient="*res://src/singleton/ai_client.gd"
 QuestManager="*res://src/singleton/quest_manager.gd"
 MiniGameManager="*res://src/singleton/mini_game_manager.gd"
 ScoreManager="*res://src/singleton/score_manager.gd"
 JournalManager="*res://src/singleton/journal_manager.gd"
-PhoneHud="*res://src/menu/phone_hud.tscn"
+PhoneHud="*res://src/menu/features/phone/phone_hud.tscn"
 Supabase="*res://src/singleton/supabase.gd"
 
 [display]

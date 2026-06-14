@@ -3,7 +3,7 @@ class_name ProfessorNPC
 
 const SCENARIO_TRIVIA: String = "trivia"
 const SCENARIO_WORDLE: String = "wordle"
-const ProfessorReplayChoiceScript = preload("res://src/menu/professor_replay_choice.gd")
+const ProfessorReplayChoiceScript = preload("res://src/menu/features/dialog/professor_replay_choice.gd")
 
 var _pending_scenarios: Array[String] = []
 var _show_replay_choice_after_dialog: bool = false

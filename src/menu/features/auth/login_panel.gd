@@ -106,7 +106,7 @@ func _on_close_pressed() -> void:
 	if _is_embedded():
 		hide_panel()
 		return
-	SceneManager.change_scene("res://src/menu/main_menu.tscn")
+	SceneManager.change_scene("res://src/menu/screens/main_menu.tscn")
 
 func _on_auth_completed(success: bool, message: String) -> void:
 	action_button.disabled = false
@@ -126,7 +126,7 @@ func _on_auth_completed(success: bool, message: String) -> void:
 				if _is_embedded():
 					hide_panel()
 				else:
-					SceneManager.change_scene("res://src/menu/main_menu.tscn")
+					SceneManager.change_scene("res://src/menu/screens/main_menu.tscn")
 			)
 		else:
 			# Registration success

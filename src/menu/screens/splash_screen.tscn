@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://splashscreen"]
 
-[ext_resource type="Script" uid="uid://dyfubodr1lpfw" path="res://src/menu/splash_screen.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://dswjytovfuu1t" path="res://src/menu/pixel.tscn" id="2_pixel"]
+[ext_resource type="Script" uid="uid://dyfubodr1lpfw" path="res://src/menu/screens/splash_screen.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://dswjytovfuu1t" path="res://src/menu/components/pixel.tscn" id="2_pixel"]
 [ext_resource type="FontFile" uid="uid://cr0ivbn1xn0bt" path="res://src/fonts/m5x7.ttf" id="3_t5p0y"]
 
 [node name="SplashScreen" type="Control" unique_id=883765292]

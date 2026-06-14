@@ -1,6 +1,6 @@
 extends Node
 
-const INTERACT_PROMPT_PATH: String = "res://src/menu/interact_prompt.tscn"
+const INTERACT_PROMPT_PATH: String = "res://src/menu/features/dialog/interact_prompt.tscn"
 
 ## Almacena el nombre del SpawnPoint de destino para posicionar al jugador al cargar escenas
 var target_spawn_name: String = ""

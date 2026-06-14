@@ -115,4 +115,4 @@ func _finish_intro() -> void:
 	tween.tween_property(audio, "volume_db", -40.0, 0.6)
 	tween.tween_property($Particles, "modulate:a", 0.0, 0.4)
 	await tween.finished
-	get_tree().change_scene_to_file("res://src/menu/intro_video.tscn")
+	get_tree().change_scene_to_file("res://src/menu/screens/intro_video.tscn")

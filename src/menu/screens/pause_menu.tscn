@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://bguh7xdm1qnpl"]
 
-[ext_resource type="Script" uid="uid://cx1cioygldoxc" path="res://src/menu/pause_menu.gd" id="1_2omny"]
-[ext_resource type="Theme" uid="uid://1dkhbt1a5a34" path="res://src/menu/ThemeMapa.tres" id="1_ld5fl"]
-[ext_resource type="PackedScene" uid="uid://cem5ckhv1st68" path="res://src/menu/custom_button.tscn" id="3_w7oy8"]
+[ext_resource type="Script" uid="uid://cx1cioygldoxc" path="res://src/menu/screens/pause_menu.gd" id="1_2omny"]
+[ext_resource type="Theme" uid="uid://1dkhbt1a5a34" path="res://src/menu/components/ThemeMapa.tres" id="1_ld5fl"]
+[ext_resource type="PackedScene" uid="uid://cem5ckhv1st68" path="res://src/menu/components/custom_button.tscn" id="3_w7oy8"]
 [ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="4_lqdws"]
-[ext_resource type="PackedScene" uid="uid://3t1cr3nwdrm3" path="res://src/menu/mute_button.tscn" id="5_mute"]
-[ext_resource type="PackedScene" uid="uid://dxr0kqygwudel" path="res://src/menu/controles_panel.tscn" id="6_controls"]
-[ext_resource type="PackedScene" uid="uid://b7w4ojuqxa3qw" path="res://src/menu/opciones_panel.tscn" id="7_opciones"]
-[ext_resource type="PackedScene" path="res://src/menu/slot_selector.tscn" id="8_slot"]
+[ext_resource type="PackedScene" uid="uid://3t1cr3nwdrm3" path="res://src/menu/components/mute_button.tscn" id="5_mute"]
+[ext_resource type="PackedScene" uid="uid://dxr0kqygwudel" path="res://src/menu/components/controles_panel.tscn" id="6_controls"]
+[ext_resource type="PackedScene" uid="uid://b7w4ojuqxa3qw" path="res://src/menu/components/opciones_panel.tscn" id="7_opciones"]
+[ext_resource type="PackedScene" path="res://src/menu/components/slot_selector.tscn" id="8_slot"]
 
 [sub_resource type="Shader" id="Shader_blur"]
 code = "shader_type canvas_item;

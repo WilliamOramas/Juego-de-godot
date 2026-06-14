@@ -1,9 +1,9 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://src/menu/slot_selector.gd" id="1_script"]
+[ext_resource type="Script" path="res://src/menu/components/slot_selector.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bd6b7pih731t6" path="res://src/fonts/porky_s/PORKYS_.TTF" id="2_porky"]
 [ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="3_cool"]
-[ext_resource type="PackedScene" uid="uid://cem5ckhv1st68" path="res://src/menu/custom_button.tscn" id="4_button"]
+[ext_resource type="PackedScene" uid="uid://cem5ckhv1st68" path="res://src/menu/components/custom_button.tscn" id="4_button"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
 bg_color = Color(0.117647, 0.117647, 0.137255, 0.941176)

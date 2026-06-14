@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cx2cioygldoxg"]
 
-[ext_resource type="Script" uid="uid://nc0iryi36mrx" path="res://src/menu/interact_prompt.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://nc0iryi36mrx" path="res://src/menu/features/dialog/interact_prompt.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://dwkxe60iq888i" path="res://src/assets/sprites/Button E-Photoroom.png" id="2_e_texture"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_root"]

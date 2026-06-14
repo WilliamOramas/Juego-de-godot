@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c7eg1tsvlabrs"]
 
-[ext_resource type="Script" uid="uid://dduohcihvif3w" path="res://src/menu/quest_notification.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dduohcihvif3w" path="res://src/menu/features/journal/quest_notification.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/fonts/coolvetica/Coolvetica Rg.otf" id="2_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]

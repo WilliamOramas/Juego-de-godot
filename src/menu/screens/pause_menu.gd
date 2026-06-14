@@ -108,4 +108,4 @@ func _on_confirmation_canceled() -> void:
 	_pending_mode = ""
 
 func _on_exit_game_pressed() -> void:
-	SceneManager.change_scene("res://src/menu/main_menu.tscn")
+	SceneManager.change_scene("res://src/menu/screens/main_menu.tscn")

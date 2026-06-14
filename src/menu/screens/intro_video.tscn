@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="Script" path="res://src/menu/intro_video.gd" id="1_script"]
+[ext_resource type="Script" path="res://src/menu/screens/intro_video.gd" id="1_script"]
 [ext_resource type="VideoStream" uid="uid://rgoedntumpl" path="res://src/assets/videos/intro.ogv" id="2_video"]
 
 [node name="IntroVideo" type="Control"]

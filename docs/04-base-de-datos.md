@@ -142,9 +142,9 @@ Agrega por sesión: nombre del jugador, escenario, puntaje, resultado, total de 
 
 | Archivo | Cuándo usarlo |
 |---------|---------------|
-| `database_schema.sql` | Proyecto nuevo o reset completo |
-| `database_migration_apply.sql` | Actualizar Supabase existente sin borrar datos |
-| `database_verification.sql` | Comprobar tablas, triggers, seeds y conteos |
+| `tools/db/database_schema.sql` | Proyecto nuevo o reset completo |
+| `tools/db/database_migration_apply.sql` | Actualizar Supabase existente sin borrar datos |
+| `tools/db/database_verification.sql` | Comprobar tablas, triggers, seeds y conteos |
 
 ## Demo offline (SQLite)
 

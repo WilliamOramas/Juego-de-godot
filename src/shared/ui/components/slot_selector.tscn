@@ -1,0 +1,108 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/shared/ui/components/slot_selector.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://bd6b7pih731t6" path="res://src/shared/fonts/porky_s/PORKYS_.TTF" id="2_porky"]
+[ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/shared/fonts/coolvetica/Coolvetica Rg.otf" id="3_cool"]
+[ext_resource type="PackedScene" uid="uid://cem5ckhv1st68" path="res://src/shared/ui/buttons/custom_button.tscn" id="4_button"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.117647, 0.117647, 0.137255, 0.941176)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="SlotSelector" type="Panel"]
+custom_minimum_size = Vector2(1280, 720)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+script = ExtResource("1_script")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = -110.0
+offset_right = 130.0
+offset_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Tabs" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="TabLocal" parent="VBoxContainer/Tabs" instance=ExtResource("4_button")]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "LOCALES"
+
+[node name="TabCloud" parent="VBoxContainer/Tabs" instance=ExtResource("4_button")]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "EN LA NUBE"
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_porky")
+theme_override_font_sizes/font_size = 20
+text = "SELECCIONAR SLOT"
+horizontal_alignment = 1
+
+[node name="Separator" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 12
+text = "──────────────"
+horizontal_alignment = 1
+
+[node name="Slot1" parent="VBoxContainer" instance=ExtResource("4_button")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 18
+text = "SLOT 1"
+
+[node name="Slot2" parent="VBoxContainer" instance=ExtResource("4_button")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 18
+text = "SLOT 2"
+
+[node name="Slot3" parent="VBoxContainer" instance=ExtResource("4_button")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 18
+text = "SLOT 3"
+
+[node name="CloseButton" parent="VBoxContainer" instance=ExtResource("4_button")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 18
+text = "VOLVER"
+
+[connection signal="pressed" from="VBoxContainer/CloseButton" to="." method="_on_close_pressed"]
+
+[node name="CloudConfirmDialog" type="ConfirmationDialog" parent="."]
+title = "Guardar en la Nube"
+initial_position = 2
+size = Vector2i(450, 100)
+ok_button_text = "Sí, subir a la Nube"
+cancel_button_text = "No, solo Local"
+dialog_text = "¿Deseas respaldar esta partida en la nube de tu cuenta?"

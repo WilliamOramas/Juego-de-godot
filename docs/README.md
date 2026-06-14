@@ -5,7 +5,7 @@
 | Parte | Archivo | Contenido |
 |-------|---------|-----------|
 | 1 | [01-introduccion.md](01-introduccion.md) | Contexto, objetivos, equipo, tecnologías |
-| 2 | [02-instalacion-y-configuracion.md](02-instalacion-y-configuracion.md) | Godot, `supabase.cfg`, `ai.cfg`, migración BD |
+| 2 | [02-instalacion-y-configuracion.md](02-instalacion-y-configuracion.md) | Godot, `config.cfg`, `config.cfg`, migración BD |
 | 3 | [03-arquitectura-software.md](03-arquitectura-software.md) | Carpetas, autoloads, EventBus, patrones |
 | 4 | [04-base-de-datos.md](04-base-de-datos.md) | Modelo ER, tablas, triggers, transacciones, RLS |
 | 5 | [05-integracion-supabase.md](05-integracion-supabase.md) | Auth, cloud saves, telemetría, flujo con el juego |
@@ -23,6 +23,6 @@
 
 | Archivo | Uso |
 |---------|-----|
-| `database_schema.sql` | Esquema completo (instalación desde cero) |
-| `database_migration_apply.sql` | Migración incremental en Supabase |
-| `database_verification.sql` | Consultas de verificación |
+| `tools/db/database_schema.sql` | Esquema completo (instalación desde cero) |
+| `tools/db/database_migration_apply.sql` | Migración incremental en Supabase |
+| `tools/db/database_verification.sql` | Consultas de verificación |

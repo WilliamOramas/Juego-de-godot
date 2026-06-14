@@ -36,7 +36,7 @@ La enseñanza de primeros auxilios suele ser teórica y con poca práctica. El j
 | Motor | Godot 4.6 (GL Compatibility) |
 | Lenguaje | GDScript (tipado estático) |
 | Backend | Supabase (PostgreSQL + Auth + REST) |
-| IA opcional | API externa vía `AiClient` (`ai.cfg`) |
+| IA opcional | API externa vía `AiClient` (`config.cfg`) |
 | Demo BD local | SQLite + DB Browser (laboratorio académico) |
 
 ## Documentos relacionados

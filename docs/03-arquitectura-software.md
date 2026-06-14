@@ -23,27 +23,27 @@ res://
 ├── tests/               # Pruebas unitarias headless
 ├── tools/               # Scripts Node para migración Supabase
 ├── docs/                # Documentación
-├── database_schema.sql
-└── database_migration_apply.sql
+├── tools/db/database_schema.sql
+└── tools/db/database_migration_apply.sql
 ```
 
 ## Autoloads (`project.godot`)
 
 | Singleton | Ruta | Responsabilidad |
 |-----------|------|-----------------|
-| `Global` | `src/levels/global.gd` | Estado de partida: diálogos vistos, escenarios completados, posición |
-| `SaveManager` | `src/singleton/save_manager.gd` | Slots locales/nube, settings, sync Supabase |
-| `EventBus` | `src/singleton/event_bus.gd` | Señales globales desacopladas |
-| `SceneManager` | `src/singleton/scene_manager.gd` | Cambio de escenas, transiciones, pausa |
-| `DialogBox` | `src/menu/dialog_box.tscn` | Diálogos JRPG |
-| `AiDialogBox` | `src/menu/ai_dialog_box.tscn` | Diálogos con IA |
-| `AiClient` | `src/singleton/ai_client.gd` | Peticiones HTTP a API de IA |
-| `QuestManager` | `src/singleton/quest_manager.gd` | Misiones y objetivos |
-| `MiniGameManager` | `src/singleton/mini_game_manager.gd` | Lanzamiento de minijuegos + sesión BD |
-| `ScoreManager` | `src/singleton/score_manager.gd` | Puntaje, telemetría, notas |
-| `JournalManager` | `src/singleton/journal_manager.gd` | Bitácora del jugador |
-| `PhoneHud` | `src/menu/phone_hud.tscn` | Interfaz de teléfono en juego |
-| `Supabase` | `src/singleton/supabase.gd` | Auth y REST API |
+| `Global` | `src/core/managers/global.gd` | Estado de partida: diálogos vistos, escenarios completados, posición |
+| `SaveManager` | `src/core/managers/save_manager.gd` | Slots locales/nube, settings, sync Supabase |
+| `EventBus` | `src/core/managers/event_bus.gd` | Señales globales desacopladas |
+| `SceneManager` | `src/core/managers/scene_manager.gd` | Cambio de escenas, transiciones, pausa |
+| `DialogBox` | `src/features/menu/dialog_box.tscn` | Diálogos JRPG |
+| `AiDialogBox` | `src/features/menu/ai_dialog_box.tscn` | Diálogos con IA |
+| `AiClient` | `src/core/infrastructure/ai/ai_client.gd` | Peticiones HTTP a API de IA |
+| `QuestManager` | `src/core/managers/quest_manager.gd` | Misiones y objetivos |
+| `MiniGameManager` | `src/core/managers/mini_game_manager.gd` | Lanzamiento de minijuegos + sesión BD |
+| `ScoreManager` | `src/core/managers/score_manager.gd` | Puntaje, telemetría, notas |
+| `JournalManager` | `src/core/managers/journal_manager.gd` | Bitácora del jugador |
+| `PhoneHud` | `src/features/menu/phone_hud.tscn` | Interfaz de teléfono en juego |
+| `Supabase` | `src/core/infrastructure/supabase/supabase.gd` | Auth y REST API |
 
 ## EventBus — señales principales
 
@@ -59,7 +59,7 @@ journal_entry_added
 
 **Regla:** los sistemas emiten eventos; los listeners reaccionan. No llamar UI desde la lógica de minijuegos directamente.
 
-## Capa `src/domain/`
+## Capa `src/core/models/`
 
 Lógica sin dependencia de nodos Godot, reutilizable y testeable:
 

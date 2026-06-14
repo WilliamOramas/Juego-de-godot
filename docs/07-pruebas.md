@@ -53,7 +53,7 @@ tests/
 
 - Integración real con Supabase (requiere red y credenciales).
 - UI, input y escenas `.tscn`.
-- Triggers de PostgreSQL (ver `database_verification.sql` y demo académica).
+- Triggers de PostgreSQL (ver `tools/db/database_verification.sql` y demo académica).
 
 ## Documentos relacionados
 

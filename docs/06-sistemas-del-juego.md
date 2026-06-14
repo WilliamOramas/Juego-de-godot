@@ -57,7 +57,7 @@ HUD lateral para llamadas de emergencia (112) integrado en escenarios de primero
 
 ## IA en NPCs (`AiClient` + `AiDialogBox`)
 
-Opcional. Requiere `ai.cfg`. Emite `ai_response_received` / `ai_error_received` vía EventBus.
+Opcional. Requiere `config.cfg`. Emite `ai_response_received` / `ai_error_received` vía EventBus.
 
 ## Exploración y niveles
 

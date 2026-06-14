@@ -2,7 +2,7 @@
 
 ## Configuración en Godot
 
-El singleton `Supabase` (`src/singleton/supabase.gd`) lee `supabase.cfg` en la raíz:
+El singleton `Supabase` (`src/core/infrastructure/supabase/supabase.gd`) lee `config.cfg` en la raíz:
 
 ```ini
 [supabase]
@@ -28,7 +28,7 @@ Tras login exitoso:
 
 Señal: `auth_completed(success, message)`.
 
-## Capa de dominio (`src/domain/`)
+## Capa de dominio (`src/core/models/`)
 
 La lógica HTTP está separada en clases estáticas:
 

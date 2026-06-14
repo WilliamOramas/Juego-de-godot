@@ -74,24 +74,20 @@ La estructura de directorios del proyecto se organiza de la siguiente manera:
 ```text
 res://
 ├── src/                     # Código fuente y recursos del juego
-│   ├── assets/              # Recursos gráficos y de audio compartidos
-│   │   └── sprites/         # Hojas de sprites y fondos del juego
-│   │       ├── player_spritesheet.png        # Spritesheet del protagonista (caminar/parado)
-│   │       └── school_hallway_background.png # Imagen de fondo del pasillo escolar
-│   ├── entities/            # Personajes, enemigos y objetos interactivos (Entidades)
-│   │   └── player/          # Lógica y scripts relacionados al jugador
-│   │       ├── player.gd    # Script principal de movimiento y animación
-│   │       └── player.gd.uid # Identificador único de recurso en Godot
-│   └── levels/              # Escenas completas de mapas y niveles
-│       └── school_hallway.tscn # Nivel principal (Pasillo de la escuela)
+│   ├── core/                # Sistemas centrales (managers, infraestructura, modelos)
+│   ├── features/            # Funcionalidades del juego (niveles, minijuegos, menús, quests)
+│   └── shared/              # Elementos compartidos (entidades, UI, componentes, assets, fuentes)
+├── tests/                   # Pruebas unitarias en GDScript
+├── tools/                   # Herramientas externas (scripts en Node.js, db)
+├── config.cfg               # Configuración global (Supabase, IA)
 ├── project.godot            # Archivo de configuración del proyecto Godot
 └── README.md                # Documentación del proyecto
 ```
 
 ### Ventajas de este Diseño
-1. **Modularidad:** El jugador (`player.gd`) se encuentra autocontenido dentro de su propia carpeta en `entities/player/`. Esto facilita la reutilización y el mantenimiento individual.
-2. **Escalabilidad:** A medida que se agreguen más enemigos o niveles, se crearán subcarpetas bajo `entities/enemies/` o `levels/` respectivamente, evitando acumular archivos en la raíz del proyecto.
-3. **Facilidad de Trabajo en Equipo:** Reduce los conflictos en el control de versiones al tener archivos organizados por componentes lógicos diferenciados.
+1. **Modularidad y Cohesión:** El código específico de una funcionalidad vive aislado en `features/`, mientras que la base sólida vive en `core/`. Esto asegura que los subsistemas no se entrelacen (cero "código espagueti").
+2. **Reutilización Clara:** Todo lo que se repite en múltiples niveles o minijuegos (como NPCs, botones o utilidades) se centraliza en `shared/`.
+3. **Escalabilidad:** Separar lógica de negocio, interfaz de usuario e infraestructura facilita que el proyecto crezca orgánicamente y que múltiples desarrolladores trabajen sin crear conflictos.
 
 ---
 

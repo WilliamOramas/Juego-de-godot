@@ -1,0 +1,94 @@
+[gd_scene format=3 uid="uid://splashscreen"]
+
+[ext_resource type="Script" uid="uid://dyfubodr1lpfw" path="res://src/features/menu/screens/splash_screen.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://dswjytovfuu1t" path="res://src/shared/ui/components/pixel.tscn" id="2_pixel"]
+[ext_resource type="FontFile" uid="uid://cr0ivbn1xn0bt" path="res://src/shared/fonts/m5x7.ttf" id="3_t5p0y"]
+
+[node name="SplashScreen" type="Control" unique_id=883765292]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1538871879]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.117647, 0.117647, 0.137255, 1)
+
+[node name="PixelContainer" type="Control" parent="." unique_id=756021209]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Pixel" parent="PixelContainer" unique_id=5269915 instance=ExtResource("2_pixel")]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -155.0
+offset_top = -194.0
+offset_right = 160.0
+offset_bottom = 139.0
+
+[node name="Title" type="Label" parent="." unique_id=1976635216]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 120.0
+offset_right = 100.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("3_t5p0y")
+theme_override_font_sizes/font_size = 31
+text = "MEDI-BOT LOADING"
+horizontal_alignment = 1
+
+[node name="Dots" type="Label" parent="." unique_id=1181202369]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = 170.0
+offset_right = 50.0
+offset_bottom = 190.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Cargando"
+horizontal_alignment = 1
+
+[node name="SkipHint" type="Label" parent="." unique_id=1870670756]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = 220.0
+offset_right = 50.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Presiona cualquier tecla"
+horizontal_alignment = 1

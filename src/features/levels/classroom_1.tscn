@@ -1,0 +1,278 @@
+[gd_scene format=3 uid="uid://d37ykuofdv1m2"]
+
+[ext_resource type="Texture2D" uid="uid://d2xyhaqh6dlm4" path="res://src/shared/assets/sprites/salon 1.png" id="1_bg"]
+[ext_resource type="PackedScene" uid="uid://b12ykuofdv1m3" path="res://src/shared/entities/player/player.tscn" id="2_player"]
+[ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/shared/entities/door/door.gd" id="3_door_gd"]
+[ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/features/menu/screens/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/shared/entities/npc/npc.tscn" id="5_npc"]
+[ext_resource type="Texture2D" uid="uid://bejib1kp3kfe1" path="res://src/shared/assets/sprites/npc_spritesheet_alt.png" id="6_teacher_tex"]
+[ext_resource type="Script" uid="uid://dtl581vlfbxui" path="res://src/features/levels/components/level_limits.gd" id="7_limits"]
+[ext_resource type="PackedScene" path="res://src/shared/entities/npc/professor_npc.tscn" id="8_prof"]
+[ext_resource type="Texture2D" uid="uid://cm3pj731lfemk" path="res://src/shared/assets/sprites/np2.png" id="9_npc_sprite"]
+[ext_resource type="Texture2D" uid="uid://bfc6brifr5ko7" path="res://src/shared/assets/sprites/np5.png" id="10_npc_sprite_f"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left"]
+size = Vector2(13, 500)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_right"]
+size = Vector2(13, 500)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_top"]
+size = Vector2(485, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_bottom_side"]
+size = Vector2(237.92375, 23)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor_bottom"]
+size = Vector2(500, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_student_desk"]
+size = Vector2(33, 19)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_teacher_desk"]
+size = Vector2(118.5, 16.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
+size = Vector2(87, 40)
+
+[node name="Classroom1" type="Node2D" unique_id=1742570909]
+y_sort_enabled = true
+script = ExtResource("7_limits")
+camera_right = 485
+camera_bottom = 515
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1946591102]
+z_index = -1
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("1_bg")
+centered = false
+metadata/_edit_lock_ = true
+
+[node name="Walls" type="Node2D" parent="." unique_id=784998654]
+
+[node name="WallLeft" type="StaticBody2D" parent="Walls" unique_id=350715639]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallLeft" unique_id=2011132897]
+position = Vector2(6.5, 250)
+shape = SubResource("RectangleShape2D_wall_left")
+
+[node name="WallRight" type="StaticBody2D" parent="Walls" unique_id=533499594]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallRight" unique_id=1876703247]
+position = Vector2(478.5, 250)
+shape = SubResource("RectangleShape2D_wall_right")
+
+[node name="WallTop" type="StaticBody2D" parent="Walls" unique_id=1020034806]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallTop" unique_id=615024041]
+position = Vector2(242.5, 32)
+shape = SubResource("RectangleShape2D_wall_top")
+
+[node name="WallBottomLeft" type="StaticBody2D" parent="Walls" unique_id=473188310]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallBottomLeft" unique_id=1141055325]
+position = Vector2(131.03812, 489)
+shape = SubResource("RectangleShape2D_wall_bottom_side")
+
+[node name="WallBottomRight" type="StaticBody2D" parent="Walls" unique_id=510078012]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallBottomRight" unique_id=1325075189]
+position = Vector2(456, 489)
+shape = SubResource("RectangleShape2D_wall_bottom_side")
+
+[node name="FloorBottom" type="StaticBody2D" parent="Walls" unique_id=1788088505]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/FloorBottom" unique_id=1604304940]
+position = Vector2(260, 505)
+shape = SubResource("RectangleShape2D_floor_bottom")
+
+[node name="Furniture" type="Node2D" parent="." unique_id=2136829240]
+
+[node name="DeskR1C1" type="StaticBody2D" parent="Furniture" unique_id=114596009]
+position = Vector2(74, 180)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR1C1" unique_id=1048219211]
+position = Vector2(1, -16)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR1C2" type="StaticBody2D" parent="Furniture" unique_id=1580922578]
+position = Vector2(154, 180)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR1C2" unique_id=1464796100]
+position = Vector2(1, -16)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR1C3" type="StaticBody2D" parent="Furniture" unique_id=1210901258]
+position = Vector2(234, 180)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR1C3" unique_id=2120087736]
+position = Vector2(1, -16)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR1C4" type="StaticBody2D" parent="Furniture" unique_id=920245053]
+position = Vector2(314, 180)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR1C4" unique_id=1851440283]
+position = Vector2(1, -16.5)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR1C5" type="StaticBody2D" parent="Furniture" unique_id=1174035467]
+position = Vector2(389, 180)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR1C5" unique_id=1445913179]
+position = Vector2(1, -16)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR2C1" type="StaticBody2D" parent="Furniture" unique_id=1692150421]
+position = Vector2(74, 260)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR2C1" unique_id=2126143249]
+position = Vector2(1, -16)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR2C2" type="StaticBody2D" parent="Furniture" unique_id=723418138]
+position = Vector2(154, 260)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR2C2" unique_id=1814354396]
+position = Vector2(1, -15)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR2C3" type="StaticBody2D" parent="Furniture" unique_id=1528766868]
+position = Vector2(234, 260)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR2C3" unique_id=2025176630]
+position = Vector2(1, -16)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR2C4" type="StaticBody2D" parent="Furniture" unique_id=1334403411]
+position = Vector2(314, 260)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR2C4" unique_id=1515920236]
+position = Vector2(1, -16)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR2C5" type="StaticBody2D" parent="Furniture" unique_id=1263324072]
+position = Vector2(389, 260)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR2C5" unique_id=416229921]
+position = Vector2(2, -16)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR3C1" type="StaticBody2D" parent="Furniture" unique_id=1015666848]
+position = Vector2(74, 340)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR3C1" unique_id=413157918]
+position = Vector2(1, -17)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR3C2" type="StaticBody2D" parent="Furniture" unique_id=968202741]
+position = Vector2(154, 340)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR3C2" unique_id=1277300527]
+position = Vector2(1, -15)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR3C3" type="StaticBody2D" parent="Furniture" unique_id=545664022]
+position = Vector2(234, 340)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR3C3" unique_id=2024680895]
+position = Vector2(0, -16)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR3C4" type="StaticBody2D" parent="Furniture" unique_id=1180197809]
+position = Vector2(314, 340)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR3C4" unique_id=8183002]
+position = Vector2(1, -15)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR3C5" type="StaticBody2D" parent="Furniture" unique_id=878709957]
+position = Vector2(389, 340)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR3C5" unique_id=1900131233]
+position = Vector2(3, -16)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR4C2" type="StaticBody2D" parent="Furniture" unique_id=780773586]
+position = Vector2(154, 420)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR4C2" unique_id=1630237410]
+position = Vector2(1, -16)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR4C3" type="StaticBody2D" parent="Furniture" unique_id=1302998437]
+position = Vector2(234, 420)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR4C3" unique_id=1258238882]
+position = Vector2(1, -16)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="DeskR4C4" type="StaticBody2D" parent="Furniture" unique_id=464443326]
+position = Vector2(314, 420)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/DeskR4C4" unique_id=1899436402]
+position = Vector2(1, -17)
+shape = SubResource("RectangleShape2D_student_desk")
+
+[node name="TeacherDesk" type="StaticBody2D" parent="Furniture" unique_id=871096458]
+position = Vector2(399, 81)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/TeacherDesk" unique_id=3978847]
+position = Vector2(-309.25, -4.75)
+shape = SubResource("RectangleShape2D_teacher_desk")
+
+[node name="Player" parent="." unique_id=561129046 instance=ExtResource("2_player")]
+position = Vector2(270, 420)
+
+[node name="DoorToHallway" type="Area2D" parent="." unique_id=565275712]
+position = Vector2(270, 482)
+script = ExtResource("3_door_gd")
+target_scene_path = "res://src/features/levels/school_hallway.tscn"
+use_dynamic_return = true
+prompt_offset = Vector2(10, -10)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DoorToHallway" unique_id=822597211]
+position = Vector2(23, 15)
+shape = SubResource("RectangleShape2D_door")
+
+[node name="ClassroomSpawnPoint" type="Marker2D" parent="." unique_id=837593034]
+position = Vector2(270, 420)
+
+[node name="EstudianteSentadoAtento" parent="." unique_id=2005933650 instance=ExtResource("5_npc")]
+position = Vector2(427, 419)
+sprite_texture = ExtResource("9_npc_sprite")
+sprite_modulate = Color(0.9, 1, 0.9, 1)
+npc_name = "Compañero"
+dialog_lines = Array[String](["Oye, ¿qué haces fuera de tu asiento?", "El profesor Méndez está de un humor terrible hoy, no perdonará a nadie.", "Vuelve antes de que te vea, yo te cubro."])
+dialog_lines_repeat = Array[String](["¿Otra vez fuera? Eres valiente...", "No sé si podré cubrirte esta vez, pero dale."])
+routine_type = "Estático"
+
+[node name="ProfesorClase" parent="." unique_id=1591853063 instance=ExtResource("8_prof")]
+position = Vector2(240, 100)
+sprite_texture = ExtResource("6_teacher_tex")
+npc_name = "Profesor Méndez"
+dialog_lines = Array[String](["¿Otra vez interrumpiendo mi clase?", "Ya he tenido suficiente de tus paseos. Si no quieres reprobar mi materia, tendrás que demostrar que has aprendido algo.", "Vas a enfrentarte a Enrique en una trivia de primeros auxilios. Si ganas, te daré puntos extra que te harán más ligera la carga."])
+dialog_lines_repeat = Array[String](["El reto sigue en pie.", "¿Tienes miedo de enfrentarte a Enrique en la trivia?"])
+routine_type = "Patrulla Horizontal"
+speed = 15.0
+
+[node name="Enrique" parent="." unique_id=987654321 instance=ExtResource("5_npc")]
+position = Vector2(362, 101)
+sprite_texture = ExtResource("9_npc_sprite")
+sprite_modulate = Color(0.7, 0.7, 0.5, 1)
+npc_name = "Enrique"
+dialog_lines = Array[String](["...", "Prepárate para perder la trivia."])
+dialog_lines_repeat = Array[String](["No me hables, estoy concentrado."])
+routine_type = "Estático"
+
+[node name="Elisabeth" parent="." unique_id=883746521 instance=ExtResource("5_npc")]
+position = Vector2(116, 221)
+sprite_texture = ExtResource("10_npc_sprite_f")
+npc_name = "Elisabeth"
+dialog_lines = Array[String](["Hola, ¿tú también estás en esta clase?", "El profesor Méndez está especialmente severo hoy, mejor no llamar la atención.", "Suerte con la trivia si te animas a participar."])
+dialog_lines_repeat = Array[String](["¿Sigues por aquí? El profesor ya está mirando feo...", "Cuidado con Enrique, se lo toma muy personal."])
+routine_type = "Estático"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=552553235]
+
+[node name="PauseMenu" parent="CanvasLayer" unique_id=775240381 instance=ExtResource("4_pause")]

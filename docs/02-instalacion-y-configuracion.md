@@ -14,11 +14,11 @@ cd Juego-de-godot
 ```
 
 1. Abre **Godot Project Manager** → **Import** → selecciona `project.godot`.
-2. Pulsa **F5** para ejecutar (escena inicial: `src/menu/splash_screen.tscn`).
+2. Pulsa **F5** para ejecutar (escena inicial: `src/features/menu/splash_screen.tscn`).
 
 ## Archivos de configuración local (no van al repositorio)
 
-### `supabase.cfg`
+### `config.cfg`
 
 Crea en la raíz del proyecto:
 
@@ -30,7 +30,7 @@ key="TU_ANON_KEY"
 
 Sin este archivo el juego funciona en **modo local**, pero no habrá login ni guardado en nube.
 
-### `ai.cfg`
+### `config.cfg`
 
 Opcional, para diálogos con IA en NPCs:
 
@@ -44,8 +44,8 @@ api_key="TU_API_KEY"
 ### Primera vez
 
 1. Crea un proyecto en Supabase.
-2. En **SQL Editor**, ejecuta el contenido de [`database_migration_apply.sql`](../database_migration_apply.sql).
-3. Verifica con [`database_verification.sql`](../database_verification.sql).
+2. En **SQL Editor**, ejecuta el contenido de [`tools/db/database_migration_apply.sql`](../tools/db/database_migration_apply.sql).
+3. Verifica con [`tools/db/database_verification.sql`](../tools/db/database_verification.sql).
 
 ### Desde la línea de comandos (opcional)
 

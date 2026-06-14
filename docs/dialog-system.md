@@ -18,16 +18,16 @@ DialogBox.show_dialog(npcs) → slide_in()
 
 | Nombre | Script/Ruta | Propósito |
 |---|---|---|
-| Global | `src/levels/global.gd` | Estado global (`dialogs_seen`) |
+| Global | `src/core/managers/global.gd` | Estado global (`dialogs_seen`) |
 | SceneManager | (integrado) | Transiciones entre escenas |
-| DialogBox | `src/menu/dialog_box.gd` | Panel de diálogo |
+| DialogBox | `src/features/menu/dialog_box.gd` | Panel de diálogo |
 
 ### Escenas
 
 | Escena | Ruta | Tipo |
 |---|---|---|
-| `dialog_box.tscn` | `src/menu/` | CanvasLayer |
-| `interact_prompt.tscn` | `src/menu/` | PanelContainer |
+| `dialog_box.tscn` | `src/features/menu/` | CanvasLayer |
+| `interact_prompt.tscn` | `src/features/menu/` | PanelContainer |
 
 ---
 

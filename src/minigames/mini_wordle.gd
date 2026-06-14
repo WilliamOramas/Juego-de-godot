@@ -187,6 +187,8 @@ func _setup_wordle_round() -> void:
 func _unhandled_key_input(event: InputEvent) -> void:
 	if not _is_running or not event is InputEventKey or not event.pressed:
 		return
+	if current_attempt >= 6:
+		return
 
 	if event.keycode == KEY_BACKSPACE and current_guess.length() > 0:
 		current_guess = current_guess.substr(0, current_guess.length() - 1)

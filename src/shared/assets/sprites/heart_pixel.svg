@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges">
+  <!-- Outline -->
+  <path d="M2 3 h2 v-1 h4 v1 h2 v2 h1 v3 h-1 v2 h-1 v2 h-1 v1 h-1 v1 h-2 v-1 h-1 v-1 h-1 v-2 h-1 v-2 h-1 v-3 h1 v-2 z" fill="#222222" />
+  <!-- Red inner -->
+  <path d="M3 3 h2 v1 h-2 z M7 3 h2 v1 h-2 z M2 4 h8 v2 h-8 z M2 6 h8 v1 h-8 z M3 7 h6 v1 h-6 z M4 8 h4 v1 h-4 z M5 9 h2 v1 h-2 z" fill="#FF3333" />
+  <!-- Adjusted Red inner manually for proper heart shape in 16x16 -->
+  <!-- Let's just use rects for pixel precision -->
+  <rect x="3" y="2" width="3" height="1" fill="#222222" />
+  <rect x="10" y="2" width="3" height="1" fill="#222222" />
+  
+  <rect x="2" y="3" width="1" height="3" fill="#222222" />
+  <rect x="6" y="3" width="4" height="1" fill="#222222" />
+  <rect x="13" y="3" width="1" height="3" fill="#222222" />
+  
+  <rect x="1" y="6" width="1" height="3" fill="#222222" />
+  <rect x="14" y="6" width="1" height="3" fill="#222222" />
+  
+  <rect x="2" y="9" width="1" height="2" fill="#222222" />
+  <rect x="13" y="9" width="1" height="2" fill="#222222" />
+  
+  <rect x="3" y="11" width="1" height="1" fill="#222222" />
+  <rect x="12" y="11" width="1" height="1" fill="#222222" />
+  
+  <rect x="4" y="12" width="1" height="1" fill="#222222" />
+  <rect x="11" y="12" width="1" height="1" fill="#222222" />
+  
+  <rect x="5" y="13" width="1" height="1" fill="#222222" />
+  <rect x="10" y="13" width="1" height="1" fill="#222222" />
+  
+  <rect x="6" y="14" width="4" height="1" fill="#222222" />
+  
+  <!-- Red fills -->
+  <rect x="3" y="3" width="3" height="1" fill="#FF3333" />
+  <rect x="10" y="3" width="3" height="1" fill="#FF3333" />
+  <rect x="3" y="4" width="10" height="2" fill="#FF3333" />
+  <rect x="2" y="6" width="12" height="3" fill="#FF3333" />
+  <rect x="3" y="9" width="10" height="2" fill="#FF3333" />
+  <rect x="4" y="11" width="8" height="1" fill="#FF3333" />
+  <rect x="5" y="12" width="6" height="1" fill="#FF3333" />
+  <rect x="6" y="13" width="4" height="1" fill="#FF3333" />
+  
+  <!-- Highlight -->
+  <rect x="4" y="4" width="2" height="2" fill="#FFFFFF" />
+</svg>

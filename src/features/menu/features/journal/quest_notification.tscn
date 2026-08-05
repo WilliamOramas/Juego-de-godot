@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://c7eg1tsvlabrs"]
+
+[ext_resource type="Script" uid="uid://dduohcihvif3w" path="res://src/features/menu/features/journal/quest_notification.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/shared/fonts/coolvetica/Coolvetica Rg.otf" id="2_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.117647, 0.117647, 0.137255, 0.941176)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.294118, 0.294118, 0.352941, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="QuestNotification" type="CanvasLayer" unique_id=1495500556]
+process_mode = 3
+layer = 99
+script = ExtResource("1_script")
+
+[node name="Root" type="Control" parent="." unique_id=1629601915]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = -100.0
+offset_right = 200.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="Panel" type="Panel" parent="Root" unique_id=930747209]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Label" type="Label" parent="Root/Panel" unique_id=1059265443]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = -12.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2

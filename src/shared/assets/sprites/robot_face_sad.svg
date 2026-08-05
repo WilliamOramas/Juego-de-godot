@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 52" width="100%" height="100%">
+  <!-- Left Eye -->
+  <rect x="16" y="14" width="8" height="14" rx="2" fill="#3ae2e2" />
+  
+  <!-- Right Eye -->
+  <rect x="40" y="14" width="8" height="14" rx="2" fill="#3ae2e2" />
+  
+  <!-- Cheeks blush (Lines/rectangles) -->
+  <rect x="10" y="28" width="5" height="3" rx="1" fill="#3ae2e2" opacity="0.5" />
+  <rect x="49" y="28" width="5" height="3" rx="1" fill="#3ae2e2" opacity="0.5" />
+  
+  <!-- Mouth (sad curve) -->
+  <path d="M24 36 Q32 30 40 36" fill="none" stroke="#3ae2e2" stroke-width="3.5" stroke-linecap="round" />
+</svg>

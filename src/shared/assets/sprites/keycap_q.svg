@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
+  <!-- Outer Border -->
+  <rect x="2" y="2" width="28" height="28" fill="#222222" />
+  <!-- Base Side -->
+  <rect x="4" y="4" width="24" height="24" fill="#666666" />
+  <!-- Top Surface -->
+  <rect x="4" y="4" width="24" height="18" fill="#DDDDDD" />
+  
+  <!-- The letter Q -->
+  <rect x="12" y="8" width="6" height="2" fill="#222222" />
+  <rect x="10" y="10" width="2" height="6" fill="#222222" />
+  <rect x="18" y="10" width="2" height="6" fill="#222222" />
+  <rect x="12" y="16" width="6" height="2" fill="#222222" />
+  <rect x="16" y="16" width="2" height="2" fill="#222222" />
+  <rect x="18" y="18" width="2" height="2" fill="#222222" />
+</svg>

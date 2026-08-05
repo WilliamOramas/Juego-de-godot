@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 300" width="100%" height="100%" fill="none" stroke="#3e4e5e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Phone Body -->
+  <rect x="8.33" y="10" width="133.33" height="280" rx="13.33" ry="13.33" fill="#222a36" />
+  
+  <!-- Phone Screen -->
+  <rect x="15" y="24" width="120" height="252" rx="8.33" ry="8.33" fill="#0c1a30" stroke="#1e2f44" stroke-width="2.5" />
+  
+  <!-- Phone Speaker Notch -->
+  <rect x="58.33" y="16" width="33.33" height="4" rx="1.67" fill="#151b24" stroke="none" />
+</svg>

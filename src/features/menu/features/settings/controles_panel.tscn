@@ -1,0 +1,135 @@
+[gd_scene format=3 uid="uid://dxr0kqygwudel"]
+
+[ext_resource type="Script" uid="uid://dgtjqj2qw1okp" path="res://src/features/menu/features/settings/controles_panel.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://bd6b7pih731t6" path="res://src/shared/fonts/porky_s/PORKYS_.TTF" id="2_porky"]
+[ext_resource type="FontFile" uid="uid://dccygxeb5ynw0" path="res://src/shared/fonts/coolvetica/Coolvetica Rg.otf" id="3_cool"]
+[ext_resource type="PackedScene" uid="uid://cem5ckhv1st68" path="res://src/shared/ui/buttons/custom_button.tscn" id="4_button"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_controls"]
+bg_color = Color(0.117647, 0.117647, 0.137255, 0.941176)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="ControlesPanel" type="Panel" unique_id=1501361843]
+custom_minimum_size = Vector2(1280, 720)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_controls")
+script = ExtResource("1_script")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=56377260]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = -110.0
+offset_right = 130.0
+offset_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Title" type="Label" parent="VBoxContainer" unique_id=1548515823]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_porky")
+theme_override_font_sizes/font_size = 20
+text = "CONTROLES"
+horizontal_alignment = 1
+
+[node name="Separator" type="Label" parent="VBoxContainer" unique_id=1841776534]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 12
+text = "──────────────"
+horizontal_alignment = 1
+
+[node name="KeyMove" type="Label" parent="VBoxContainer" unique_id=1752451188]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "WASD  —  Moverse"
+horizontal_alignment = 1
+
+[node name="KeyInteract" type="Label" parent="VBoxContainer" unique_id=362629748]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "E  —  Interactuar / Hablar"
+horizontal_alignment = 1
+
+[node name="KeyPause" type="Label" parent="VBoxContainer" unique_id=1586947062]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "Esc  —  Pausa"
+horizontal_alignment = 1
+
+[node name="KeyPhone" type="Label" parent="VBoxContainer" unique_id=1257432163]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "Q  —  Teléfono"
+horizontal_alignment = 1
+
+[node name="KeyQuest" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "M  —  Misiones"
+horizontal_alignment = 1
+
+[node name="KeyJournal" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "J  —  Bitácora (con teléfono)"
+horizontal_alignment = 1
+
+[node name="KeyStats" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "K  —  Stats (con teléfono)"
+horizontal_alignment = 1
+
+[node name="KeyFullscreen" type="Label" parent="VBoxContainer" unique_id=855268403]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "F11  —  Pantalla completa"
+horizontal_alignment = 1
+
+[node name="KeyRun" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 14
+text = "Shift  —  Correr"
+horizontal_alignment = 1
+
+[node name="CloseButton" parent="VBoxContainer" unique_id=520629534 instance=ExtResource("4_button")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_cool")
+theme_override_font_sizes/font_size = 18
+text = "CERRAR"
+
+[connection signal="pressed" from="VBoxContainer/CloseButton" to="." method="_on_close_pressed"]

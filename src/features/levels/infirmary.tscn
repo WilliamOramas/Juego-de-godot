@@ -1,0 +1,174 @@
+[gd_scene format=3 uid="uid://d37ykuofdv1m4"]
+
+[ext_resource type="Texture2D" uid="uid://cwe6mjoekm3n6" path="res://src/shared/assets/sprites/enfermeria.png" id="1_bg"]
+[ext_resource type="PackedScene" uid="uid://b12ykuofdv1m3" path="res://src/shared/entities/player/player.tscn" id="2_player"]
+[ext_resource type="Script" uid="uid://66id6up3rfjf" path="res://src/shared/entities/door/door.gd" id="3_door_gd"]
+[ext_resource type="PackedScene" uid="uid://bguh7xdm1qnpl" path="res://src/features/menu/screens/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" uid="uid://d37ykuofdv1n8" path="res://src/shared/entities/npc/npc.tscn" id="5_npc"]
+[ext_resource type="Texture2D" uid="uid://ckfk1i1404ys6" path="res://src/shared/assets/sprites/npc_spritesheet.png" id="6_nurse_tex"]
+[ext_resource type="Script" uid="uid://dtl581vlfbxui" path="res://src/features/levels/components/level_limits.gd" id="7_limits"]
+[ext_resource type="Resource" uid="uid://bpjju3kwde2by" path="res://src/features/quests/quest_emergency.tres" id="8_quest_emergency"]
+[ext_resource type="Script" uid="uid://m5epbddkyfn4" path="res://src/shared/components/interactables/cpr_trigger.gd" id="9_cpr_trigger"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left_bottom"]
+size = Vector2(2, 219)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left_top"]
+size = Vector2(8, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_right"]
+size = Vector2(8, 296)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_top"]
+size = Vector2(387, 80)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8qql4"]
+size = Vector2(7.25, 39)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k2c1i"]
+size = Vector2(9, 29)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_brdl2"]
+size = Vector2(91, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yfdn7"]
+size = Vector2(28, 186)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_bottom"]
+size = Vector2(387, 4)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
+size = Vector2(32, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bed"]
+size = Vector2(10, 7)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cpr"]
+size = Vector2(64, 64)
+
+[node name="Infirmary" type="Node2D" unique_id=1175055387]
+y_sort_enabled = true
+script = ExtResource("7_limits")
+camera_right = 387
+camera_bottom = 296
+
+[node name="Background" type="Sprite2D" parent="." unique_id=203791448]
+z_index = -1
+texture = ExtResource("1_bg")
+centered = false
+
+[node name="Walls" type="Node2D" parent="." unique_id=678388564]
+
+[node name="WallLeftBottom" type="StaticBody2D" parent="Walls" unique_id=410680217]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallLeftBottom" unique_id=1042452193]
+position = Vector2(1, 186.5)
+shape = SubResource("RectangleShape2D_wall_left_bottom")
+
+[node name="WallLeftTop" type="StaticBody2D" parent="Walls" unique_id=1091665518]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallLeftTop" unique_id=2098227639]
+position = Vector2(4, 20)
+shape = SubResource("RectangleShape2D_wall_left_top")
+
+[node name="WallRight" type="StaticBody2D" parent="Walls" unique_id=1212322047]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallRight" unique_id=60707271]
+position = Vector2(383, 148)
+shape = SubResource("RectangleShape2D_wall_right")
+
+[node name="WallTop" type="StaticBody2D" parent="Walls" unique_id=97142940]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallTop" unique_id=1933418563]
+position = Vector2(193.5, 40)
+shape = SubResource("RectangleShape2D_wall_top")
+
+[node name="WallBottom" type="StaticBody2D" parent="Walls" unique_id=2122822286]
+
+[node name="CollisionShape2D7" type="CollisionShape2D" parent="Walls/WallBottom" unique_id=1344067855]
+position = Vector2(342.25, 272)
+shape = SubResource("RectangleShape2D_8qql4")
+
+[node name="CollisionShape2D8" type="CollisionShape2D" parent="Walls/WallBottom" unique_id=19119584]
+position = Vector2(257, 272)
+shape = SubResource("RectangleShape2D_k2c1i")
+
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="Walls/WallBottom" unique_id=181944280]
+position = Vector2(245, 272)
+shape = SubResource("RectangleShape2D_8qql4")
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="Walls/WallBottom" unique_id=594131758]
+position = Vector2(301, 284)
+shape = SubResource("RectangleShape2D_brdl2")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="Walls/WallBottom" unique_id=1001788682]
+position = Vector2(367, 199)
+shape = SubResource("RectangleShape2D_yfdn7")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Walls/WallBottom" unique_id=1327444983]
+position = Vector2(203, 282)
+shape = SubResource("RectangleShape2D_brdl2")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Walls/WallBottom" unique_id=919769120]
+position = Vector2(159.5, 272.5)
+shape = SubResource("RectangleShape2D_k2c1i")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallBottom" unique_id=1594357908]
+position = Vector2(193.5, 294)
+shape = SubResource("RectangleShape2D_wall_bottom")
+
+[node name="Player" parent="." unique_id=627634083 instance=ExtResource("2_player")]
+position = Vector2(110, 77)
+
+[node name="DoorToHallway" type="Area2D" parent="." unique_id=1238250678]
+position = Vector2(40, 83)
+script = ExtResource("3_door_gd")
+target_scene_path = "res://src/features/levels/school_hallway.tscn"
+target_spawn_name = "HallwaySpawnInfirmary"
+return_spawn_name = "InfirmarySpawnPoint"
+use_dynamic_return = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DoorToHallway" unique_id=1101677984]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_door")
+
+[node name="InfirmarySpawnPoint" type="Marker2D" parent="." unique_id=417369398]
+position = Vector2(59, 110)
+
+[node name="EnfermeroGuardia" parent="." unique_id=1267357982 instance=ExtResource("5_npc")]
+position = Vector2(58, 218)
+sprite_texture = ExtResource("6_nurse_tex")
+npc_name = "Carlos (Enfermero)"
+is_ai = true
+ai_system_prompt = "Eres Carlos, el enfermero venezolano de la universidad UNEFA. Eres muy inteligente y estricto como profesional médico, pero amigable y caes bien. Ocasionalmente usas modismos venezolanos suaves (como 'chamo', 'pana', 'chévere'). Si te preguntan algo fuera de tu área médica, te niegas de forma muy relajada aclarando que no es tu especialidad. Responde de forma MUY breve (1 o 2 oraciones máximo). El jugador es un estudiante. No suele terminar sus respuestas con preguntas."
+fallback_qa = {
+"Me caí por las escaleras": "Quédate quieto si te duele la espalda. Si el dolor es leve, aplica hielo y reposa.",
+"Me duele la cabeza": "Toma un descanso, aléjate de las pantallas y bebe agua. Si sigue, te remito a medicina general.",
+"¿Cómo trato una quemadura?": "Ponla bajo agua fría de inmediato por 10 minutos. Nunca uses pasta dental, chamo.",
+"¿Qué hago si me corto?": "Lávalo con abundante agua y jabón, luego haz presión directa con una gasa limpia."
+}
+dialog_lines = Array[String](["Hola. Toma asiento, por favor.", "Dime, ¿qué síntomas tienes hoy? Vamos a evaluarte rápido y bien."])
+dialog_lines_repeat = Array[String](["¿Todo bien, muchacho? ¿Sigues con molestias?", "Recuerda descansar un poco. Si te sientes mal de nuevo, regresa."])
+dialog_lines_blocked = Array[String](["Todavía no es momento, joven. Primero conoce bien las instalaciones y luego hablamos de lo que hay que hacer."])
+quest_to_start = ExtResource("8_quest_emergency")
+routine_type = "Estático"
+
+[node name="Furniture" type="Node2D" parent="." unique_id=653743026]
+
+[node name="Esqueleto" type="StaticBody2D" parent="Furniture" unique_id=1885991632]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Furniture/Esqueleto" unique_id=1896158235]
+position = Vector2(287, 84.5)
+shape = SubResource("RectangleShape2D_bed")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1542440028]
+
+[node name="PauseMenu" parent="CanvasLayer" unique_id=348394732 instance=ExtResource("4_pause")]
+
+[node name="CPRTrigger" type="Area2D" parent="." unique_id=999888777]
+position = Vector2(280, 170)
+collision_mask = 3
+script = ExtResource("9_cpr_trigger")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CPRTrigger" unique_id=999888778]
+shape = SubResource("RectangleShape2D_cpr")
